@@ -10,7 +10,7 @@ const translationToken = async (_: NextApiRequest, res: NextApiResponse) => {
         'Content-Type': 'application/x-www-form-urlencoded',
     },
   });
-  res.status(200).json({ token: data, region: process.env.TRANSLATION_REGION })
+  res.status(200).json({ token: data, region: process.env.TRANSLATION_REGION });
 }
 
-export default translationToken
+export default translationToken;

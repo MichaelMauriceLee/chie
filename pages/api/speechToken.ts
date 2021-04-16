@@ -10,7 +10,7 @@ const speechToken = async (_: NextApiRequest, res: NextApiResponse) => {
         'Content-Type': 'application/x-www-form-urlencoded',
     },
   });
-  res.status(200).json({ token: data, region: process.env.SPEECH_REGION })
+  res.status(200).json({ token: data, region: process.env.SPEECH_REGION });
 }
 
-export default speechToken
+export default speechToken;

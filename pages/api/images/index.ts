@@ -11,7 +11,7 @@ const images = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
   const readResultUrl = headers['operation-location'];
-  res.status(200).json(readResultUrl.split('/').pop())
+  res.status(200).json(readResultUrl.split('/').pop());
 }
 
-export default images
+export default images;

@@ -1,1 +1,1 @@
-{"apis":{"dynamic":{},"nonDynamic":{"/api/hello":"pages/api/hello.js"}},"domainRedirects":{},"enableHTTPCompression":false}
+{"apis":{"dynamic":{"/api/images/results/:analysisId":{"file":"pages/api/images/results/[analysisId].js","regex":"^\\/api\\/images\\/results(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"}},"nonDynamic":{"/api/images":"pages/api/images.js","/api/jisho":"pages/api/jisho.js","/api/speechToken":"pages/api/speechToken.js","/api/translationToken":"pages/api/translationToken.js"}},"domainRedirects":{},"enableHTTPCompression":false}
