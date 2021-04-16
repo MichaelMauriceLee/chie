@@ -22,7 +22,7 @@ enum ButtonType {
 const SearchResultItem: React.FC<SearchResultItemProps> = ({
   searchResult, isConnectedToAnki, currentDeckName, currentDeckNotes,
 }) => {
-  const isMobile = !!navigator.userAgent.match(/iphone|android|blackberry/ig) || false;
+  const isMobile = typeof window !== 'undefined' ? !!navigator.userAgent.match(/iphone|android|blackberry/ig) || false : false;
 
   const dispatch = useNotification();
   const createSuccessNotification = () => {
@@ -207,12 +207,12 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({
             </div>
           )}
 
-        {searchResult.jlpt
+        {/* {searchResult.jlpt
           && (
             <div className="text-blue-700 pt-1">
               {searchResult.jlpt.join(', ').replaceAll('-', ' ')}
             </div>
-          )}
+          )} */}
 
         {searchResult.japanese.length !== 1 && (
           <div>
