@@ -1,1 +1,0 @@
-{"version":3,"pages404":true,"basePath":"","redirects":[],"headers":[],"dynamicRoutes":[{"page":"/api/images/results/[analysisId]","regex":"^/api/images/results/([^/]+?)(?:/)?$","routeKeys":{"analysisId":"analysisId"},"namedRegex":"^/api/images/results/(?<analysisId>[^/]+?)(?:/)?$"}],"dataRoutes":[],"rewrites":[]}
