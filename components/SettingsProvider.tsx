@@ -22,31 +22,33 @@ export interface SettingsAction {
   payload?: VoiceType | string;
 }
 
-const reducer = (state: Settings, action: SettingsAction): Settings => {
-  switch (action.type) {
-    case SettingsActionType.changeCurrentDeckName:
-      return { ...state, currentDeckName: action.payload as string };
-    case SettingsActionType.toggleDarkMode:
-      return { ...state, useDarkMode: !state.useDarkMode };
-    case SettingsActionType.changeVoiceType:
-      return { ...state, voiceType: action.payload as VoiceType };
-    default:
-      return state;
-  }
+export const SettingsContext = createContext({});
+
+const SettingsProvider: React.FC = ({ children }) => {
+  const reducer = (state: Settings, action: SettingsAction): Settings => {
+    switch (action.type) {
+      case SettingsActionType.changeCurrentDeckName:
+        return { ...state, currentDeckName: action.payload as string };
+      case SettingsActionType.toggleDarkMode:
+        return { ...state, useDarkMode: !state.useDarkMode };
+      case SettingsActionType.changeVoiceType:
+        return { ...state, voiceType: action.payload as VoiceType };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, {
+    currentDeckName: typeof window !== 'undefined' ? localStorage.getItem('currentDeck') ?? 'Default' : 'Default',
+    useDarkMode: false,
+    voiceType: VoiceType.male,
+  });
+
+  return (
+    <SettingsContext.Provider value={{ state, dispatch }}>
+      {children}
+    </SettingsContext.Provider>
+  );
 };
-
-const [state, dispatch] = useReducer(reducer, {
-  currentDeckName: typeof window !== 'undefined' ? localStorage.getItem('currentDeck') ?? 'Default' : 'Default',
-  useDarkMode: false,
-  voiceType: VoiceType.male,
-});
-
-export const SettingsContext = createContext({ state, dispatch });
-
-const SettingsProvider: React.FC = ({ children }) => (
-  <SettingsContext.Provider value={{ state, dispatch }}>
-    {children}
-  </SettingsContext.Provider>
-);
 
 export default SettingsProvider;
