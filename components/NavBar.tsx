@@ -4,6 +4,11 @@ import useModal from '../hooks/useModal';
 
 const NavBar: React.FC = () => {
   const toggleModal = useModal();
+  const onClick = () => {
+    if (toggleModal) {
+      toggleModal();
+    }
+  };
   return (
     <div className="flex justify-between items-end mt-[4px]">
       <Link href="/">
@@ -17,7 +22,7 @@ const NavBar: React.FC = () => {
 
       <button
         className="hover:text-blue-500 rounded-full md:h-16 md:w-16 h-8 w-8 mt-4 focus:outline-none focus:ring focus:border-blue-500"
-        onClick={toggleModal}
+        onClick={onClick}
         aria-label="Settings"
         type="button"
       >
