@@ -32,6 +32,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const debouncedSubmit = useCallback(
     debounce((searchTerm) => {
       if (searchTerm) {
+        setKeyword(searchTerm);
         router.push(`/results/${searchTerm}`);
       }
     }, 500),
@@ -54,6 +55,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       searchBarRef.current.style.height = '';
     }
     setKeyword('');
+    router.push('/');
   };
 
   useEffect(() => {

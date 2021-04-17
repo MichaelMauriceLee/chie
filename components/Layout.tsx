@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import React, { useState } from 'react';
 import ImageArea from './ImageArea/ImageArea';
 import NavBar from './NavBar';
@@ -12,6 +13,11 @@ const Layout: React.FC = ({ children }) => {
 
   return (
     <div>
+      <Head>
+        <title>Chie</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <main className="md:px-72 px-2">
         <NavBar />
 
