@@ -8,7 +8,7 @@ import VoiceArea from './VoiceArea/VoiceArea';
 
 const Layout: React.FC = ({ children }) => {
   const router = useRouter();
-  const initialKeyword = router.pathname === '/results/[keyword]' ? router.asPath.split('/').pop() : '';
+  const initialKeyword = router.pathname === '/results/[keyword]' ? router.asPath.split('/')[2] : '';
   const [keyword, setKeyword] = useState(initialKeyword);
   const [image, setImage] = useState<File | null>(null);
   const [showImageArea, setShowImageArea] = useState(false);
