@@ -7,6 +7,7 @@ import wordList from '../../utils/wordList';
 import { SearchResult } from '../../models/SearchResult';
 import SearchResultItemSkeleton from '../../components/SearchResult/SearchResultItemSkeleton';
 import SearchResultItem from '../../components/SearchResult/SearchResultItem';
+import usePageTransition from '../../hooks/usePageTransition';
 
 interface SearchResultPageProps {
   keyword: string;
@@ -14,23 +15,22 @@ interface SearchResultPageProps {
 }
 
 const SearchResultPage: React.FC<SearchResultPageProps> = ({ searchResults }) => {
-  const router = useRouter();
+  const { isFallback } = useRouter();
+  const isLoading = usePageTransition();
 
-  if (router.isFallback) {
+  if (isFallback || isLoading) {
     return (
-      <div>
-        <div className="grid md:grid-cols-4 grid-cols-1 gap-2">
-          <div className="col-span-3">
-            <div className="mt-2 space-y-4">
-              <SearchResultItemSkeleton />
-              <SearchResultItemSkeleton />
-              <SearchResultItemSkeleton />
-            </div>
+      <div className="grid md:grid-cols-4 grid-cols-1 gap-2">
+        <div className="col-span-3">
+          <div className="mt-2 space-y-4">
+            <SearchResultItemSkeleton />
+            <SearchResultItemSkeleton />
+            <SearchResultItemSkeleton />
           </div>
-          <div className="col-span-1">
-            <div className="mt-2">
-              <div className="rounded-md border border-blue-400 px-2 py-1 h-96 animate-pulse" />
-            </div>
+        </div>
+        <div className="col-span-1">
+          <div className="mt-2">
+            <div className="rounded-md border border-blue-400 px-2 py-1 h-96 animate-pulse" />
           </div>
         </div>
       </div>
@@ -38,24 +38,22 @@ const SearchResultPage: React.FC<SearchResultPageProps> = ({ searchResults }) =>
   }
 
   return (
-    <div>
-      <div className="grid md:grid-cols-4 grid-cols-1 gap-2">
-        <div className="col-span-3">
-          <div className="mt-2 space-y-4">
-            { searchResults.map((searchResult) => (
-              <SearchResultItem
-                key={JSON.stringify(searchResult)}
-                searchResult={searchResult}
-              />
-            ))}
-          </div>
+    <div className="grid md:grid-cols-4 grid-cols-1 gap-2">
+      <div className="col-span-3">
+        <div className="mt-2 space-y-4">
+          { searchResults.map((searchResult) => (
+            <SearchResultItem
+              key={JSON.stringify(searchResult)}
+              searchResult={searchResult}
+            />
+          ))}
         </div>
-        <div className="col-span-1">
-          {/* <TranslationDisplay
+      </div>
+      <div className="col-span-1">
+        {/* <TranslationDisplay
             sentence={translation}
             key={JSON.stringify(translation)}
           /> */}
-        </div>
       </div>
     </div>
   );
