@@ -12,14 +12,16 @@ const useNotification = (): UseNotification => {
   const dispatch = useContext(NotificationContext);
 
   const createNotification = (message: string, type: NotificationType) => {
-    dispatch({
-      type: NotificationActionType.addNotification,
-      payload: {
-        id: uuidv4(),
-        message,
-        type,
-      },
-    });
+    if (dispatch) {
+      dispatch({
+        type: NotificationActionType.addNotification,
+        payload: {
+          id: uuidv4(),
+          message,
+          type,
+        },
+      });
+    }
   };
 
   const createErrorNotification = (error?: Error) => {

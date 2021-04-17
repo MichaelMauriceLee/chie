@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import { AnkiConnectionContext } from '../../components/Provider/AnkiConnectionProvider';
 
 interface UseAnkiConnection {
-  isConnectedToAnki: boolean
-  setIsConnectedToAnki: (param: boolean) => void
+  isConnectedToAnki?: boolean
+  setIsConnectedToAnki?: (param: boolean) => void
 }
 
 const useAnkiConnection = (): UseAnkiConnection => {

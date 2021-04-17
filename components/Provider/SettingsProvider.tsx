@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, Dispatch, useReducer } from 'react';
 
 export enum VoiceType {
   female = 'female',
@@ -22,7 +22,12 @@ export interface SettingsAction {
   payload?: VoiceType | string;
 }
 
-export const SettingsContext = createContext({});
+interface ContextProps {
+  state: Settings;
+  dispatch: Dispatch<SettingsAction>
+}
+
+export const SettingsContext = createContext<Partial<ContextProps>>({});
 
 const SettingsProvider: React.FC = ({ children }) => {
   const reducer = (state: Settings, action: SettingsAction): Settings => {

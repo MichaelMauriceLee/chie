@@ -17,13 +17,15 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
   const closeModalAnimationDuration = 200;
 
   const { isConnectedToAnki, deckList } = useAnkiInfo();
-  const { state: { currentDeckName }, dispatch } = useSettings();
+  const { state, dispatch } = useSettings();
 
   const setCurrentDeckName = (name: string) => {
-    dispatch({
-      type: SettingsActionType.changeCurrentDeckName,
-      payload: name,
-    });
+    if (dispatch) {
+      dispatch({
+        type: SettingsActionType.changeCurrentDeckName,
+        payload: name,
+      });
+    }
   };
 
   const setModalDisplayOn = () => {
@@ -59,8 +61,10 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
   }, [showModal]);
 
   useEffect(() => {
-    setNewCurrentName(currentDeckName);
-  }, [currentDeckName]);
+    if (state && state.currentDeckName) {
+      setNewCurrentName(state.currentDeckName);
+    }
+  }, [state]);
 
   return (
     <div className="fixed z-10 inset-0 overflow-y-auto">

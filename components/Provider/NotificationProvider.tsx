@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, Dispatch, useReducer } from 'react';
 import Notification from '../Notification/Notification';
 import { NotificationActionType, NotificationType } from '../../models/Notification';
 
@@ -13,7 +13,7 @@ export interface NotificationModel {
   type?: NotificationType;
 }
 
-export const NotificationContext = createContext({});
+export const NotificationContext = createContext<Dispatch<NotificationAction> | null>(null);
 
 const NotificationProvider: React.FC = ({ children }) => {
   const reducer = (state: NotificationModel[], action: NotificationAction): NotificationModel[] => {

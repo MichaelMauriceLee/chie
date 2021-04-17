@@ -1,6 +1,13 @@
-import React, { createContext, useState } from 'react';
+import React, {
+  createContext, useState,
+} from 'react';
 
-export const AnkiConnectionContext = createContext({});
+interface ContextProps {
+  isConnectedToAnki: boolean;
+  setIsConnectedToAnki: (param: boolean) => void
+}
+
+export const AnkiConnectionContext = createContext<Partial<ContextProps>>({});
 
 const AnkiConnectionProvider: React.FC = ({ children }) => {
   const [isConnectedToAnki, setIsConnectedToAnki] = useState(false);

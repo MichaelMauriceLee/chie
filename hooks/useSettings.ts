@@ -2,8 +2,8 @@ import { Dispatch, useContext } from 'react';
 import { Settings, SettingsAction, SettingsContext } from '../components/Provider/SettingsProvider';
 
 interface UseSettings {
-  state: Settings;
-  dispatch: Dispatch<SettingsAction>;
+  state?: Settings;
+  dispatch?: Dispatch<SettingsAction>;
 }
 
 const useSettings = (): UseSettings => {

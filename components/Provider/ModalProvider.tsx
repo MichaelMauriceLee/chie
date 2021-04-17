@@ -1,7 +1,7 @@
 import React, { createContext, useState } from 'react';
 import Modal from '../Modal/Modal';
 
-export const ModalContext = createContext({});
+export const ModalContext = createContext<(() => void) | null>(null);
 
 const ModalProvider: React.FC = ({ children }) => {
   const [showModal, setShowModal] = useState(false);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { SettingsActionType } from '../../components/Provider/SettingsProvider';
 import { getCurrentDeckNotes, getDeckNames } from '../../services/agent';
@@ -14,24 +14,30 @@ interface UseAnki {
 
 const useAnkiInfo = (): UseAnki => {
   const pollingInterval = 1000;
-  const { isConnectedToAnki, setIsConnectedToAnki } = useAnkiConnection();
+  const { isConnectedToAnki = false, setIsConnectedToAnki } = useAnkiConnection();
 
-  const { state: { currentDeckName }, dispatch } = useSettings();
+  const { state, dispatch } = useSettings();
 
   const fetchCurrentDeckNotes = async () => {
     try {
-      const data = await getCurrentDeckNotes(currentDeckName);
       const regex = /(<([^>]+)>)/ig; // strip any html text that may appear and get inner text
       const dict: Record<string, boolean> = {};
-      data.forEach((note) => {
-        const { value } = note.fields.Front;
-        const w = value.replace(regex, '');
-        dict[w] = true;
-      });
-      setIsConnectedToAnki(true);
+      if (state && state.currentDeckName) {
+        const data = await getCurrentDeckNotes(state.currentDeckName);
+        data.forEach((note) => {
+          const { value } = note.fields.Front;
+          const w = value.replace(regex, '');
+          dict[w] = true;
+        });
+        if (setIsConnectedToAnki) {
+          setIsConnectedToAnki(true);
+        }
+      }
       return dict;
     } catch (error) {
-      setIsConnectedToAnki(false);
+      if (setIsConnectedToAnki) {
+        setIsConnectedToAnki(false);
+      }
       throw new Error(error.message ?? 'Failed getting current deck notes');
     }
   };
@@ -39,15 +45,19 @@ const useAnkiInfo = (): UseAnki => {
   const fetchDeckNames = async () => {
     try {
       const data = await getDeckNames();
-      setIsConnectedToAnki(true);
+      if (setIsConnectedToAnki) {
+        setIsConnectedToAnki(true);
+      }
       return data;
     } catch (error) {
-      setIsConnectedToAnki(false);
+      if (setIsConnectedToAnki) {
+        setIsConnectedToAnki(false);
+      }
       throw new Error(error.message ?? 'Failed getting deck names');
     }
   };
 
-  const { data: currentDeckNotes = {} } = useQuery(['currentDeckNotes', currentDeckName],
+  const { data: currentDeckNotes = {} } = useQuery(['currentDeckNotes', state?.currentDeckName],
     () => fetchCurrentDeckNotes(),
     {
       refetchInterval: pollingInterval,
@@ -64,11 +74,13 @@ const useAnkiInfo = (): UseAnki => {
   // if there isnt any currentDeckName, assign one
   // (will either be there or will be undefined since couldn't get one)
   useEffect(() => {
-    if (!currentDeckName && deckList && deckList.length !== 0) {
-      dispatch({
-        type: SettingsActionType.changeCurrentDeckName,
-        payload: deckList[0],
-      });
+    if (state && !state.currentDeckName && deckList && deckList.length !== 0) {
+      if (dispatch) {
+        dispatch({
+          type: SettingsActionType.changeCurrentDeckName,
+          payload: deckList[0],
+        });
+      }
     }
   }, [isConnectedToAnki]);
 

@@ -24,13 +24,11 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({ searchResult }) => 
     currentDeckNotes,
   } = useAnkiInfo();
 
-  const {
-    state: { currentDeckName },
-  } = useSettings();
+  const { state } = useSettings();
 
   const { createSuccessNotification, createErrorNotification } = useNotification();
   const createAddedNoteNotification = () => {
-    createSuccessNotification(`Successfully added card to deck: ${currentDeckName}`);
+    createSuccessNotification(state && `Successfully added card to deck: ${state.currentDeckName}`);
   };
 
   const queryClient = useQueryClient();
@@ -103,7 +101,7 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({ searchResult }) => 
     });
 
     const newNote: Note = {
-      deckName: currentDeckName ?? '',
+      deckName: state ? state.currentDeckName : '',
       modelName: 'Basic',
       fields: {
         Front: kanaOnly ? searchResult.japanese[i].reading : searchResult.japanese[i].word,
