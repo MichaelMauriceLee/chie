@@ -19,7 +19,7 @@ const images = async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     },
   });
   const readResultUrl = headers['operation-location'];
-  res.status(200).json(readResultUrl);
+  res.status(200).json(readResultUrl.split('/').pop());
 };
 
 export default images;
