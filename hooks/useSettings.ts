@@ -1,5 +1,5 @@
 import { Dispatch, useContext } from 'react';
-import { Settings, SettingsAction, SettingsContext } from '../components/SettingsProvider';
+import { Settings, SettingsAction, SettingsContext } from '../components/Provider/SettingsProvider';
 
 interface UseSettings {
   state: Settings;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { SettingsActionType } from '../../components/SettingsProvider';
+import { SettingsActionType } from '../../components/Provider/SettingsProvider';
 import { getCurrentDeckNotes, getDeckNames } from '../../services/agent';
 import isMobile from '../../utils/isMobile';
 import useSettings from '../useSettings';

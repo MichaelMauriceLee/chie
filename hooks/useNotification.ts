@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { NotificationActionType, NotificationType } from '../models/Notification';
-import { NotificationContext } from '../components/Notifications/NotificationProvider';
+import { NotificationContext } from '../components/Provider/NotificationProvider';
 
 interface UseNotification {
   createErrorNotification: (error?: Error) => void

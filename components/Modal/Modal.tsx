@@ -3,7 +3,7 @@ import NoConnection from './NoConnection';
 import AnkiDeckSelect from './AnkiDeckSelect';
 import useSettings from '../../hooks/useSettings';
 import useAnkiInfo from '../../hooks/anki/useAnkiInfo';
-import { SettingsActionType } from '../SettingsProvider';
+import { SettingsActionType } from '../Provider/SettingsProvider';
 
 interface ModalProps {
   showModal: boolean;

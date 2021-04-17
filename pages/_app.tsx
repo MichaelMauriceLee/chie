@@ -3,11 +3,11 @@ import '../styles/globals.css';
 import React from 'react';
 import { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import NotificationProvider from '../components/Notifications/NotificationProvider';
+import NotificationProvider from '../components/Provider/NotificationProvider';
 import Layout from '../components/Layout';
-import ModalProvider from '../components/Modal/ModalProvider';
-import SettingsProvider from '../components/SettingsProvider';
-import AnkiConnectionProvider from '../components/AnkiConnectionProvider';
+import ModalProvider from '../components/Provider/ModalProvider';
+import SettingsProvider from '../components/Provider/SettingsProvider';
+import AnkiConnectionProvider from '../components/Provider/AnkiConnectionProvider';
 
 const queryClient = new QueryClient();
 

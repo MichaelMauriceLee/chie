@@ -1,7 +1,7 @@
 /* global NodeJS */
 import React, { useEffect, useState } from 'react';
 import { NotificationActionType } from '../../models/Notification';
-import { NotificationAction, NotificationModel } from './NotificationProvider';
+import { NotificationAction, NotificationModel } from '../Provider/NotificationProvider';
 
 interface NotificationProps extends NotificationModel {
   dispatch: React.Dispatch<NotificationAction>;

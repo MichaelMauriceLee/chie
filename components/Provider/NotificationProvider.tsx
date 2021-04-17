@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from 'react';
-import Notification from './Notification';
+import Notification from '../Notification/Notification';
 import { NotificationActionType, NotificationType } from '../../models/Notification';
 
 export interface NotificationAction {
