@@ -19,11 +19,6 @@ enum ButtonType {
 }
 
 const SearchResultItem: React.FC<SearchResultItemProps> = ({ searchResult }) => {
-  const { createSuccessNotification, createErrorNotification } = useNotification();
-  const createAddedNoteNotification = () => {
-    createSuccessNotification('Successfully added card to deck');
-  };
-
   const {
     isConnectedToAnki,
     currentDeckNotes,
@@ -32,6 +27,11 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({ searchResult }) => 
   const {
     state: { currentDeckName },
   } = useSettings();
+
+  const { createSuccessNotification, createErrorNotification } = useNotification();
+  const createAddedNoteNotification = () => {
+    createSuccessNotification(`Successfully added card to deck: ${currentDeckName}`);
+  };
 
   const queryClient = useQueryClient();
   const { mutate } = useCreateNote(

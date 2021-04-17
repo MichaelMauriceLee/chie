@@ -4,6 +4,7 @@ import { SettingsActionType } from '../../components/SettingsProvider';
 import { getCurrentDeckNotes, getDeckNames } from '../../services/agent';
 import isMobile from '../../utils/isMobile';
 import useSettings from '../useSettings';
+import useAnkiConnection from './useAnkiConnection';
 
 interface UseAnki {
   isConnectedToAnki: boolean
@@ -13,7 +14,7 @@ interface UseAnki {
 
 const useAnkiInfo = (): UseAnki => {
   const pollingInterval = 1000;
-  const [isConnectedToAnki, setIsConnectedToAnki] = useState(false);
+  const { isConnectedToAnki, setIsConnectedToAnki } = useAnkiConnection();
 
   const { state: { currentDeckName }, dispatch } = useSettings();
 

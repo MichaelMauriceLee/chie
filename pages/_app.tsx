@@ -7,20 +7,23 @@ import NotificationProvider from '../components/Notifications/NotificationProvid
 import Layout from '../components/Layout';
 import ModalProvider from '../components/Modal/ModalProvider';
 import SettingsProvider from '../components/SettingsProvider';
+import AnkiConnectionProvider from '../components/AnkiConnectionProvider';
 
 const queryClient = new QueryClient();
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => (
   <QueryClientProvider client={queryClient}>
-    <SettingsProvider>
-      <NotificationProvider>
-        <ModalProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </ModalProvider>
-      </NotificationProvider>
-    </SettingsProvider>
+    <AnkiConnectionProvider>
+      <SettingsProvider>
+        <NotificationProvider>
+          <ModalProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ModalProvider>
+        </NotificationProvider>
+      </SettingsProvider>
+    </AnkiConnectionProvider>
   </QueryClientProvider>
 );
 
