@@ -1,12 +1,15 @@
 import Head from 'next/head';
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import ImageArea from './ImageArea/ImageArea';
 import NavBar from './NavBar';
 import SearchBar from './SearchBar';
 import VoiceArea from './VoiceArea/VoiceArea';
 
 const Layout: React.FC = ({ children }) => {
-  const [keyword, setKeyword] = useState(''); // TODO idk if this is needed
+  const router = useRouter();
+  const initialKeyword = router.pathname === '/results/[keyword]' ? router.asPath.split('/').pop() : '';
+  const [keyword, setKeyword] = useState(initialKeyword);
   const [image, setImage] = useState<File | null>(null);
   const [showImageArea, setShowImageArea] = useState(false);
   const [showVoiceArea, setShowVoiceArea] = useState(false);
