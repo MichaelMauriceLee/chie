@@ -11,7 +11,7 @@ const ModalProvider: React.FC = ({ children }) => {
   };
   return (
     <ModalContext.Provider value={toggleModal}>
-      {showModal && <Modal showModal={showModal} toggleModal={toggleModal} />}
+      <Modal showModal={showModal} toggleModal={toggleModal} />
 
       {children}
     </ModalContext.Provider>

@@ -3,7 +3,7 @@ import isMobile from '../../utils/isMobile';
 
 const NoConnection: React.FC = () => (
   <div className="mt-3 text-center">
-    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
+    <h3 className="text-lg leading-6 font-medium text-gray-900">
       No connection
     </h3>
     <div className="mt-2">
