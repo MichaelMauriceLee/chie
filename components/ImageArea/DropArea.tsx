@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
+import isMobile from '../../utils/isMobile';
 
 interface DropAreaProps {
   setImage: (param: File) => void
 }
 
 const DropArea:React.FC<DropAreaProps> = ({ setImage }) => {
-  const isMobile = !!navigator.userAgent.match(/iphone|android|blackberry/ig) || false;
   const [isHovering, setIsHovering] = useState<boolean>();
   const fileInputRef = useRef<HTMLInputElement>(null);
 

@@ -3,25 +3,36 @@ import { v4 as uuidv4 } from 'uuid';
 import { NotificationActionType, NotificationType } from '../models/Notification';
 import { NotificationContext } from '../components/Notifications/NotificationProvider';
 
-interface NotificationPayload {
-  message: string;
-  type: NotificationType;
+interface UseNotification {
+  createErrorNotification: (error?: Error) => void
+  createSuccessNotification: (message?: string) => void
 }
 
-const useNotification = (): (props: NotificationPayload) => void => {
+const useNotification = (): UseNotification => {
   const dispatch = useContext(NotificationContext);
 
-  return (props: NotificationPayload) => {
-    if (dispatch) {
-      dispatch({
-        type: NotificationActionType.addNotification,
-        payload: {
-          id: uuidv4(),
-          ...props,
-        },
-      });
-    }
+  const createNotification = (message: string, type: NotificationType) => {
+    dispatch({
+      type: NotificationActionType.addNotification,
+      payload: {
+        id: uuidv4(),
+        message,
+        type,
+      },
+    });
   };
+
+  const createErrorNotification = (error?: Error) => {
+    const errorMessage = error ? error.message : 'Failed';
+    createNotification(errorMessage, NotificationType.Error);
+  };
+
+  const createSuccessNotification = (message?: string) => {
+    const successMessage = message ?? 'Success';
+    createNotification(successMessage, NotificationType.Success);
+  };
+
+  return { createErrorNotification, createSuccessNotification };
 };
 
 export default useNotification;

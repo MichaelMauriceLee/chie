@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@headlessui/react": "^1.0.0",
     "axios": "^0.21.1",
     "lodash.debounce": "^4.0.8",
     "microsoft-cognitiveservices-speech-sdk": "^1.16.0",

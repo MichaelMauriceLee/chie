@@ -1,8 +1,8 @@
 import {
   QueryClient, useMutation, UseMutationResult,
 } from 'react-query';
-import { Note } from '../models/Note';
-import { postNote } from '../services/agent';
+import { Note } from '../../models/Note';
+import { postNote } from '../../services/agent';
 
 const addNoteToCurrentDeck = async (card: Note) => {
   try {

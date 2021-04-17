@@ -1,9 +1,7 @@
-import { AxiosError } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import useNotification from '../../hooks/useNotification';
 import useTextInImageSearch from '../../hooks/useTextInImageSearch';
 import { Word } from '../../models/ImageSearchResult';
-import { NotificationType } from '../../models/Notification';
 import LoadingIndicator from './LoadingIndicator';
 
 interface ImageDisplayProps {
@@ -30,13 +28,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
   const imgRef = useRef<HTMLImageElement>(new Image());
   const tempWordArrayRef = useRef<Word[]>([]);
 
-  const dispatch = useNotification();
-  const createErrorNotification = (error:AxiosError) => {
-    dispatch({
-      type: NotificationType.Error,
-      message: error.response?.data ?? error.message,
-    });
-  };
+  const { createErrorNotification } = useNotification();
 
   const {
     data: imageSearchResult, isLoading, refetch,
@@ -194,9 +186,13 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
   };
 
   useEffect(() => {
-    canvas?.addEventListener('wheel', onWheel);
+    if (canvas) {
+      canvas.addEventListener('wheel', onWheel);
+    }
     return () => {
-      canvas?.removeEventListener('wheel', onWheel);
+      if (canvas) {
+        canvas.removeEventListener('wheel', onWheel);
+      }
     };
   });
 
@@ -254,11 +250,11 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
 
   const panImage = (evt: React.MouseEvent<HTMLCanvasElement>) => {
     const mousePos = getMousePos(evt);
-    if (dragStartPosition && mousePos) {
+    if (dragStartPosition && mousePos && ctx) {
       const { x, y } = mousePos;
       const dx = x - dragStartPosition?.x;
       const dy = y - dragStartPosition?.y;
-      ctx?.translate(dx, dy);
+      ctx.translate(dx, dy);
       window.requestAnimationFrame(drawImageAndBoundingBoxes);
     }
   };

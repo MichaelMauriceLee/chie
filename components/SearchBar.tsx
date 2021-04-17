@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 import debounce from 'lodash.debounce';
+import { useRouter } from 'next/router';
 import useNotification from '../hooks/useNotification';
-import { NotificationType } from '../models/Notification';
 import useTextToSpeech from '../hooks/useTextToSpeech';
 
 interface SearchBarProps {
@@ -9,34 +9,30 @@ interface SearchBarProps {
   setKeyword: (param: string) => void;
   setShowImageArea: (callback: (prev: boolean) => boolean) => void;
   setShowVoiceArea: (callback: (prev: boolean) => boolean) => void;
-  fetchSearchResults: () => void
-  setShowInfo: (param: boolean) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
-  keyword, setKeyword, setShowImageArea, setShowVoiceArea, fetchSearchResults, setShowInfo,
+  keyword, setKeyword, setShowImageArea, setShowVoiceArea,
 }) => {
   const searchBarRef = useRef<HTMLTextAreaElement>(null);
 
-  const dispatch = useNotification();
-  const createErrorNotification = (error: Error) => {
-    dispatch({
-      type: NotificationType.Error,
-      message: error.message,
-    });
-  };
+  const router = useRouter();
+
+  const { createErrorNotification } = useNotification();
 
   const onKeyDown = (evt: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (evt.key === 'Enter') {
       evt.preventDefault();
-      searchBarRef.current?.blur();
+      if (searchBarRef.current) {
+        searchBarRef.current.blur();
+      }
     }
   };
 
   const debouncedSubmit = useCallback(
     debounce((searchTerm) => {
       if (searchTerm) {
-        fetchSearchResults();
+        router.push(`/results/${searchTerm}`);
       }
     }, 500),
     [],
@@ -44,7 +40,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setKeyword(event.target.value);
-    setShowInfo(false);
   };
 
   const resizeTextArea = () => {
@@ -122,7 +117,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onClick={() => {
           setShowVoiceArea((prev: boolean) => !prev);
           setShowImageArea(() => false);
-          setShowInfo(false);
         }}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -137,7 +131,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onClick={() => {
           setShowImageArea((prev: boolean) => !prev);
           setShowVoiceArea(() => false);
-          setShowInfo(false);
         }}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

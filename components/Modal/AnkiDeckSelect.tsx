@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 
 interface AnkiDeckSelectProps {
   currentDeckName: string | null;
-  setCurrentDeckName: (param: string | null) => void;
+  setCurrentDeckName: Dispatch<SetStateAction<string>>;
   deckList: string[];
 }
 

@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import NoConnection from './NoConnection';
 import AnkiDeckSelect from './AnkiDeckSelect';
+import useSettings from '../../hooks/useSettings';
+import useAnkiInfo from '../../hooks/anki/useAnkiInfo';
+import { SettingsActionType } from '../SettingsProvider';
 
 interface ModalProps {
-  isConnectedToAnki: boolean;
-  currentDeckName: string | null;
-  setCurrentDeckName: (param: string | null) => void;
   showModal: boolean;
-  setShowModal: (param: boolean) => void;
-  deckList: string[];
+  toggleModal: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({
-  isConnectedToAnki, setShowModal, setCurrentDeckName, currentDeckName, deckList, showModal,
-}) => {
-  const [newCurrentName, setNewCurrentName] = useState<string | null>(null);
+const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
+  const [newCurrentName, setNewCurrentName] = useState<string>('');
   const [backgroundOpacity, setBackgroundOpacity] = useState('opacity-0');
   const [modalPanelDisplayOptions, setModalPanelDisplayOptions] = useState('opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95');
   const closeModalAnimationDuration = 200;
+
+  const { isConnectedToAnki, deckList } = useAnkiInfo();
+  const { state: { currentDeckName }, dispatch } = useSettings();
+
+  const setCurrentDeckName = (name: string) => {
+    dispatch({
+      type: SettingsActionType.changeCurrentDeckName,
+      payload: name,
+    });
+  };
 
   const setModalDisplayOn = () => {
     setBackgroundOpacity('opacity-100');
@@ -32,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({
   const close = () => {
     setModalDisplayOff();
     // gives time for animation to play out before unmounting modal from DOM
-    setTimeout(() => { setShowModal(false); }, closeModalAnimationDuration);
+    setTimeout(() => { toggleModal(); }, closeModalAnimationDuration);
   };
 
   const save = () => {
