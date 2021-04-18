@@ -2,5 +2,8 @@
   "baseUrl": "http://localhost:3000",
   "chromeWebSecurity": false,
   "video": false,
-  "componentFolder": "cypress/component"
+  "component": {
+    "testFiles": "**/*.test.{js,ts,jsx,tsx}",
+    "componentFolder": "components"
+  }
 }

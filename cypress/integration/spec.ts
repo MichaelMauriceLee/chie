@@ -1,5 +1,0 @@
-it('loads examples', () => {
-  const url = 'http://localhost:3000';
-  cy.visit(url);
-  cy.contains('Chie');
-});

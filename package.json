@@ -6,8 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cy:open": "cypress open",
+    "cy": "cypress open",
     "cy:run": "cypress run",
+    "cy:ct": "cypress open-ct",
+    "cy:run-ct": "cypress run-ct",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -35,11 +37,6 @@
     "@storybook/addon-links": "^6.2.8",
     "@storybook/react": "^6.2.8",
     "@tailwindcss/jit": "^0.1.18",
-    "@testing-library/cypress": "^7.0.6",
-    "@testing-library/dom": "^7.30.3",
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.4",
-    "@types/jest": "^26.0.22",
     "@types/lodash.debounce": "^4.0.6",
     "@types/node": "^14.14.41",
     "@types/react": "^17.0.3",
@@ -49,8 +46,6 @@
     "autoprefixer": "^10.2.5",
     "babel-loader": "^8.2.2",
     "cypress": "^7.1.0",
-    "cypress-react-selector": "^2.3.6",
-    "cypress-react-unit-test": "^4.17.2",
     "eslint": "^7.2.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-cypress": "^2.11.2",
@@ -61,6 +56,7 @@
     "postcss": "^8.2.10",
     "tailwindcss": "^2.1.1",
     "typescript": "^4.2.4",
-    "webpack": "^5.33.2"
+    "webpack": "^5.33.2",
+    "webpack-dev-server": "^3.11.2"
   }
 }
