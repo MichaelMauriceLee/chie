@@ -8,8 +8,6 @@ import {
   AnkiConnectActionType,
   ocrBaseUrl,
   speechTokenUrl,
-  translationTokenUrl,
-  translationUrl,
 } from './constants';
 import {
   AddCardRequest,
@@ -22,7 +20,6 @@ import { Note } from '../models/Note';
 import { SearchResult } from '../models/SearchResult';
 import { ImageSearchResult } from '../models/ImageSearchResult';
 import { TokenResponse } from '../models/TokenResponse';
-import { TranslateLineRequest, TranslateLineResponse } from '../models/Translation';
 
 const formatAnkiResponse = async <T>(res: Response): Promise<T> => {
   const { result, error }: AnkiResponse = await res.json();
@@ -89,7 +86,7 @@ export const getSearchResults = async (
   const { data } = await axios.get(
     `${jishoSearchWordBaseUrl}?keyword=${keyword}`,
   );
-  return data.data;
+  return data;
 };
 
 export const postAnalyzeImageRequest = async (image: File): Promise<string> => {
@@ -115,18 +112,6 @@ export const getAnalysisResults = async (
   return null;
 };
 
-export const getTranslation = async (
-  payload: TranslateLineRequest[], accessToken: string, to: string, from?: string,
-): Promise<TranslateLineResponse[]> => {
-  const url = from ? `${translationUrl}&from=${from}&to=${to}` : `${translationUrl}&to=${to}`;
-  const { data } = await axios.post(url, payload, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return data;
-};
-
 export const getSpeechToken = async (): Promise<TokenResponse> => {
   const cookie = new Cookie();
   const speechToken = cookie.get('speech-token');
@@ -143,24 +128,5 @@ export const getSpeechToken = async (): Promise<TokenResponse> => {
   } else {
     const idx = speechToken.indexOf(':');
     return { token: speechToken.slice(idx + 1), region: speechToken.slice(0, idx) };
-  }
-};
-
-export const getTranslationToken = async (): Promise<TokenResponse> => {
-  const cookie = new Cookie();
-  const translationToken = cookie.get('translation-token');
-
-  if (!translationToken) {
-    try {
-      const res = await axios.get(translationTokenUrl);
-      const { token, region } = res.data;
-      cookie.set('translation-token', `${region}:${token}`, { maxAge: 540, path: '/' });
-      return { token, region };
-    } catch (err) {
-      throw new Error(err.message ?? err);
-    }
-  } else {
-    const idx = translationToken.indexOf(':');
-    return { token: translationToken.slice(idx + 1), region: translationToken.slice(0, idx) };
   }
 };

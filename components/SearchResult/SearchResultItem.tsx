@@ -205,12 +205,12 @@ const SearchResultItem: React.FC<SearchResultItemProps> = ({ searchResult }) => 
             </div>
           )}
 
-        {/* {searchResult.jlpt
+        {searchResult.jlpt
           && (
             <div className="text-blue-700 pt-1">
-              {searchResult.jlpt.join(', ').replaceAll('-', ' ')}
+              {searchResult.jlpt.join(', ').replace(/-/g, ' ')}
             </div>
-          )} */}
+          )}
 
         {searchResult.japanese.length !== 1 && (
           <div>

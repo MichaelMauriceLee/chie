@@ -1,20 +1,24 @@
 import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import wordList from '../../utils/wordList';
 import { SearchResult } from '../../models/SearchResult';
 import SearchResultItemSkeleton from '../../components/SearchResult/SearchResultItemSkeleton';
 import SearchResultItem from '../../components/SearchResult/SearchResultItem';
 import usePageTransition from '../../hooks/usePageTransition';
+import { fetchWordDefinitions } from '../api/jisho';
+import TranslationDisplay from '../../components/Translation/TranslationDisplay';
+import { TranslateLineResponse } from '../../models/Translation';
+import { fetchTranslation } from '../api/translation';
 
 interface SearchResultPageProps {
   keyword: string;
   searchResults: SearchResult[];
+  translation: TranslateLineResponse
 }
 
-const SearchResultPage: React.FC<SearchResultPageProps> = ({ searchResults }) => {
+const SearchResultPage: React.FC<SearchResultPageProps> = ({ searchResults, translation }) => {
   const { isFallback } = useRouter();
   const isLoading = usePageTransition();
 
@@ -49,11 +53,11 @@ const SearchResultPage: React.FC<SearchResultPageProps> = ({ searchResults }) =>
           ))}
         </div>
       </div>
-      <div className="col-span-1">
-        {/* <TranslationDisplay
-            sentence={translation}
-            key={JSON.stringify(translation)}
-          /> */}
+      <div className="mt-2 col-span-1">
+        <TranslationDisplay
+          sentence={translation}
+          key={JSON.stringify(translation)}
+        />
       </div>
     </div>
   );
@@ -62,12 +66,15 @@ const SearchResultPage: React.FC<SearchResultPageProps> = ({ searchResults }) =>
 export const getStaticProps: GetStaticProps = async (context) => {
   // @ts-expect-error ignore for now
   const { keyword } = context.params;
-  const { data } = await axios.get(`https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(keyword)}`);
-  const searchResults = data.data;
+  const [searchResults, translation] = await Promise.all([
+    fetchWordDefinitions(keyword),
+    fetchTranslation(keyword)]);
+
   return {
     props: {
       keyword,
       searchResults,
+      translation,
     },
   };
 };
