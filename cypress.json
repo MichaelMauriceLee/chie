@@ -3,7 +3,7 @@
   "chromeWebSecurity": false,
   "video": false,
   "component": {
-    "testFiles": "**/*.test.{js,ts,jsx,tsx}",
+    "testFiles": "**/*.spec.{js,ts,jsx,tsx}",
     "componentFolder": "components"
   }
 }
