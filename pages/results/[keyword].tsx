@@ -2,15 +2,13 @@ import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import wordList from '../../utils/wordList';
+import axios from 'axios';
 import { SearchResult } from '../../models/SearchResult';
 import SearchResultItemSkeleton from '../../components/SearchResult/SearchResultItemSkeleton';
 import SearchResultItem from '../../components/SearchResult/SearchResultItem';
 import usePageTransition from '../../hooks/usePageTransition';
-import { fetchWordDefinitions } from '../api/jisho';
 import TranslationDisplay from '../../components/Translation/TranslationDisplay';
-import { TranslateLineResponse } from '../../models/Translation';
-import { fetchTranslation } from '../api/translation';
+import { TranslateLineRequest, TranslateLineResponse } from '../../models/Translation';
 
 interface SearchResultPageProps {
   keyword: string;
@@ -63,12 +61,45 @@ const SearchResultPage: React.FC<SearchResultPageProps> = ({ searchResults, tran
   );
 };
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  // @ts-expect-error ignore for now
-  const { keyword } = context.params;
+interface Params extends ParsedUrlQuery {
+  keyword: string,
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { keyword } = params as Params;
+
+  const fetchWordDefinitions = async (): Promise<SearchResult[]> => {
+    const jishoSearchWordBaseUrl = 'https://jisho.org/api/v1/search/words?keyword=';
+    const url = jishoSearchWordBaseUrl + encodeURIComponent(keyword);
+    const { data } = await axios.get(url);
+    return data.data;
+  };
+
+  const fetchTranslation = async (): Promise<TranslateLineResponse> => {
+    const translationUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0';
+
+    const payload: TranslateLineRequest[] = [
+      {
+        Text: keyword,
+      },
+    ];
+
+    const url = `${translationUrl}&to=en`;
+
+    const { data } = await axios.post(url, payload, {
+      headers: {
+        'Ocp-Apim-Subscription-Key': process.env.TRANSLATION_KEY,
+        'Ocp-Apim-Subscription-Region': process.env.TRANSLATION_REGION,
+      },
+    });
+
+    return data[0];
+  };
+
   const [searchResults, translation] = await Promise.all([
-    fetchWordDefinitions(keyword),
-    fetchTranslation(keyword)]);
+    fetchWordDefinitions(),
+    fetchTranslation(),
+  ]);
 
   return {
     props: {
@@ -79,16 +110,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths: { params: ParsedUrlQuery }[] = [];
-  wordList.forEach((word) => {
-    const path = { params: { keyword: word } };
-    paths.push(path);
-  });
-  return {
-    paths,
-    fallback: true,
-  };
-};
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: true,
+});
 
 export default SearchResultPage;

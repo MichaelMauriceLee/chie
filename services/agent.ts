@@ -1,7 +1,6 @@
 import axios from 'axios';
 import Cookie from 'universal-cookie';
 import {
-  jishoSearchWordBaseUrl,
   ankiBaseUrl,
   ankiConnectVersion,
   HttpMethods,
@@ -17,7 +16,6 @@ import {
 } from '../models/AnkiRequest';
 import { AnkiResponse, NotesInfoResponse } from '../models/AnkiResponse';
 import { Note } from '../models/Note';
-import { SearchResult } from '../models/SearchResult';
 import { ImageSearchResult } from '../models/ImageSearchResult';
 import { TokenResponse } from '../models/TokenResponse';
 
@@ -78,15 +76,6 @@ export const postNote = async (note: Note): Promise<string> => {
     body: JSON.stringify(payload),
   });
   return formatAnkiResponse<string>(response);
-};
-
-export const getSearchResults = async (
-  keyword: string,
-): Promise<SearchResult[]> => {
-  const { data } = await axios.get(
-    `${jishoSearchWordBaseUrl}?keyword=${keyword}`,
-  );
-  return data;
 };
 
 export const postAnalyzeImageRequest = async (image: File): Promise<string> => {
