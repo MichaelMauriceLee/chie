@@ -1,34 +1,45 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Setup
 
-## Getting Started
+Follow the instructions to install AnkiConnect here:
+https://foosoft.net/projects/anki-connect/
 
-First, run the development server:
+After installing, replace the AnkiConnect config with the following:
+```bash
+{
+    "apiKey": null,
+    "apiLogPath": null,
+    "webBindAddress": "127.0.0.1",
+    "webBindPort": 8765,
+    "webCorsOrigin": "http://localhost",
+    "webCorsOriginList": [
+        "http://localhost",
+        "http://localhost:3000",
+        "https://www.chie.app"
+    ]
+}
+```
+
+You can now use https://www.chie.app/ or run the next.js app locally.
+
+Make sure to keep Anki running in the background as you use the site.
+
+## How to run this repo locally
+
+Create a file called '.env.local' in the root directory and copy the following contents into that file and save (make sure to replace the values in {} with their actual value):
+
+```bash
+CV_NAME={cv_name}
+CV_KEY={cv_key}
+SPEECH_REGION={speech_region}
+SPEECH_KEY={speech_key}
+TRANSLATION_REGION={translation_region}
+TRANSLATION_KEY={translation_key}
+```
+
+Next, type the following command into the console:
 
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Now navigate to localhost:3000 in your browser to use the site locally.
