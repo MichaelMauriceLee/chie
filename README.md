@@ -36,10 +36,11 @@ TRANSLATION_REGION={translation_region}
 TRANSLATION_KEY={translation_key}
 ```
 
-Next, type the following command into the console:
+Next, type the following commands into the console:
 
 ```bash
-npm run dev
+yarn install
+yarn dev
 ```
 
 Now navigate to localhost:3000 in your browser to use the site locally.
