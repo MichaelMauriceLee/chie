@@ -1,10 +1,10 @@
 import React from 'react';
 import { mount } from '@cypress/react';
-import Info from './Info';
+import { Default } from './Info.stories';
 
 describe('Info', () => {
   it('renders', () => {
-    mount(<Info />);
+    mount(<Default />);
     cy.contains('Welcome');
   });
 });
