@@ -26,7 +26,7 @@ class MyDocument extends Document {
             window._mNHandle.queue = window._mNHandle.queue || [];
             medianet_versionId = &quot;3121199&quot;;
           </script>
-          <script src="https://contextual.media.net/dmedianet.js?cid=8CU36X42E" async="async" />
+          <script src="https://contextual.media.net/dmedianet.js?cid=8CU36X42E" async />
         </Head>
         <body>
           <Main />
