@@ -18,7 +18,15 @@ class MyDocument extends Document {
         <Head>
           <link rel="manifest" href="manifest.json" />
           <meta name="description" content="Next generation Japanese dictionary with Anki Integration, text recognition, and speech recognition" />
-          <script data-ad-client="ca-pub-2188571361088905" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" />
+          <script type="text/javascript">
+            window._mNHandle = window._mNHandle ||
+            {' '}
+            {}
+            ;
+            window._mNHandle.queue = window._mNHandle.queue || [];
+            medianet_versionId = &quot;3121199&quot;;
+          </script>
+          <script src="https://contextual.media.net/dmedianet.js?cid=8CU36X42E" async="async" />
         </Head>
         <body>
           <Main />
