@@ -20,24 +20,24 @@ const NavBar: React.FC = () => {
         </a>
       </Link>
 
-      <div className="flex flex-row space-x-4 pt-4">
-        <Link href="/recommendations">
-          <a
-            className="text-xl hover:text-blue-500 rounded focus:outline-none focus:ring focus:border-blue-500"
-            href="/recommendations"
-          >
-            Recommendations
-          </a>
-        </Link>
-        <Link href="/grammar">
-          <a
-            className="text-xl hover:text-blue-500 rounded focus:outline-none focus:ring focus:border-blue-500"
-            href="/grammar"
-          >
-            Learn Grammar
-          </a>
-        </Link>
-        <div className="flex flex-col items-center">
+      <div>
+        <div className="flex space-x-4 pt-4">
+          <Link href="/recommendations">
+            <a
+              className="text-xl hover:text-blue-500 rounded focus:outline-none focus:ring focus:border-blue-500"
+              href="/recommendations"
+            >
+              Recommendations
+            </a>
+          </Link>
+          <Link href="/grammar">
+            <a
+              className="text-xl hover:text-blue-500 rounded focus:outline-none focus:ring focus:border-blue-500"
+              href="/grammar"
+            >
+              Learn Grammar
+            </a>
+          </Link>
           <Link href="/about">
             <a
               className="text-xl hover:text-blue-500 rounded focus:outline-none focus:ring focus:border-blue-500"
@@ -46,6 +46,8 @@ const NavBar: React.FC = () => {
               About
             </a>
           </Link>
+        </div>
+        <div className="flex justify-end">
           <button
             className="hover:text-blue-500 rounded-full md:h-16 md:w-16 h-8 w-8 mt-4 focus:outline-none focus:ring focus:border-blue-500"
             onClick={onClick}
