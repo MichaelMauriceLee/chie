@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import ImageArea from './ImageArea/ImageArea';
 import NavBar from './NavBar';
 import SearchBar from './SearchBar';
@@ -34,6 +35,17 @@ const Layout: React.FC = ({ children }) => {
         {showVoiceArea && <VoiceArea />}
 
         {children}
+
+        <div className="mt-2 px-2 flex flex-row-reverse bg-gray-300">
+          <Link href="/privacyPolicy">
+            <a
+              className="text-xl hover:text-blue-500 rounded focus:outline-none focus:ring focus:border-blue-500"
+              href="/privacyPolicy"
+            >
+              Privacy Policy
+            </a>
+          </Link>
+        </div>
       </main>
     </div>
   );
