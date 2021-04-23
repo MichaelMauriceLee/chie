@@ -30,6 +30,14 @@ const NavBar: React.FC = () => {
               Recommendations
             </a>
           </Link>
+          <Link href="/commonWords">
+            <a
+              className="text-xl hover:text-blue-500 rounded focus:outline-none focus:ring focus:border-blue-500"
+              href="/commonWords"
+            >
+              Common Words
+            </a>
+          </Link>
           <Link href="/grammar">
             <a
               className="text-xl hover:text-blue-500 rounded focus:outline-none focus:ring focus:border-blue-500"
