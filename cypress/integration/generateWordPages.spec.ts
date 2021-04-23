@@ -5,11 +5,11 @@ describe('access site', () => {
     const url = 'https://www.chie.app';
     cy.visit(url);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500);
+    cy.wait(1000);
     wordList.forEach((word) => {
-      cy.visit(`${url}/results/${word}`);
+      cy.visit(`${url}/results/${encodeURIComponent(word)}`);
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(500);
+      cy.wait(1000);
     });
   });
 });
