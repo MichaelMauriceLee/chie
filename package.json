@@ -5,15 +5,15 @@
   "license": "",
   "sideEffects": false,
   "scripts": {
-    "build": "npm-run-all -p build:*",
-    "dev": "npm-run-all -p dev:*",
+    "build": "npm-run-all -s build:*",
     "build:css": "npm run generate:css -- --minify",
-    "dev:css": "npm run generate:css -- --watch",
-    "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
     "build:remix": "cross-env NODE_ENV=production remix build",
     "build:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
+    "dev": "npm-run-all -p dev:*",
+    "dev:css": "npm run generate:css -- --watch",
     "dev:remix": "cross-env NODE_ENV=development remix dev",
-    "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch"
+    "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
+    "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css"
   },
   "prettier": {},
   "eslintIgnore": [
