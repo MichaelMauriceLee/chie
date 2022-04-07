@@ -34,6 +34,7 @@ const SearchBar: React.FC = () => {
 
   const onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setQuery(event.target.value);
+    searchResultsLinkRef.current!.click()
   };
 
   const resizeTextArea = () => {
