@@ -6,7 +6,7 @@ const analysisResultsUrl = `https://${process.env.CV_NAME}.cognitiveservices.azu
 export const loader: LoaderFunction = async ({ params })=> {
   const { data } = await axios.get(`${analysisResultsUrl}/${params.id}`, {
     headers: {
-      'Ocp-Apim-Subscription-Key': process.env.CV_KEY,
+      'Ocp-Apim-Subscription-Key': process.env.CV_KEY!,
     },
   });
   return json(data)

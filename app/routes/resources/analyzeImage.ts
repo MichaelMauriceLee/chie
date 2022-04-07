@@ -10,7 +10,7 @@ export const action: ActionFunction = async ({ request }) => {
       const buffer = Buffer.from(data.image.split(",")[1], "base64");
       const { headers } = await axios.post(analyzeImageUrl, buffer, {
         headers: {
-          "Ocp-Apim-Subscription-Key": process.env.CV_KEY,
+          "Ocp-Apim-Subscription-Key": process.env.CV_KEY!,
           "Content-Type": "application/octet-stream",
         },
       });

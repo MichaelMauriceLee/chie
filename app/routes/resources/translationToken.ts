@@ -6,7 +6,7 @@ const tokenUrl = `https://${process.env.TRANSLATION_REGION}.api.cognitive.micros
 export const loader: LoaderFunction = async ({ request }) => {
   const { data } = await axios.post(tokenUrl, null, {
     headers: {
-      "Ocp-Apim-Subscription-Key": process.env.TRANSLATION_KEY,
+      "Ocp-Apim-Subscription-Key": process.env.TRANSLATION_KEY!,
       "Content-Type": "application/x-www-form-urlencoded",
     },
   });
