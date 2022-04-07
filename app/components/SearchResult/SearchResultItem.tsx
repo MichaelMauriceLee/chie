@@ -5,9 +5,9 @@ import React from 'react';
 // import useNotification from '../../hooks/useNotification';
 // import useSettings from '../../hooks/useSettings';
 // import useTextToSpeech from '../../hooks/useTextToSpeech';
-import { Note } from '../models/Note';
-import { JapaneseWord, SearchResult } from '../models/SearchResult';
-import isMobile from '../utils/client/isMobile';
+import { Note } from '../../models/Note';
+import { JapaneseWord, SearchResult } from '../../models/SearchResult';
+import isMobile from '../../utils/client/isMobile';
 
 interface SearchResultItemProps {
   searchResult: SearchResult;
