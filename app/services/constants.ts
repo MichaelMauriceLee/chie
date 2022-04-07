@@ -3,10 +3,9 @@ export enum HttpMethods {
   post = 'POST'
 }
 
-export const jishoSearchWordBaseUrl = '/api/jisho';
 export const ocrBaseUrl = '/resources/analyzeImage';
-export const speechTokenUrl = '/api/speechToken';
-export const translationTokenUrl = '/api/translationToken';
+export const speechTokenUrl = '/resources/speechToken';
+export const translationTokenUrl = '/resources/translationToken';
 
 export const translationUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0';
 
