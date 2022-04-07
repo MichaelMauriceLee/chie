@@ -7,10 +7,9 @@ import ImageDisplayControls from './ImageDisplayControls';
 interface ImageModuleProps {
   file: File | null;
   setFile: (params: File | null) => void;
-  setKeyword: (params: string) => void;
 }
 
-export const ImageModule: React.FC<ImageModuleProps> = ({ file, setFile, setKeyword }) => {
+export const ImageModule: React.FC<ImageModuleProps> = ({ file, setFile }) => {
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [showLineBoundingBox, setShowLineBoundingBox] = useState<boolean>(true);
   const [showWordBoundingBox, setShowWordBoundingBox] = useState<boolean>(false);
@@ -24,7 +23,6 @@ export const ImageModule: React.FC<ImageModuleProps> = ({ file, setFile, setKeyw
             image={croppedImage}
             showLineBoundingBox={showLineBoundingBox}
             showWordBoundingBox={showWordBoundingBox}
-            setKeyword={setKeyword}
           />
           <ImageDisplayControls
             showLineBoundingBox={showLineBoundingBox}

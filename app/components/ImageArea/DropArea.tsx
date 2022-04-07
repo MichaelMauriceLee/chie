@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import DropAreaContextMenu from './DropAreaContextMenu';
 
-import isMobile from '../../utils/isMobile';
+import isMobile from '../../utils/client/isMobile';
 
 interface DropAreaProps {
   setFile: (param: File | null) => void

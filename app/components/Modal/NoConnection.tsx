@@ -1,5 +1,5 @@
 import React from 'react';
-import isMobile from '../../utils/isMobile';
+import isMobile from '../../utils/client/isMobile';
 
 const NoConnection: React.FC = () => (
   <div className="mt-3 text-center">

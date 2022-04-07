@@ -1,7 +1,15 @@
 import { Link } from '@remix-run/react';
 import React from 'react';
+import useModal from '~/hooks/useModal';
 
 const NavBar: React.FC = () => {
+  const toggleModal = useModal();
+  const onClick = () => {
+    if (toggleModal) {
+      toggleModal();
+    }
+  };
+
   return (
     <div className="flex justify-between items-end" style={{ marginTop: '4px' }}>
       <Link
@@ -14,6 +22,7 @@ const NavBar: React.FC = () => {
 
       <button
         className="hover:text-blue-500 rounded-full md:h-16 md:w-16 h-8 w-8 mt-4 focus:outline-none focus:ring focus:border-blue-500"
+        onClick={onClick}
         aria-label="Settings"
         type="button"
       >

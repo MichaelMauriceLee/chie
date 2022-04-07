@@ -1,37 +1,37 @@
 import React from 'react';
-import useSpeechToText from '../../hooks/useSpeechToText';
+import useSpeechToText from '../../hooks/useTextToSpeech';
 
 const VoiceArea: React.FC = () => {
-  const {
-    displayText,
-    tempDisplayText,
-    fetchTextFromFile,
-    fetchTextFromMic,
-    stopMicRecording,
-    isRecognizingMic,
-    isRecognizingFile,
-  } = useSpeechToText();
+  // const {
+  //   displayText,
+  //   tempDisplayText,
+  //   fetchTextFromFile,
+  //   fetchTextFromMic,
+  //   stopMicRecording,
+  //   isRecognizingMic,
+  //   isRecognizingFile,
+  // } = useSpeechToText();
 
-  const onClick = () => {
-    if (isRecognizingMic) {
-      stopMicRecording();
-      return;
-    }
-    fetchTextFromMic();
-  };
+  // const onClick = () => {
+  //   if (isRecognizingMic) {
+  //     stopMicRecording();
+  //     return;
+  //   }
+  //   fetchTextFromMic();
+  // };
 
-  const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    if (evt.target.files) {
-      const file = evt.target.files[0];
-      fetchTextFromFile(file);
-    }
-  };
+  // const onFileUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (evt.target.files) {
+  //     const file = evt.target.files[0];
+  //     fetchTextFromFile(file);
+  //   }
+  // };
 
   return (
     <div className="flex mt-2 border rounded">
       <div className="p-4 w-30">
-        <button className="flex flex-row items-center hover:text-blue-500" type="button" onClick={onClick}>
-          { isRecognizingMic ? (
+        <button className="flex flex-row items-center hover:text-blue-500" type="button">
+          {/* { isRecognizingMic ? (
             <svg
               className="animate-spin h-5 w-5 text-blue-500"
               xmlns="http://www.w3.org/2000/svg"
@@ -61,12 +61,12 @@ const VoiceArea: React.FC = () => {
                 Use Microphone
               </div>
             </>
-          )}
+          )} */}
         </button>
 
         <div className="mt-2">
           <label className="flex flex-row hover:text-blue-500" htmlFor="audio-file">
-            { isRecognizingFile ? (
+            {/* { isRecognizingFile ? (
               <svg
                 className="animate-spin h-5 w-5 text-blue-500"
                 xmlns="http://www.w3.org/2000/svg"
@@ -96,19 +96,19 @@ const VoiceArea: React.FC = () => {
                   Upload audio file
                 </div>
               </>
-            )}
+            )} */}
           </label>
-          <input
+          {/* <input
             type="file"
             id="audio-file"
             style={{ display: 'none' }}
             onChange={onFileUpload}
-          />
+          /> */}
         </div>
       </div>
       <div className="h-96 p-1 overflow-auto">
-        {displayText}
-        {tempDisplayText}
+        {/* {displayText}
+        {tempDisplayText} */}
       </div>
     </div>
   );
