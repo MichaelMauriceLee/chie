@@ -1,7 +1,6 @@
 import axios from 'axios';
 import Cookie from 'universal-cookie';
 import {
-  jishoSearchWordBaseUrl,
   ankiBaseUrl,
   ankiConnectVersion,
   HttpMethods,
@@ -19,7 +18,6 @@ import {
 } from '../models/AnkiRequest';
 import { AnkiResponse, NotesInfoResponse } from '../models/AnkiResponse';
 import { Note } from '../models/Note';
-import { SearchResult } from '../models/SearchResult';
 import { ImageSearchResult } from '../models/ImageSearchResult';
 import { TokenResponse } from '../models/TokenResponse';
 import { TranslateLineRequest, TranslateLineResponse } from '../models/Translation';
