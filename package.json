@@ -13,7 +13,10 @@
     "dev:css": "npm run generate:css -- --watch",
     "dev:remix": "cross-env NODE_ENV=development remix dev",
     "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
-    "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css"
+    "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "typecheck": "tsc -b && tsc -b cypress",
+    "cypress": "cypress open"
   },
   "prettier": {},
   "eslintIgnore": [
