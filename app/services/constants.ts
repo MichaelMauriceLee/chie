@@ -4,7 +4,7 @@ export enum HttpMethods {
 }
 
 export const jishoSearchWordBaseUrl = '/api/jisho';
-export const ocrBaseUrl = '/api/images';
+export const ocrBaseUrl = '/resources/analyzeImage';
 export const speechTokenUrl = '/api/speechToken';
 export const translationTokenUrl = '/api/translationToken';
 

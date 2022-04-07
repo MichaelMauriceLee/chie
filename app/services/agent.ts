@@ -83,15 +83,6 @@ export const postNote = async (note: Note): Promise<string> => {
   return formatAnkiResponse<string>(response);
 };
 
-export const getSearchResults = async (
-  keyword: string,
-): Promise<SearchResult[]> => {
-  const { data } = await axios.get(
-    `${jishoSearchWordBaseUrl}?keyword=${keyword}`,
-  );
-  return data.data;
-};
-
 export const postAnalyzeImageRequest = async (image: string): Promise<string> => {
   const { data } = await axios.post(ocrBaseUrl, { image });
   return data;
@@ -100,7 +91,7 @@ export const postAnalyzeImageRequest = async (image: string): Promise<string> =>
 export const getAnalysisResults = async (
   analysisId: string,
 ): Promise<ImageSearchResult[] | null> => {
-  const { data } = await axios.get(`${ocrBaseUrl}/results/${analysisId}`);
+  const { data } = await axios.get(`${ocrBaseUrl}/${analysisId}`);
   const { status, analyzeResult } = data;
   if (status === 'succeeded') {
     return analyzeResult.readResults;
