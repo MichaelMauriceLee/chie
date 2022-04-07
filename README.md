@@ -1,3 +1,6 @@
+# Chie
+Chie is a next generation Japanese-English dictionary aimed towards English speakers learning Japanese.
+
 ## Setup
 
 Follow the instructions to install AnkiConnect here:
@@ -14,22 +17,20 @@ After installing, replace the AnkiConnect config with the following:
     "webCorsOriginList": [
         "http://localhost",
         "http://localhost:3000",
-        "https://www.chie.app"
+        "https://www.chie.vercel.app"
     ]
 }
 ```
 
-You can now use https://www.chie.app/ or run the next.js app locally.
+You can now use https://www.chie.vercel.app/ or run the next.js app locally.
 
 Make sure to keep Anki running in the background as you use the site.
 
 ## Development
 
-First, cd into /client-app and run the following commands to run the next.js project:
-
 ```bash
-yarn install
-yarn dev
+npm install
+npm run dev
 ```
 
-Now navigate to localhost:3000 in your browser to use the site locally.
+Navigate to localhost:3000 in your browser to use the site locally.

@@ -10,6 +10,8 @@ import {
   useMatches,
 } from "@remix-run/react";
 import { useEffect } from "react";
+import NavBar from "./components/NavBar";
+import SearchBar from "./components/SearchBar";
 
 import styles from "./tailwind.css"
 
@@ -70,7 +72,11 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <main className="md:px-72 px-2">
+          <NavBar />
+          <SearchBar />
+          <Outlet />
+        </main>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
