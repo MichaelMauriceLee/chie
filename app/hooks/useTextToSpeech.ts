@@ -1,11 +1,9 @@
-import Cookie from 'universal-cookie';
 import {
   SpeechConfig,
   SpeechSynthesizer,
   AudioConfig,
   ResultReason,
 } from 'microsoft-cognitiveservices-speech-sdk';
-import { TokenResponse } from '~/models/TokenResponse';
 import { getSpeechToken } from '~/services/agent';
 
 const useTextToSpeech = async (

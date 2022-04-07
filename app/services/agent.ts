@@ -1,7 +1,6 @@
 import axios from 'axios';
 import Cookie from 'universal-cookie';
 import {
-  jishoSearchWordBaseUrl,
   ankiBaseUrl,
   ankiConnectVersion,
   HttpMethods,
@@ -19,7 +18,6 @@ import {
 } from '../models/AnkiRequest';
 import { AnkiResponse, NotesInfoResponse } from '../models/AnkiResponse';
 import { Note } from '../models/Note';
-import { SearchResult } from '../models/SearchResult';
 import { ImageSearchResult } from '../models/ImageSearchResult';
 import { TokenResponse } from '../models/TokenResponse';
 import { TranslateLineRequest, TranslateLineResponse } from '../models/Translation';
@@ -83,15 +81,6 @@ export const postNote = async (note: Note): Promise<string> => {
   return formatAnkiResponse<string>(response);
 };
 
-export const getSearchResults = async (
-  keyword: string,
-): Promise<SearchResult[]> => {
-  const { data } = await axios.get(
-    `${jishoSearchWordBaseUrl}?keyword=${keyword}`,
-  );
-  return data.data;
-};
-
 export const postAnalyzeImageRequest = async (image: string): Promise<string> => {
   const { data } = await axios.post(ocrBaseUrl, { image });
   return data;
@@ -100,7 +89,7 @@ export const postAnalyzeImageRequest = async (image: string): Promise<string> =>
 export const getAnalysisResults = async (
   analysisId: string,
 ): Promise<ImageSearchResult[] | null> => {
-  const { data } = await axios.get(`${ocrBaseUrl}/results/${analysisId}`);
+  const { data } = await axios.get(`${ocrBaseUrl}/${analysisId}`);
   const { status, analyzeResult } = data;
   if (status === 'succeeded') {
     return analyzeResult.readResults;
