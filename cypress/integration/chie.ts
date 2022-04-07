@@ -1,4 +1,3 @@
-/// <reference types="cypress" />
 describe("chie", () => {
     it("navigates", () => {
       // find more Cypress commands at
