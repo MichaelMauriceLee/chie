@@ -1,7 +1,7 @@
 import { LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import SearchResultItem from '~/components/SearchResultItem';
-import SearchResultItemSkeleton from '~/components/SearchResultItemSkeleton';
+import SearchResultItem from '~/components/SearchResult/SearchResultItem';
+import SearchResultItemSkeleton from '~/components/SearchResult/SearchResultItemSkeleton';
 import { SearchResult } from '~/models/SearchResult';
 
 type LoaderData = { data: SearchResult[] };
