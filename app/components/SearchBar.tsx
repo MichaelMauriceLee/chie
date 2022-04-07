@@ -7,11 +7,11 @@ import { Link, useSearchParams } from '@remix-run/react';
 
 const SearchBar: React.FC = () => {
   const [params] = useSearchParams()
-  console.log(params.get("query"))
   const [query, setQuery] = useState(params.get("query") ? (params.get("query")) : '')
 
   const searchBarRef = useRef<HTMLTextAreaElement>(null);
-  const linkRef = useRef<HTMLAnchorElement>(null);
+  const searchResultsLinkRef = useRef<HTMLAnchorElement>(null);
+  const homeLinkRef = useRef<HTMLAnchorElement>(null);
 
   //   const { createErrorNotification } = useNotification();
 
@@ -22,10 +22,11 @@ const SearchBar: React.FC = () => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSubmit = useCallback(
     debounce((searchTerm) => {
-      if (searchTerm && linkRef.current) {
-        linkRef.current.click()
+      if (searchTerm && searchResultsLinkRef.current) {
+        searchResultsLinkRef.current.click()
       }
     }, 500),
     [],
@@ -47,6 +48,7 @@ const SearchBar: React.FC = () => {
       searchBarRef.current.style.height = '';
     }
     setQuery('');
+    homeLinkRef.current!.click()
   };
 
   useEffect(() => {
@@ -79,8 +81,12 @@ const SearchBar: React.FC = () => {
         </div>
 
         <Link
-          ref={linkRef}
+          ref={searchResultsLinkRef}
           to={`/search-results?query=${query}`}
+        />
+        <Link
+          ref={homeLinkRef}
+          to='/'
         />
 
         {query && (
@@ -95,15 +101,15 @@ const SearchBar: React.FC = () => {
               </svg>
             </button> */}
 
-            <Link
+            <button
               className="rounded-full hover:text-blue-500 focus:outline-none focus:ring focus:border-blue-500 mx-1"
               type="button"
-              to="/"
+              onClick={clearSearchBar}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="md:h-10 md:w-10 h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
-            </Link>
+            </button>
           </div>
         )}
       </div>
