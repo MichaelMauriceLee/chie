@@ -3,7 +3,7 @@ import React from 'react';
 
 const NavBar: React.FC = () => {
   const location = useLocation()
-  const modalUrl = location.pathname + location.search + '#modal'
+  const modalUrl = location.pathname + location.search + '#settings'
 
   return (
     <div className="flex justify-between items-end" style={{ marginTop: '4px' }}>

@@ -14,7 +14,7 @@ const Modal: React.FC = () => {
   const { state, dispatch } = useSettings();
 
   const location = useLocation()
-  const isModalShowing = location.hash === '#modal' ? true : false
+  const showModal = location.hash === '#settings' ? true : false
 
   const setCurrentDeckName = (name: string) => {
     if (dispatch) {
@@ -40,7 +40,7 @@ const Modal: React.FC = () => {
 
   return (
     <Transition
-      show={isModalShowing}
+      show={showModal}
       enter="transition duration-100 ease-out"
       enterFrom="transform scale-95 opacity-0"
       enterTo="transform scale-100 opacity-100"
@@ -51,7 +51,7 @@ const Modal: React.FC = () => {
       <Dialog
         className="fixed z-10 inset-0 overflow-y-auto"
         static
-        open={isModalShowing}
+        open={showModal}
         onClose={() => {}}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
