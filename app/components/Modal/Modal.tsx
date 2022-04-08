@@ -6,16 +6,15 @@ import useSettings from '../../hooks/useSettings';
 import useAnkiInfo from '../../hooks/anki/useAnkiInfo';
 import { SettingsActionType } from '../Provider/SettingsProvider';
 import ButtonRow from './ButtonRow';
+import { useLocation } from '@remix-run/react';
 
-interface ModalProps {
-  showModal: boolean;
-  toggleModal: () => void;
-}
-
-const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
+const Modal: React.FC = () => {
   const [newCurrentName, setNewCurrentName] = useState<string>('');
   const { isConnectedToAnki, deckList } = useAnkiInfo();
   const { state, dispatch } = useSettings();
+
+  const location = useLocation()
+  const isModalShowing = location.hash === 'modal' ? true : false
 
   const setCurrentDeckName = (name: string) => {
     if (dispatch) {
@@ -31,7 +30,7 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
       setCurrentDeckName(newCurrentName);
       localStorage.setItem('currentDeck', newCurrentName);
     }
-    toggleModal();
+    location.hash = ''
   };
 
   useEffect(() => {
@@ -42,7 +41,7 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
 
   return (
     <Transition
-      show={showModal}
+      show={isModalShowing}
       enter="transition duration-100 ease-out"
       enterFrom="transform scale-95 opacity-0"
       enterTo="transform scale-100 opacity-100"
@@ -53,8 +52,8 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
       <Dialog
         className="fixed z-10 inset-0 overflow-y-auto"
         static
-        open={showModal}
-        onClose={toggleModal}
+        open={isModalShowing}
+        onClose={() => location.hash = ''}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -102,7 +101,6 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
               <ButtonRow
                 isConnectedToAnki={isConnectedToAnki}
                 save={save}
-                toggleModal={toggleModal}
               />
             </div>
           </Transition.Child>

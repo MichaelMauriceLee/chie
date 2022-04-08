@@ -18,9 +18,9 @@ import styles from "./tailwind.css"
 import AnkiConnectionProvider from "./components/Provider/AnkiConnectionProvider";
 import SettingsProvider from "./components/Provider/SettingsProvider";
 import NotificationProvider from "./components/Provider/NotificationProvider";
-import ModalProvider from "./components/Provider/ModalProvider";
 import ImageArea from "./components/ImageArea/ImageArea";
 import VoiceArea from "./components/VoiceArea/VoiceArea";
+import Modal from "./components/Modal/Modal";
 
 export function links () {
   return [{ rel: "stylesheet", href: styles }]
@@ -89,13 +89,12 @@ export default function App () {
             <AnkiConnectionProvider>
               <SettingsProvider>
                 <NotificationProvider>
-                  <ModalProvider>
+                    <Modal />
                     <NavBar />
                     <SearchBar setShowImageArea={setShowImageArea} setShowVoiceArea={setShowVoiceArea} />
                     {showImageArea && <ImageArea />}
                     {showVoiceArea && <VoiceArea />}
                     <Outlet />
-                  </ModalProvider>
                 </NotificationProvider>
               </SettingsProvider>
             </AnkiConnectionProvider>
