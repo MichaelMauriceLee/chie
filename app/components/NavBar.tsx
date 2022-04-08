@@ -3,7 +3,7 @@ import React from 'react';
 
 const NavBar: React.FC = () => {
   const location = useLocation()
-  const modalUrl = location.pathname + location.search + '#settings'
+  const settingsUrl = location.pathname + location.search + '#settings'
 
   return (
     <div className="flex justify-between items-end" style={{ marginTop: '4px' }}>
@@ -19,7 +19,7 @@ const NavBar: React.FC = () => {
         className="hover:text-blue-500 rounded-full md:h-16 md:w-16 h-8 w-8 mt-4 focus:outline-none focus:ring focus:border-blue-500"
         aria-label="Settings"
         type="button"
-        to={modalUrl}
+        to={settingsUrl}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

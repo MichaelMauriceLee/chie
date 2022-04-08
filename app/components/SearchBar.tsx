@@ -1,22 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import React, { useCallback, useRef, useEffect, useState } from 'react';
 import debounce from 'lodash.debounce';
-import { Link, useSearchParams } from '@remix-run/react';
+import { Link, useLocation, useSearchParams } from '@remix-run/react';
 import useTextToSpeech from '~/hooks/useTextToSpeech';
 import useNotification from '~/hooks/useNotification';
 
-interface SearchBarProps {
-  setShowImageArea: (callback: (prev: boolean) => boolean) => void;
-  setShowVoiceArea: (callback: (prev: boolean) => boolean) => void;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ setShowImageArea, setShowVoiceArea }) => {
+const SearchBar: React.FC= () => {
   const [params] = useSearchParams()
+  const location = useLocation()
   const [query, setQuery] = useState(params.get("query") ? (params.get("query")) : '')
 
   const searchBarRef = useRef<HTMLTextAreaElement>(null);
   const searchResultsLinkRef = useRef<HTMLAnchorElement>(null);
   const homeLinkRef = useRef<HTMLAnchorElement>(null);
+
+  const imageModuleUrl = location.pathname + location.search + '#image-module'
+  const voiceModuleUrl = location.pathname + location.search + '#voice-module'
 
   const { createErrorNotification } = useNotification();
 
@@ -121,33 +120,27 @@ const SearchBar: React.FC<SearchBarProps> = ({ setShowImageArea, setShowVoiceAre
         )}
       </div>
 
-      <button
+      <Link
         className="md:h-16 md:w-16 h-8 w-8 rounded-full hover:text-blue-500 ml-2 focus:outline-none focus:ring focus:border-blue-500"
         type="button"
         aria-label="Activate Speech to Text"
-        onClick={() => {
-          setShowVoiceArea((prev: boolean) => !prev);
-          setShowImageArea(() => false);
-        }}
+        to={location.hash !== "#voice-module" ? voiceModuleUrl : location.pathname + location.search}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
         </svg>
-      </button>
+      </Link>
 
-      <button
+      <Link
         className="md:h-16 md:w-16 h-8 w-8 rounded-full hover:text-blue-500 ml-2 focus:outline-none focus:ring focus:border-blue-500"
         type="button"
         aria-label="Find Text in Photo"
-        onClick={() => {
-          setShowImageArea((prev: boolean) => !prev);
-          setShowVoiceArea(() => false);
-        }}
+        to={location.hash !== "#image-module" ? imageModuleUrl : location.pathname + location.search}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
         </svg>
-      </button>
+      </Link>
     </div>
   );
 };

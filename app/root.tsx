@@ -33,13 +33,10 @@ export const meta: MetaFunction = () => ({
 });
 
 export default function App () {
-  let location = useLocation();
-  let matches = useMatches();
+  const location = useLocation();
+  const matches = useMatches();
 
   const queryClient = new QueryClient();
-
-  const [showImageArea, setShowImageArea] = useState(false);
-  const [showVoiceArea, setShowVoiceArea] = useState(false);
 
   let isMount = true;
   useEffect(() => {
@@ -89,12 +86,12 @@ export default function App () {
             <AnkiConnectionProvider>
               <SettingsProvider>
                 <NotificationProvider>
-                    <Modal />
-                    <NavBar />
-                    <SearchBar setShowImageArea={setShowImageArea} setShowVoiceArea={setShowVoiceArea} />
-                    {showImageArea && <ImageArea />}
-                    {showVoiceArea && <VoiceArea />}
-                    <Outlet />
+                  <Modal />
+                  <NavBar />
+                  <SearchBar />
+                  <ImageArea />
+                  <VoiceArea />
+                  <Outlet />
                 </NotificationProvider>
               </SettingsProvider>
             </AnkiConnectionProvider>
