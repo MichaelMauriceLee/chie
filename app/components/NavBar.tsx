@@ -3,6 +3,8 @@ import React from 'react';
 
 const NavBar: React.FC = () => {
   const location = useLocation()
+  const modalUrl = location.pathname + location.search + '#modal'
+
   return (
     <div className="flex justify-between items-end" style={{ marginTop: '4px' }}>
       <Link
@@ -13,11 +15,11 @@ const NavBar: React.FC = () => {
         Chie
       </Link>
 
-      <button
+      <Link
         className="hover:text-blue-500 rounded-full md:h-16 md:w-16 h-8 w-8 mt-4 focus:outline-none focus:ring focus:border-blue-500"
-        onClick={() => location.hash = 'modal'}
         aria-label="Settings"
         type="button"
+        to={modalUrl}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +32,7 @@ const NavBar: React.FC = () => {
             clipRule="evenodd"
           />
         </svg>
-      </button>
+      </Link>
     </div>
   );
 };

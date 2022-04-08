@@ -14,7 +14,7 @@ const Modal: React.FC = () => {
   const { state, dispatch } = useSettings();
 
   const location = useLocation()
-  const isModalShowing = location.hash === 'modal' ? true : false
+  const isModalShowing = location.hash === '#modal' ? true : false
 
   const setCurrentDeckName = (name: string) => {
     if (dispatch) {
@@ -30,7 +30,6 @@ const Modal: React.FC = () => {
       setCurrentDeckName(newCurrentName);
       localStorage.setItem('currentDeck', newCurrentName);
     }
-    location.hash = ''
   };
 
   useEffect(() => {
@@ -53,7 +52,7 @@ const Modal: React.FC = () => {
         className="fixed z-10 inset-0 overflow-y-auto"
         static
         open={isModalShowing}
-        onClose={() => location.hash = ''}
+        onClose={() => {}}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
