@@ -18,9 +18,9 @@ import styles from "./tailwind.css"
 import AnkiConnectionProvider from "./components/Provider/AnkiConnectionProvider";
 import SettingsProvider from "./components/Provider/SettingsProvider";
 import NotificationProvider from "./components/Provider/NotificationProvider";
-import ModalProvider from "./components/Provider/ModalProvider";
 import ImageArea from "./components/ImageArea/ImageArea";
 import VoiceArea from "./components/VoiceArea/VoiceArea";
+import Modal from "./components/Modal/Modal";
 
 export function links () {
   return [{ rel: "stylesheet", href: styles }]
@@ -33,13 +33,10 @@ export const meta: MetaFunction = () => ({
 });
 
 export default function App () {
-  let location = useLocation();
-  let matches = useMatches();
+  const location = useLocation();
+  const matches = useMatches();
 
   const queryClient = new QueryClient();
-
-  const [showImageArea, setShowImageArea] = useState(false);
-  const [showVoiceArea, setShowVoiceArea] = useState(false);
 
   let isMount = true;
   useEffect(() => {
@@ -89,13 +86,12 @@ export default function App () {
             <AnkiConnectionProvider>
               <SettingsProvider>
                 <NotificationProvider>
-                  <ModalProvider>
-                    <NavBar />
-                    <SearchBar setShowImageArea={setShowImageArea} setShowVoiceArea={setShowVoiceArea} />
-                    {showImageArea && <ImageArea />}
-                    {showVoiceArea && <VoiceArea />}
-                    <Outlet />
-                  </ModalProvider>
+                  <Modal />
+                  <NavBar />
+                  <SearchBar />
+                  <ImageArea />
+                  <VoiceArea />
+                  <Outlet />
                 </NotificationProvider>
               </SettingsProvider>
             </AnkiConnectionProvider>

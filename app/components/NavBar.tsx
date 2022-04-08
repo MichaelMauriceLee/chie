@@ -1,14 +1,9 @@
-import { Link } from '@remix-run/react';
+import { Link, useLocation } from '@remix-run/react';
 import React from 'react';
-import useModal from '~/hooks/useModal';
 
 const NavBar: React.FC = () => {
-  const toggleModal = useModal();
-  const onClick = () => {
-    if (toggleModal) {
-      toggleModal();
-    }
-  };
+  const location = useLocation()
+  const settingsUrl = location.pathname + location.search + '#settings'
 
   return (
     <div className="flex justify-between items-end" style={{ marginTop: '4px' }}>
@@ -20,11 +15,11 @@ const NavBar: React.FC = () => {
         Chie
       </Link>
 
-      <button
+      <Link
         className="hover:text-blue-500 rounded-full md:h-16 md:w-16 h-8 w-8 mt-4 focus:outline-none focus:ring focus:border-blue-500"
-        onClick={onClick}
         aria-label="Settings"
         type="button"
+        to={settingsUrl}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -37,7 +32,7 @@ const NavBar: React.FC = () => {
             clipRule="evenodd"
           />
         </svg>
-      </button>
+      </Link>
     </div>
   );
 };

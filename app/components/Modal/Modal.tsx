@@ -6,16 +6,15 @@ import useSettings from '../../hooks/useSettings';
 import useAnkiInfo from '../../hooks/anki/useAnkiInfo';
 import { SettingsActionType } from '../Provider/SettingsProvider';
 import ButtonRow from './ButtonRow';
+import { useLocation } from '@remix-run/react';
 
-interface ModalProps {
-  showModal: boolean;
-  toggleModal: () => void;
-}
-
-const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
+const Modal: React.FC = () => {
   const [newCurrentName, setNewCurrentName] = useState<string>('');
   const { isConnectedToAnki, deckList } = useAnkiInfo();
   const { state, dispatch } = useSettings();
+
+  const location = useLocation()
+  const showModal = location.hash === '#settings' ? true : false
 
   const setCurrentDeckName = (name: string) => {
     if (dispatch) {
@@ -31,7 +30,6 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
       setCurrentDeckName(newCurrentName);
       localStorage.setItem('currentDeck', newCurrentName);
     }
-    toggleModal();
   };
 
   useEffect(() => {
@@ -54,7 +52,7 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
         className="fixed z-10 inset-0 overflow-y-auto"
         static
         open={showModal}
-        onClose={toggleModal}
+        onClose={() => {}}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -102,7 +100,6 @@ const Modal: React.FC<ModalProps> = ({ toggleModal, showModal }) => {
               <ButtonRow
                 isConnectedToAnki={isConnectedToAnki}
                 save={save}
-                toggleModal={toggleModal}
               />
             </div>
           </Transition.Child>
