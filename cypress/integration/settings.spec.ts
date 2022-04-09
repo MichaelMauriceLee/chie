@@ -13,9 +13,10 @@ describe("settings", () => {
   });
 
   it("selects a new deck and saves the selection when Anki is connected", () => {
-    cy.intercept("", (req) => {
-      if (req.body.hasOwnProperty("action") === "deckNames") {
-        return {
+    cy.intercept("POST","http://localhost:8765", (req) => {
+      const data = JSON.parse(req.body)
+      if (data.action === "deckNames") {
+        req.reply({
           statusCode: 200,
           body: {
             result: [
@@ -37,15 +38,15 @@ describe("settings", () => {
             ],
             error: null,
           },
-        };
+        });
       } else {
-        return {
+        req.reply({
           statusCode: 200,
           body: {
             result: [],
             error: null,
           },
-        };
+        });
       }
     }).as("getAnkiInfo");
 
