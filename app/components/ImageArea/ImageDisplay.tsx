@@ -1,4 +1,3 @@
-import { Link, useSearchParams } from '@remix-run/react';
 import React, { useEffect, useRef, useState } from 'react';
 import useNotification from '../../hooks/useNotification';
 import useTextInImageSearch from '../../hooks/useTextInImageSearch';
@@ -9,6 +8,7 @@ interface ImageDisplayProps {
   image: string;
   showLineBoundingBox: boolean;
   showWordBoundingBox: boolean;
+  setKeyword: (params: string) => void;
 }
 
 interface Coordinate {
@@ -17,16 +17,11 @@ interface Coordinate {
 }
 
 const ImageDisplay: React.FC<ImageDisplayProps> = ({
-  image, showLineBoundingBox, showWordBoundingBox
+  image, showLineBoundingBox, showWordBoundingBox, setKeyword,
 }) => {
   const [isCanvasVisible, setIsCanvasVisible] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStartPosition, setDragStartPosition] = useState<Coordinate | null>(null);
-
-  const [params] = useSearchParams()
-  const [query, setQuery] = useState(params.get("query") ? (params.get("query")) : '')
-  const searchResultsLinkRef = useRef<HTMLAnchorElement>(null);
-
 
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -215,7 +210,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
             line.words.forEach((word) => {
               const { boundingBox: wordBoundingBox } = word;
               if (checkIfPointWithinBoundingBox(wordBoundingBox, mousePos)
-                && !tempWordArrayRef.current.includes(word)) {
+              && !tempWordArrayRef.current.includes(word)) {
                 tempWordArrayRef.current.push(word);
               }
             });
@@ -236,8 +231,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
 
   const onMouseUp = (evt: React.MouseEvent<HTMLCanvasElement>) => {
     if (isDragging && evt.ctrlKey) {
-      setQuery(tempWordArrayRef.current.map((el) => el.text).join(''));
-      searchResultsLinkRef.current!.click()
+      setKeyword(tempWordArrayRef.current.map((el) => el.text).join(''));
     }
     setIsDragging(false);
     setDragStartPosition(null);
@@ -274,10 +268,6 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
         onMouseMove={onMouseMove}
-      />
-      <Link
-        ref={searchResultsLinkRef}
-        to={`/search-results?query=${query}`}
       />
     </div>
   );

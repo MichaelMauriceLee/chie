@@ -3,6 +3,7 @@ export enum HttpMethods {
   post = 'POST'
 }
 
+export const jishoSearchWordBaseUrl = '/resources/jisho';
 export const ocrBaseUrl = '/resources/analyzeImage';
 export const speechTokenUrl = '/resources/speechToken';
 export const translationTokenUrl = '/resources/translationToken';

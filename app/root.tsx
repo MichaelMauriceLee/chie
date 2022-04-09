@@ -9,18 +9,14 @@ import {
   useLocation,
   useMatches,
 } from "@remix-run/react";
-import { useEffect, useState } from "react";
-import NavBar from "./components/NavBar";
-import SearchBar from "./components/SearchBar";
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import styles from "./tailwind.css"
 import AnkiConnectionProvider from "./components/Provider/AnkiConnectionProvider";
 import SettingsProvider from "./components/Provider/SettingsProvider";
 import NotificationProvider from "./components/Provider/NotificationProvider";
-import ImageArea from "./components/ImageArea/ImageArea";
-import VoiceArea from "./components/VoiceArea/VoiceArea";
-import Modal from "./components/Modal/Modal";
+import ModalProvider from "./components/Provider/ModalProvider";
 
 export function links () {
   return [{ rel: "stylesheet", href: styles }]
@@ -81,22 +77,17 @@ export default function App () {
         <Links />
       </head>
       <body>
-        <main className="md:px-72 px-2">
-          <QueryClientProvider client={queryClient}>
-            <AnkiConnectionProvider>
-              <SettingsProvider>
-                <NotificationProvider>
-                  <Modal />
-                  <NavBar />
-                  <SearchBar />
-                  <ImageArea />
-                  <VoiceArea />
+        <QueryClientProvider client={queryClient}>
+          <AnkiConnectionProvider>
+            <SettingsProvider>
+              <NotificationProvider>
+                <ModalProvider>
                   <Outlet />
-                </NotificationProvider>
-              </SettingsProvider>
-            </AnkiConnectionProvider>
-          </QueryClientProvider>
-        </main>
+                </ModalProvider>
+              </NotificationProvider>
+            </SettingsProvider>
+          </AnkiConnectionProvider>
+        </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
