@@ -49,8 +49,6 @@ describe("settings", () => {
       }
     }).as("getAnkiInfo");
 
-    cy.wait('@getAnkiInfo')
-
     cy.get("[data-cy=current-deck-title]").contains("Current Deck");
     cy.get("[data-cy=deck-name-button]").should("have.length", 15);
     cy.get("[data-cy=deck-name-button]").eq(2).click();
