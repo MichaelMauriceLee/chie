@@ -25,6 +25,7 @@ const useAnkiInfo = (): UseAnki => {
       if (state && state.currentDeckName) {
         const data = await getCurrentDeckNotes(state.currentDeckName);
         data.forEach((note) => {
+          console.log(note)
           const { value } = note.fields.Front;
           const w = value.replace(regex, '');
           dict[w] = true;
