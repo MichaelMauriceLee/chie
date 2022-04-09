@@ -20,6 +20,7 @@ const AnkiDeckSelect: React.FC<AnkiDeckSelectProps> = ({
           shadow ${deck === currentDeckName ? 'border-blue-500 text-blue-500 cursor-default' : 'hover:border-blue-500 hover:bg-blue-500 hover:text-white'}`}
           key={deck}
           type="button"
+          data-cy="deck-name-button"
           disabled={currentDeckName === deck}
           onClick={() => { setCurrentDeckName(deck); }}
         >
