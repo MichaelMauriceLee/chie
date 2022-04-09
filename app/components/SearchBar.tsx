@@ -63,13 +63,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <div className="flex flex-row items-center outline border-2 focus-within:border-blue-500 flex-grow">
         <div className="relative flex-grow">
           <textarea
-            className="block text-lg p-4 w-full appearance-none focus:outline-none bg-transparent resize-none"
+            className="block text-lg p-4 w-full appearance-none focus:outline-none bg-transparent"
             id="searchInput"
             placeholder=" "
             ref={searchBarRef}
             value={keyword}
             onChange={onInputChange}
             onKeyDown={onKeyDown}
+            style={{ resize: 'none' }}
             rows={1}
             onInput={resizeTextArea}
           />
