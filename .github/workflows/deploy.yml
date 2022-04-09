@@ -80,6 +80,3 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: npm run dev
-          record: true
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
