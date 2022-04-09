@@ -100,7 +100,7 @@ export const postAnalyzeImageRequest = async (image: string): Promise<string> =>
 export const getAnalysisResults = async (
   analysisId: string,
 ): Promise<ImageSearchResult[] | null> => {
-  const { data } = await axios.get(`${ocrBaseUrl}/results/${analysisId}`);
+  const { data } = await axios.get(`${ocrBaseUrl}/${analysisId}`);
   const { status, analyzeResult } = data;
   if (status === 'succeeded') {
     return analyzeResult.readResults;
