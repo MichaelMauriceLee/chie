@@ -1,98 +1,45 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
-import React, { useCallback, useRef, useEffect, useState } from 'react';
-import debounce from 'lodash.debounce';
-import { Link, useLocation, useSearchParams } from '@remix-run/react';
+import React, { useMemo, useRef, useState } from 'react';
+import { Form, Link, useLocation, useSearchParams } from '@remix-run/react';
 import useTextToSpeech from '~/hooks/useTextToSpeech';
 import useNotification from '~/hooks/useNotification';
 
-const SearchBar: React.FC= () => {
+const SearchBar: React.FC = () => {
   const [params] = useSearchParams()
+  const [query, setQuery] = useState<string>(params.get('query') ?? '')
+
+  useMemo(() => {
+    setQuery(params.get('query') ?? '')
+  }, [params])
+
+  const formRef = useRef<HTMLFormElement>(null);
+
   const location = useLocation()
-  const [query, setQuery] = useState(params.get("query") ? (params.get("query")) : '')
-
-  const searchBarRef = useRef<HTMLTextAreaElement>(null);
-  const searchResultsLinkRef = useRef<HTMLAnchorElement>(null);
-  const homeLinkRef = useRef<HTMLAnchorElement>(null);
-
   const imageModuleUrl = location.pathname + location.search + '#image-module'
   const voiceModuleUrl = location.pathname + location.search + '#voice-module'
 
   const { createErrorNotification } = useNotification();
 
-  const onKeyDown = (evt: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (evt.key === 'Enter') {
-      evt.preventDefault();
-      searchBarRef.current?.blur();
-    }
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSubmit = useCallback(
-    debounce((searchTerm) => {
-      if (searchTerm && searchResultsLinkRef.current) {
-        searchResultsLinkRef.current.click()
-      }
-    }, 500),
-    [],
-  );
-
-  const onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setQuery(event.target.value);
-    searchResultsLinkRef.current!.click()
-  };
-
-  const resizeTextArea = () => {
-    if (searchBarRef.current && searchBarRef.current.style) {
-      searchBarRef.current.style.height = '';
-      searchBarRef.current.style.height = `${searchBarRef.current.scrollHeight}px`;
-    }
-  };
-
-  const clearSearchBar = () => {
-    if (searchBarRef.current) {
-      searchBarRef.current.style.height = '';
-    }
-    setQuery('');
-    homeLinkRef.current!.click()
-  };
-
-  useEffect(() => {
-    debouncedSubmit(query);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  const onInput = (evt) => {
+    setQuery(evt.currentTarget.value)
+  }
 
   return (
     <div className="flex flex-row justify-between items-center mt-4">
       <div className="flex flex-row items-center outline border-2 focus-within:border-blue-500 flex-grow">
         <div className="relative flex-grow">
-          <textarea
-            className="block text-lg p-4 w-full appearance-none focus:outline-none bg-transparent resize-none"
-            id="searchInput"
-            placeholder=" "
-            ref={searchBarRef}
-            value={query as string}
-            onChange={onInputChange}
-            onKeyDown={onKeyDown}
-            rows={1}
-            onInput={resizeTextArea}
-          />
-
-          <label
-            className="absolute p-4 text-lg top-0 duration-300 -z-1 origin-0 bg-white"
-            htmlFor="searchInput"
-          >
-            Search
-          </label>
+          <Form ref={formRef} method='get' action='/search-results'>
+            <input
+              className="block text-lg p-4 w-full appearance-none focus:outline-none bg-transparent resize-none"
+              name="query"
+              id="searchInput"
+              placeholder="Search"
+              type="text"
+              value={query}
+              onInput={onInput}
+            />
+          </Form>
         </div>
-
-        <Link
-          ref={searchResultsLinkRef}
-          to={`/search-results?query=${query}`}
-        />
-        <Link
-          ref={homeLinkRef}
-          to='/'
-        />
 
         {query && (
           <div className="flex flex-row items-center">
@@ -107,15 +54,15 @@ const SearchBar: React.FC= () => {
               </svg>
             </button>
 
-            <button
+            <Link
               className="rounded-full hover:text-blue-500 focus:outline-none focus:ring focus:border-blue-500 mx-1"
               type="button"
-              onClick={clearSearchBar}
+              to="/"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="md:h-10 md:w-10 h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
-            </button>
+            </Link>
           </div>
         )}
       </div>
