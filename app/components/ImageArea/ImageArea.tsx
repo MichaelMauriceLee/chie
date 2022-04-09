@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import DropArea from './DropArea';
 import { ImageModule } from './ImageModule';
 
-const ImageArea: React.FC = () => {
+interface ImageAreaProps {
+  setKeyword: (params: string) => void;
+}
+
+const ImageArea: React.FC<ImageAreaProps> = ({ setKeyword }) => {
   const [file, setFile] = useState<File | null>(null);
 
   return (
@@ -11,6 +15,7 @@ const ImageArea: React.FC = () => {
         <ImageModule
           file={file}
           setFile={setFile}
+          setKeyword={setKeyword}
         />
       ) : (
         <DropArea setFile={setFile} />
