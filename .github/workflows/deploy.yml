@@ -83,4 +83,4 @@ jobs:
           record: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          PORT: "8765"
+          CYPRESS_PORT: 8765
