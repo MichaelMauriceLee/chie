@@ -10,7 +10,7 @@ export const translationTokenUrl = '/resources/translationToken';
 
 export const translationUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0';
 
-export const ankiBaseUrl = 'http://127.0.0.1:8765';
+export const ankiBaseUrl = 'http://localhost:8765';
 export const ankiConnectVersion = 6;
 
 export enum AnkiConnectActionType {
