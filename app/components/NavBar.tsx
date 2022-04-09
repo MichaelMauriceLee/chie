@@ -28,6 +28,7 @@ const NavBar: React.FC = () => {
         onClick={onClick}
         aria-label="Settings"
         type="button"
+        data-cy="settings-button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
