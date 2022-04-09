@@ -1,6 +1,6 @@
 describe("settings", () => {
   it("selects a new deck and saves the selection when Anki is connected", () => {
-    cy.intercept("POST", "**:8765/", (req) => {
+    cy.intercept("POST", "**", (req) => {
       if (req.body.hasOwnProperty("action") === "deckNames") {
         return {
           statusCode: 200,
