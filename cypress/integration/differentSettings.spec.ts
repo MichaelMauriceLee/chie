@@ -1,17 +1,4 @@
 describe("settings", () => {
-  beforeEach(() => {
-    cy.visit("/");
-    cy.get("[data-cy=settings-button]").click();
-  });
-
-  it("opens and displays right message with no connection", () => {
-    cy.get("[data-cy=no-connection-title]").contains("No connection");
-    cy.get("[data-cy=no-connection-info]").contains(
-      "You must connect Anki in order to access settings. Find out more "
-    );
-    cy.get("[data-cy=link-to-setup-page]").contains("here.");
-  });
-
   it("selects a new deck and saves the selection when Anki is connected", () => {
     cy.intercept("POST", "http://localhost:8765/", (req) => {
       if (req.body.hasOwnProperty("action") === "deckNames") {
@@ -49,6 +36,8 @@ describe("settings", () => {
       }
     }).as("getAnkiInfo");
 
+    cy.visit("/");
+    cy.get("[data-cy=settings-button]").click();
     cy.get("[data-cy=current-deck-title]").contains("Current Deck");
     cy.get("[data-cy=deck-name-button]").should("have.length", 15);
     cy.get("[data-cy=deck-name-button]").eq(2).click();
