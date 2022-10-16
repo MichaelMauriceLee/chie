@@ -32,7 +32,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <main className="md:px-72 px-2">
+    <main className="xl:px-72 lg:px-28 md:px-6 sm:px-4 px-2">
       <NavBar />
 
       <SearchBar
