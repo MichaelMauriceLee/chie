@@ -9,14 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Loader, Send, Settings, Upload } from "lucide-react";
+import { Loader, Send, Settings, Upload, X } from "lucide-react";
 import {
   AudioConfig,
   SpeechConfig,
   SpeechSynthesizer,
 } from "microsoft-cognitiveservices-speech-sdk";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 
 import {
@@ -26,8 +25,10 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { getDeckNames } from "@/lib/agent";
+import { Textarea } from "@/components/ui/textarea"; // <-- Make sure you have this in your project
 
 type ResponseType = {
   choices: { message: { content: string } }[];
@@ -48,9 +49,11 @@ export default function Home() {
   const [showImageArea, setShowImageArea] = useState(false);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [deckNames, setDeckNames] = useState<string[]>([]);
-
   const [selectedDeck, setSelectedDeck] = useState("");
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Initialize the Microsoft Speech SDK
   async function initializeSpeechSDK() {
     const res = await fetch("/api/speechToken", { method: "POST" });
     const data: TokenResponse = await res.json();
@@ -65,6 +68,7 @@ export default function Home() {
     initializeSpeechSDK();
   }, []);
 
+  // Submit user query
   async function handleQuerySubmit() {
     if (loading) return;
     setLoading(true);
@@ -75,6 +79,7 @@ export default function Home() {
     const data = await res.json();
     const responseContent = data.response.choices[0].message.content;
 
+    // Match language from response to set TTS language
     const languageMatch = responseContent.match(/Detected Language: (\S+)/);
     if (languageMatch && speechConfig) {
       speechConfig.speechSynthesisLanguage = languageMatch[1];
@@ -84,6 +89,26 @@ export default function Home() {
     setLoading(false);
   }
 
+  // Pressing Enter => submit (unless Shift is held)
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Avoid newline
+      handleQuerySubmit();
+    }
+  }
+
+  // Auto-resize logic
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setQuery(e.target.value);
+
+    if (textareaRef.current) {
+      const el = textareaRef.current;
+      el.style.height = "auto"; // reset the height
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }
+
+  // Process text to remove extraneous parentheses for TTS
   function processTextForSpeech(text: string): string {
     const match = text.match(/\(([^)]+)\)/);
     if (match) {
@@ -97,6 +122,7 @@ export default function Home() {
     return text.split(",")[0].trim();
   }
 
+  // Speak text via TTS
   function speakText(text: string) {
     if (speechConfig) {
       const audioConfig = AudioConfig.fromDefaultSpeakerOutput();
@@ -119,6 +145,7 @@ export default function Home() {
     }
   }
 
+  // Parse response into distinct sections
   function parseResponseContent(content: string) {
     const sections = content.split("\n\n");
     const sentence = sections[0];
@@ -126,6 +153,7 @@ export default function Home() {
     return { sentence, breakdown };
   }
 
+  // Render text with 🔊 buttons on certain tokens
   function renderWithAudioButtons(text: string) {
     const parts = text.split(/(###.*?###)/g);
     return parts.map((part, index) => {
@@ -143,6 +171,7 @@ export default function Home() {
     });
   }
 
+  // Handle sync with Anki
   async function handleSyncAnki() {
     try {
       const decks = await getDeckNames();
@@ -153,32 +182,69 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen px-10 pt-4 flex flex-col items-start gap-4">
-      <h1 className="text-2xl font-bold mb-6">Chie</h1>
-
-      <div className="flex w-full gap-2">
-        <Input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("ask-a-question-placeholder")}
-          disabled={loading}
-        />
-        <Button onClick={handleQuerySubmit} disabled={loading}>
-          {loading ? <Loader className="animate-spin" /> : <Send />}
-        </Button>
-        <Button onClick={() => setShowImageArea(!showImageArea)}>
-          <Upload />
-        </Button>
+    <div className="min-h-screen px-10 pt-4 flex flex-col gap-4">
+      <div className="flex w-full items-center justify-between">
+        <h1 className="text-2xl font-bold">Chie</h1>
         <Button onClick={() => setIsSettingsDialogOpen(true)}>
           <Settings />
         </Button>
       </div>
 
-      {showImageArea && <ImageArea setKeyword={setQuery} />}
+      <Card className="w-full">
+        <CardContent>
+          <div className="relative my-3">
+            <Textarea
+              ref={textareaRef}
+              value={query}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              rows={1}
+              placeholder={t("ask-a-question-placeholder")}
+              disabled={loading}
+              className="
+                w-full 
+                pr-10 
+                resize-none 
+                overflow-y-auto 
+                max-h-[10rem] 
+                scrollbar-thin 
+                scrollbar-thumb-rounded 
+                scrollbar-thumb-gray-300 
+                hover:scrollbar-thumb-gray-400
+              "
+            />
+            {query && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-4 top-1/2 -translate-y-1/2"
+                onClick={() => setQuery("")}
+              >
+                <X size={16} />
+              </Button>
+            )}
+          </div>
 
+          <div className="flex items-center justify-between mb-3">
+            <Button
+              onClick={() => setShowImageArea(!showImageArea)}
+              disabled={loading}
+            >
+              <Upload />
+            </Button>
+
+            <Button onClick={handleQuerySubmit} disabled={loading}>
+              {loading ? <Loader className="animate-spin" /> : <Send />}
+            </Button>
+          </div>
+
+          {showImageArea && <ImageArea setKeyword={setQuery} />}
+        </CardContent>
+      </Card>
+
+      {/* Display the AI response */}
       {response && (
-        <pre className="whitespace-pre-wrap">
+        <pre className="whitespace-pre-wrap mt-4">
           {(() => {
             const { sentence, breakdown } = parseResponseContent(
               response.choices[0].message.content
@@ -188,7 +254,6 @@ export default function Home() {
                 <div className="flex items-center gap-2">
                   <p>{renderWithAudioButtons(sentence)}</p>
                 </div>
-
                 {breakdown.map((entry, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <p>{renderWithAudioButtons(entry)}</p>
@@ -200,6 +265,7 @@ export default function Home() {
         </pre>
       )}
 
+      {/* Settings dialog */}
       <Dialog
         open={isSettingsDialogOpen}
         onOpenChange={(isOpen) => setIsSettingsDialogOpen(isOpen)}

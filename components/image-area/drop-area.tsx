@@ -80,7 +80,7 @@ export default function DropArea({ setFile }: DropAreaProps) {
     <ContextMenu>
       <ContextMenuTrigger>
         <div
-          className={`flex flex-col items-center justify-center my-2 border-2 rounded-md border-dotted h-96 w-full cursor-pointer ${
+          className={`flex flex-col items-center justify-center border-2 border-dotted h-96 w-full cursor-pointer ${
             isDragging ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"
           }`}
           onPaste={onPhotoPaste}
