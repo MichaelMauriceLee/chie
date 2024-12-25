@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from "react";
 import { DictionaryResponse } from "@/models/serverActions";
 import {
   Accordion,
@@ -14,6 +15,11 @@ import {
   SpeechConfig,
   SpeechSynthesizer,
 } from "microsoft-cognitiveservices-speech-sdk";
+import { useAtom } from "jotai";
+import { selectedDeckAtom } from "@/store/atoms";
+import { postNote } from "@/lib/agent";
+import { format } from "date-fns";
+import { Loader2 } from "lucide-react";
 
 type DictionaryDisplayProps = {
   data: DictionaryResponse;
@@ -26,6 +32,9 @@ export default function DictionaryDisplay({
   region,
   token,
 }: DictionaryDisplayProps) {
+  const [selectedDeck] = useAtom(selectedDeckAtom);
+  const [activeAdd, setActiveAdd] = useState<string | null>(null);
+
   function speakText(text: string, detectedLanguage: string) {
     const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
     speechConfig.speechSynthesisLanguage = detectedLanguage;
@@ -42,6 +51,50 @@ export default function DictionaryDisplay({
         synthesizer.close();
       }
     );
+  }
+
+  async function addToAnki(
+    word: string,
+    pronunciation: string,
+    meanings: string[],
+    sentence: string
+  ) {
+    if (!selectedDeck) {
+      alert("Please select a deck first in the settings.");
+      return;
+    }
+
+    const front = word;
+    const back = `
+      <strong>Pronunciation:</strong> ${pronunciation || "N/A"}<br />
+      <strong>Meanings:</strong> ${meanings.join(", ")}<br />
+      <strong>Original Sentence:</strong> ${sentence || "N/A"}<br />
+      <strong>Added on:</strong> ${format(new Date(), "MMMM dd, yyyy, hh:mm a")}
+    `;
+
+    const note = {
+      deckName: selectedDeck,
+      modelName: "Basic",
+      fields: {
+        Front: front,
+        Back: back,
+      },
+      options: {
+        allowDuplicate: false,
+      },
+      tags: ["dictionary"],
+    };
+
+    try {
+      setActiveAdd(word);
+      await postNote(note);
+      alert(`Added "${word}" to deck "${selectedDeck}"`);
+    } catch (error) {
+      console.error("Failed to add card to Anki:", error);
+      alert("Failed to add card to Anki.");
+    } finally {
+      setActiveAdd(null);
+    }
   }
 
   return (
@@ -63,7 +116,7 @@ export default function DictionaryDisplay({
         </CardHeader>
       )}
 
-      {data.explanation && <CardContent> {data.explanation}</CardContent>}
+      {data.explanation && <CardContent>{data.explanation}</CardContent>}
 
       <CardContent>
         {data.words && data.words.length > 0 && (
@@ -79,21 +132,47 @@ export default function DictionaryDisplay({
                       </span>
                     )}
                   </div>
-                  {word.pronunciation && (
+                  <div className="flex items-center space-x-2">
+                    {word.pronunciation && (
+                      <Button
+                        variant="ghost"
+                        className="px-2 py-1 ml-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          speakText(
+                            word.text ?? "",
+                            data.detectedLanguage ?? "en-US"
+                          );
+                        }}
+                      >
+                        🔊
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
-                      className="ml-4 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      className={`px-2 py-1 rounded flex items-center justify-center ${
+                        selectedDeck
+                          ? "bg-green-500 text-white hover:bg-green-600"
+                          : "bg-gray-400 text-gray-700 cursor-not-allowed"
+                      }`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        speakText(
-                          word.text ?? "",
-                          data.detectedLanguage ?? "en-US"
+                        addToAnki(
+                          word.text,
+                          word.pronunciation,
+                          word.meanings,
+                          data.sentence || ""
                         );
                       }}
+                      disabled={!selectedDeck || !!activeAdd}
                     >
-                      🔊
+                      {activeAdd === word.text ? (
+                        <Loader2 className="animate-spin w-4 h-4" />
+                      ) : (
+                        "+"
+                      )}
                     </Button>
-                  )}
+                  </div>
                 </AccordionTrigger>
                 <AccordionContent className="mt-2 bg-white p-4 border border-gray-100 rounded">
                   <h3 className="text-sm font-medium mb-2">Meanings:</h3>
@@ -123,21 +202,47 @@ export default function DictionaryDisplay({
                                   </span>
                                 )}
                               </span>
-                              {subWord.pronunciation && (
+                              <div className="flex items-center space-x-2">
+                                {subWord.pronunciation && (
+                                  <Button
+                                    variant="ghost"
+                                    className="px-2 py-1 ml-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      speakText(
+                                        subWord.text ?? "",
+                                        data.detectedLanguage ?? "en-US"
+                                      );
+                                    }}
+                                  >
+                                    🔊
+                                  </Button>
+                                )}
                                 <Button
                                   variant="ghost"
-                                  className="ml-4 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                  className={`px-2 py-1 rounded flex items-center justify-center ${
+                                    selectedDeck
+                                      ? "bg-green-500 text-white hover:bg-green-600"
+                                      : "bg-gray-400 text-gray-700 cursor-not-allowed"
+                                  }`}
                                   onClick={(e) => {
-                                    e.stopPropagation()
-                                    speakText(
-                                      subWord.text ?? "",
-                                      data.detectedLanguage ?? "en-US"
+                                    e.stopPropagation();
+                                    addToAnki(
+                                      subWord.text,
+                                      subWord.pronunciation,
+                                      subWord.meanings,
+                                      data.sentence || ""
                                     );
                                   }}
+                                  disabled={!selectedDeck || !!activeAdd}
                                 >
-                                  🔊
+                                  {activeAdd === subWord.text ? (
+                                    <Loader2 className="animate-spin w-4 h-4" />
+                                  ) : (
+                                    "+"
+                                  )}
                                 </Button>
-                              )}
+                              </div>
                             </AccordionTrigger>
                             <AccordionContent className="mt-2 bg-white p-3 border border-gray-50 rounded">
                               <ul className="list-disc ml-5 space-y-1 text-sm text-gray-700">

@@ -19,8 +19,8 @@ export type Note = {
   };
   options?: {
     allowDuplicate: boolean;
-    duplicateScope: string;
-    duplicateScopeOptions: {
+    duplicateScope?: string;
+    duplicateScopeOptions?: {
       deckName: string;
       checkChildren?: boolean;
     };

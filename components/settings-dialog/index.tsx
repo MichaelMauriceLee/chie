@@ -36,7 +36,7 @@ export default function SettingsDialog() {
   }, [isSettingsOpen, selectedDeck]);
 
   async function handleAnkiSync() {
-    setIsSyncing(true); // Start loading
+    setIsSyncing(true); 
     try {
       const decks = await getDeckNames();
       setDeckNames(decks);
@@ -44,7 +44,7 @@ export default function SettingsDialog() {
     } catch (error) {
       console.error("Failed to sync with Anki:", error);
     } finally {
-      setIsSyncing(false); // Stop loading
+      setIsSyncing(false); 
     }
   }
 
