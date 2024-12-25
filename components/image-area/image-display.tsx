@@ -1,3 +1,5 @@
+"use client";
+
 import React, {
   useEffect,
   useRef,
@@ -11,6 +13,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { OCRBlock, OCRCoordinate, OCRWord } from "@/models/serverActions";
 import { analyzeImage } from "@/app/[locale]/actions";
+import { useTranslations } from "next-intl";
 
 type ImageDisplayProps = {
   image: string;
@@ -49,6 +52,8 @@ export default function ImageDisplay({
   setFile,
   setImage,
 }: ImageDisplayProps) {
+  const t = useTranslations("ImageDisplay");
+
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(new Image());
@@ -370,7 +375,11 @@ export default function ImageDisplay({
     <>
       <div className="h-96 w-full relative" ref={canvasWrapperRef}>
         {isLoading && <LoadingIndicator />}
-        {error && <div className="text-red-500">Error: {error.message}</div>}
+        {error && (
+          <div className="text-red-500">
+            {t("error.message")}: {error.message}
+          </div>
+        )}
 
         <canvas
           className={`${isCanvasVisible ? "border border-black" : ""} `}
@@ -383,14 +392,9 @@ export default function ImageDisplay({
 
       <div className="flex flex-row justify-between items-start space-x-4 pt-1">
         <div>
-          <div>
-            Position the mouse cursor over the image and use the scroll wheel to
-            zoom in.
-          </div>
-          <div>Hold left click + drag to pan.</div>
-          <div>
-            Hold down left ctrl + left click to select and search words.
-          </div>
+          <div>{t("instructions.zoom")}</div>
+          <div>{t("instructions.pan")}</div>
+          <div>{t("instructions.select")}</div>
         </div>
 
         <div className="flex flex-row items-center space-x-4">
@@ -402,7 +406,7 @@ export default function ImageDisplay({
                   setShowLineBoundingBox(Boolean(checked))
                 }
               />
-              <Label htmlFor="showLineBoxes">Lines</Label>
+              <Label htmlFor="showLineBoxes">{t("options.lines")}</Label>
             </div>
             <div className="flex items-center space-x-1">
               <Checkbox
@@ -411,11 +415,11 @@ export default function ImageDisplay({
                   setShowWordBoundingBox(Boolean(checked))
                 }
               />
-              <Label htmlFor="showWordBoxes">Words</Label>
+              <Label htmlFor="showWordBoxes">{t("options.words")}</Label>
             </div>
           </div>
 
-          <Button onClick={clearImage}>Clear</Button>
+          <Button onClick={clearImage}>{t("buttons.clear")}</Button>
         </div>
       </div>
     </>

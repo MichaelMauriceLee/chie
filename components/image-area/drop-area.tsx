@@ -15,7 +15,7 @@ type DropAreaProps = {
 };
 
 export default function DropArea({ setFile }: DropAreaProps) {
-  const t = useTranslations("Home");
+  const t = useTranslations("DropArea");
 
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -77,7 +77,7 @@ export default function DropArea({ setFile }: DropAreaProps) {
         setFile(blob as File);
       }
     } catch (error) {
-      console.error("Failed to paste image from clipboard:", error);
+      console.error(t("error.paste-failed"), error);
     }
   }
 
@@ -98,9 +98,9 @@ export default function DropArea({ setFile }: DropAreaProps) {
           tabIndex={0}
         >
           <Upload className="w-10 h-10 mb-2" />
-          <span className="text-lg">Drag and drop an image here</span>
-          <span className="text-sm">or click to upload</span>
-          <span className="text-sm">or press Ctrl + V to paste</span>
+          <span className="text-lg">{t("drag-drop")}</span>
+          <span className="text-sm">{t("click-upload")}</span>
+          <span className="text-sm">{t("ctrl-v")}</span>
           <input
             className="hidden"
             ref={fileInputRef}
@@ -115,7 +115,7 @@ export default function DropArea({ setFile }: DropAreaProps) {
       <ContextMenuContent>
         <ContextMenuItem onClick={pasteFromClipboard}>
           <ClipboardPaste className="w-5 h-5 mr-2" />
-          {t("paste-image-from-clipboard")}
+          {t("paste-from-clipboard")}
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

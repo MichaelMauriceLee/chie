@@ -4,18 +4,20 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import DictionaryResult from "@/components/dictionary-result";
 import SettingsDialog from "@/components/settings-dialog";
+import { getTranslations } from "next-intl/server";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
+  const t = await getTranslations("Metadata");
   const { query } = await searchParams;
 
   return (
     <div className="min-h-screen px-10 pt-4 flex flex-col gap-4">
       <div className="flex w-full items-center justify-between">
-        <h1 className="text-6xl font-bold">Chie</h1>
+        <h1 className="text-6xl font-bold">{t("title")}</h1>
         <SettingsDialog />
       </div>
 

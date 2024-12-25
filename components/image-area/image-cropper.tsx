@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Cropper, ReactCropperElement } from "react-cropper";
 import { Button } from "../ui/button";
+import { useTranslations } from "next-intl";
 
 type ImageCropperProps = {
   file: File | null;
@@ -13,6 +14,8 @@ export default function ImageCropper({
   setFile,
   setImage,
 }: ImageCropperProps) {
+  const t = useTranslations("ImageCropper");
+
   const cropperRef = useRef<ReactCropperElement>(null);
   const [unCroppedImage, setUncroppedImage] = useState<string>();
 
@@ -63,15 +66,12 @@ export default function ImageCropper({
 
       <div className="flex flex-row justify-between items-start space-x-4 pt-5">
         <div>
-          <div>
-            Position the window and then hit the button to crop the image and
-            begin analysis.
-          </div>
+          <div>{t("instructions")}</div>
         </div>
 
         <div className="flex flex-row items-center space-x-4">
-          <Button onClick={clear}>Clear</Button>
-          <Button onClick={setCroppedImage}>Crop Image</Button>
+          <Button onClick={clear}>{t("clearButton")}</Button>
+          <Button onClick={setCroppedImage}>{t("cropButton")}</Button>
         </div>
       </div>
     </>

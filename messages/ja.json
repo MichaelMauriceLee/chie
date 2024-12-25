@@ -4,11 +4,81 @@
         "description": "次世代多言語辞書"
     },
     "Home": {
-        "ask-a-question-placeholder": "質問を入力してください..."
+        "close": "閉じる",
+        "settings": "設定"
+    },
+    "DictionaryInput": {
+        "askAQuestionPlaceholder": "質問を入力してください..."
+    },
+    "DictionaryDisplay": {
+        "errors": {
+            "noDeckSelected": "まず設定でデッキを選択してください。",
+            "addFailed": "Ankiにカードを追加できませんでした。"
+        },
+        "success": {
+            "added": "「{word}」をデッキ「{deck}」に追加しました。"
+        },
+        "labels": {
+            "pronunciation": "発音",
+            "meanings": "意味",
+            "originalSentence": "原文",
+            "addedOn": "追加日",
+            "notAvailable": "該当なし"
+        },
+        "dateFormat": "yyyy年MM月dd日 hh:mm a"
     },
     "NotFound": {
         "title": "404 - ページが見つかりません",
-        "description": "申し訳ありませんが、お探しのページが見つかりませんでした。",
+        "description": "お探しのページが見つかりませんでした。申し訳ありません。",
         "backHome": "ホームに戻る"
+    },
+    "ImageCropper": {
+        "instructions": "ウィンドウを調整してからボタンを押して画像を切り取り、解析を開始してください。",
+        "clearButton": "クリア",
+        "cropButton": "画像を切り取る"
+    },
+    "DropArea": {
+        "drag-drop": "ここに画像をドラッグ＆ドロップ",
+        "click-upload": "またはクリックしてアップロード",
+        "ctrl-v": "またはCtrl + Vで貼り付け",
+        "paste-from-clipboard": "クリップボードから画像を貼り付け",
+        "error": {
+            "paste-failed": "クリップボードから画像を貼り付けできませんでした。"
+        }
+    },
+    "SettingsDialog": {
+        "aria": {
+            "settings": "設定"
+        },
+        "title": "設定",
+        "description": "一般設定とAnkiデッキを管理します。",
+        "anki": {
+            "title": "Anki",
+            "sync-button": "同期",
+            "select-deck": "同期するデッキを選択:",
+            "placeholder": "デッキを選択"
+        },
+        "save-button": "保存",
+        "error": {
+            "sync-failed": "Ankiとの同期に失敗しました。"
+        }
+    },
+    "ImageDisplay": {
+        "error": {
+            "message": "エラー",
+            "unknown": "不明なエラーが発生しました"
+        },
+        "instructions": {
+            "zoom": "マウスカーソルを画像上に移動し、スクロールホイールでズームインしてください。",
+            "pan": "左クリックを押したままドラッグして移動します。",
+            "select": "Ctrlキーを押しながら左クリックして単語を選択して検索します。"
+        },
+        "options": {
+            "lines": "行",
+            "words": "単語"
+        },
+        "buttons": {
+            "clear": "クリア"
+        }
     }
 }

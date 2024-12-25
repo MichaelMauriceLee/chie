@@ -14,7 +14,7 @@ type DictionaryInputProps = {
 };
 
 export default function DictionaryInput({ initialText }: DictionaryInputProps) {
-  const t = useTranslations("Home");
+  const t = useTranslations("DictionaryInput");
   const [text, setText] = useState(decodeURIComponent(initialText));
   const [showImageArea, setShowImageArea] = useState(false);
 
@@ -61,7 +61,7 @@ export default function DictionaryInput({ initialText }: DictionaryInputProps) {
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             rows={1}
-            placeholder={t("ask-a-question-placeholder")}
+            placeholder={t("askAQuestionPlaceholder")}
             className="
                 w-full 
                 pr-10 

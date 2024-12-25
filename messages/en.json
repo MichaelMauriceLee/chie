@@ -1,17 +1,84 @@
 {
     "Metadata": {
         "title": "Chie",
-        "description": "Next Generation Multi-Lingual Dictionary"
+        "description": "Next generation multilingual dictionary"
     },
     "Home": {
-        "ask-a-question-placeholder": "Ask a question...",
         "close": "Close",
-        "settings": "Settings",
-        "paste-image-from-clipboard": "Paste image from clipboard"
+        "settings": "Settings"
+    },
+    "DictionaryInput": {
+        "askAQuestionPlaceholder": "Ask a question..."
+    },
+    "DictionaryDisplay": {
+        "errors": {
+            "noDeckSelected": "Please select a deck first in the settings.",
+            "addFailed": "Failed to add card to Anki."
+        },
+        "success": {
+            "added": "Added \"{word}\" to deck \"{deck}\"."
+        },
+        "labels": {
+            "pronunciation": "Pronunciation",
+            "meanings": "Meanings",
+            "originalSentence": "Original Sentence",
+            "addedOn": "Added on",
+            "notAvailable": "N/A"
+        },
+        "dateFormat": "MMMM dd, yyyy, hh:mm a"
     },
     "NotFound": {
         "title": "404 - Page Not Found",
         "description": "Sorry, we couldn’t find the page you’re looking for.",
         "backHome": "Go back home"
+    },
+    "ImageCropper": {
+        "instructions": "Position the window and then hit the button to crop the image and begin analysis.",
+        "clearButton": "Clear",
+        "cropButton": "Crop Image"
+    },
+    "DropArea": {
+        "drag-drop": "Drag and drop an image here",
+        "click-upload": "or click to upload",
+        "ctrl-v": "or press Ctrl + V to paste",
+        "paste-from-clipboard": "Paste image from clipboard",
+        "error": {
+            "paste-failed": "Failed to paste image from clipboard"
+        }
+    },
+    "SettingsDialog": {
+        "aria": {
+            "settings": "Settings"
+        },
+        "title": "Settings",
+        "description": "Manage general settings and your Anki decks.",
+        "anki": {
+            "title": "Anki",
+            "sync-button": "Sync",
+            "select-deck": "Select a deck to sync:",
+            "placeholder": "Choose a deck"
+        },
+        "save-button": "Save",
+        "error": {
+            "sync-failed": "Failed to sync with Anki."
+        }
+    },
+    "ImageDisplay": {
+        "error": {
+            "message": "Error",
+            "unknown": "An unknown error occurred"
+        },
+        "instructions": {
+            "zoom": "Position the mouse cursor over the image and use the scroll wheel to zoom in.",
+            "pan": "Hold left click + drag to pan.",
+            "select": "Hold down left ctrl + left click to select and search words."
+        },
+        "options": {
+            "lines": "Lines",
+            "words": "Words"
+        },
+        "buttons": {
+            "clear": "Clear"
+        }
     }
 }

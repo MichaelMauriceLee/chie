@@ -22,8 +22,11 @@ import { useAtom } from "jotai";
 import { Settings, RefreshCcw, Loader } from "lucide-react";
 import { deckNamesAtom, selectedDeckAtom } from "@/store/atoms";
 import { getDeckNames } from "@/lib/agent";
+import { useTranslations } from "next-intl";
 
 export default function SettingsDialog() {
+  const t = useTranslations("SettingsDialog");
+
   const [deckNames, setDeckNames] = useAtom(deckNamesAtom);
   const [selectedDeck, setSelectedDeck] = useAtom(selectedDeckAtom);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -43,7 +46,7 @@ export default function SettingsDialog() {
       setDeckNames(decks);
       localStorage.setItem("deckNames", JSON.stringify(decks));
     } catch (error) {
-      console.error("Failed to sync with Anki:", error);
+      console.error(t("error.sync-failed"), error);
     } finally {
       setIsSyncing(false);
     }
@@ -58,20 +61,18 @@ export default function SettingsDialog() {
   return (
     <Sheet open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
       <SheetTrigger asChild>
-        <Button aria-label="Settings">
+        <Button aria-label={t("aria.settings")}>
           <Settings className="w-6 h-6" />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Settings</SheetTitle>
-          <SheetDescription>
-            Manage general settings and your Anki decks.
-          </SheetDescription>
+          <SheetTitle>{t("title")}</SheetTitle>
+          <SheetDescription>{t("description")}</SheetDescription>
         </SheetHeader>
         <div className="my-4 space-y-4">
           <section>
-            <h2 className="text-lg font-medium mb-2">Anki</h2>
+            <h2 className="text-lg font-medium mb-2">{t("anki.title")}</h2>
             <Button
               variant="default"
               onClick={handleAnkiSync}
@@ -82,19 +83,19 @@ export default function SettingsDialog() {
               ) : (
                 <RefreshCcw className="w-4 h-4 mr-2" />
               )}
-              Sync
+              {t("anki.sync-button")}
             </Button>
             {deckNames.length > 0 && (
               <div className="mt-4">
                 <p className="text-sm text-gray-500 mb-2">
-                  Select a deck to sync:
+                  {t("anki.select-deck")}
                 </p>
                 <Select
                   value={tempSelectedDeck}
                   onValueChange={(value) => setTempSelectedDeck(value)}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choose a deck" />
+                    <SelectValue placeholder={t("anki.placeholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {deckNames.map((deck) => (
@@ -109,7 +110,7 @@ export default function SettingsDialog() {
           </section>
         </div>
         <SheetFooter>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleSave}>{t("save-button")}</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

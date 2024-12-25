@@ -6,7 +6,7 @@ export const selectedDeckAtom = atom<string>("");
 
 export const initializeDeckNamesAtom = atom(
   (get) => get(deckNamesAtom),
-  (get, set) => {
+  (_get, set) => {
     const storedDeckNames = JSON.parse(
       localStorage.getItem("deckNames") || "[]"
     );
@@ -16,7 +16,7 @@ export const initializeDeckNamesAtom = atom(
 
 export const initializeSelectedDeckAtom = atom(
   (get) => get(selectedDeckAtom),
-  (get, set) => {
+  (_get, set) => {
     const storedSelectedDeck = localStorage.getItem("selectedDeck") || "";
     set(selectedDeckAtom, storedSelectedDeck);
   }
