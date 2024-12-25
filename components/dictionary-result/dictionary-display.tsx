@@ -60,77 +60,99 @@ export default function DictionaryDisplay({
   }
 
   return (
-    <Card className="mt-4">
+    <Card className="mt-4 shadow-lg border border-gray-200 rounded-lg">
       {data.explanation && (
-        <CardHeader>
-          <p>
+        <CardHeader className="flex flex-col gap-4">
+          <div className="text-lg font-semibold text-gray-800">
             {data.explanation}
-            {data.pronunciation && (
-              <Button
-                onClick={() =>
-                  speakText(
-                    data.pronunciation ?? "",
-                    data.detectedLanguage ?? "en-US"
-                  )
-                }
-              >
-                🔊
-              </Button>
-            )}
-          </p>
+          </div>
+          {data.sentence && (
+            <Button
+              className="self-start mt-2 px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              onClick={() =>
+                speakText(data.sentence ?? "", data.detectedLanguage ?? "en-US")
+              }
+            >
+              🔊 Play Pronunciation
+            </Button>
+          )}
         </CardHeader>
       )}
-      <CardContent>
+
+      <CardContent className="p-6">
         {data.words && data.words.length > 0 && (
-          <Accordion type="single" collapsible>
+          <Accordion type="single" collapsible className="space-y-4">
             {data.words.map((word, index) => (
               <AccordionItem key={index} value={`word-${index}`}>
-                <AccordionTrigger>
-                  <span className="font-semibold">{word.text}</span>
-                  {word.pronunciation && (
-                    <span className="text-sm text-gray-500 ml-2">
-                      ({word.pronunciation})
-                    </span>
-                  )}
-                  <Button
-                    onClick={() =>
-                      speakText(
-                        word.pronunciation ?? "",
-                        data.detectedLanguage ?? "en-US"
-                      )
-                    }
-                  >
-                    🔊
-                  </Button>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="mt-2">
-                    <h3 className="text-sm font-medium">Meanings:</h3>
-                    <ul className="list-disc ml-5">
-                      {word.meanings.map((meaning, idx) => (
-                        <li key={idx}>{meaning}</li>
-                      ))}
-                    </ul>
+                <AccordionTrigger className="flex justify-between items-center p-3 bg-gray-100 hover:bg-gray-200 rounded-lg">
+                  <div className="text-md font-medium text-gray-800">
+                    {word.text}
+                    {word.pronunciation && (
+                      <span className="ml-2 text-sm text-gray-500">
+                        ({word.pronunciation})
+                      </span>
+                    )}
                   </div>
+                  {word.pronunciation && (
+                    <Button
+                      variant="ghost"
+                      className="ml-4 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      onClick={() =>
+                        speakText(
+                          word.text ?? "",
+                          data.detectedLanguage ?? "en-US"
+                        )
+                      }
+                    >
+                      🔊
+                    </Button>
+                  )}
+                </AccordionTrigger>
+                <AccordionContent className="mt-2 bg-white p-4 border border-gray-100 rounded">
+                  <h3 className="text-sm font-medium mb-2">Meanings:</h3>
+                  <ul className="list-disc ml-5 space-y-1 text-gray-700">
+                    {word.meanings.map((meaning, idx) => (
+                      <li key={idx}>{meaning}</li>
+                    ))}
+                  </ul>
+
                   {word.words && word.words.length > 0 && (
                     <div className="mt-4">
-                      <h3 className="text-sm font-medium">Compound Words:</h3>
+                      <h4 className="text-sm font-medium mb-2">
+                        Compound Words:
+                      </h4>
                       <Accordion type="single" collapsible>
                         {word.words.map((subWord, subIdx) => (
                           <AccordionItem
                             key={subIdx}
                             value={`subword-${subIdx}`}
                           >
-                            <AccordionTrigger>
-                              {subWord.text}{" "}
+                            <AccordionTrigger className="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg">
+                              <span className="text-sm text-gray-800">
+                                {subWord.text}
+                                {subWord.pronunciation && (
+                                  <span className="ml-2 text-xs text-gray-500">
+                                    ({subWord.pronunciation})
+                                  </span>
+                                )}
+                              </span>
                               {subWord.pronunciation && (
-                                <span className="text-sm text-gray-500 ml-2">
-                                  ({subWord.pronunciation})
-                                </span>
+                                <Button
+                                  variant="ghost"
+                                  className="ml-4 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                  onClick={() =>
+                                    speakText(
+                                      subWord.pronunciation ?? "",
+                                      data.detectedLanguage ?? "en-US"
+                                    )
+                                  }
+                                >
+                                  🔊
+                                </Button>
                               )}
                             </AccordionTrigger>
-                            <AccordionContent>
-                              <ul className="list-disc ml-5">
+                            <AccordionContent className="mt-2 bg-white p-3 border border-gray-50 rounded">
+                              <ul className="list-disc ml-5 space-y-1 text-sm text-gray-700">
                                 {subWord.meanings.map((subMeaning, subId) => (
                                   <li key={subId}>{subMeaning}</li>
                                 ))}

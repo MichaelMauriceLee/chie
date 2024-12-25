@@ -94,7 +94,7 @@ export default function DropArea({ setFile }: DropAreaProps) {
           onDragLeave={onDragLeave}
           onDrop={onDrop}
           onClick={onClick}
-          role="button"text-white
+          role="button"
           tabIndex={0}
         >
           <Upload className="w-10 h-10 mb-2" />
