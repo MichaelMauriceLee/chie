@@ -1,11 +1,11 @@
 "use client";
 
-import { X, Upload, Send } from "lucide-react";
+import { X, Upload, Send, Loader } from "lucide-react";
 import ImageArea from "../image-area";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Textarea } from "../ui/textarea";
-import { useRef, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
@@ -15,8 +15,10 @@ type DictionaryInputProps = {
 
 export default function DictionaryInput({ initialText }: DictionaryInputProps) {
   const t = useTranslations("Home");
-  const [text, setText] = useState(initialText);
+  const [text, setText] = useState(decodeURIComponent(initialText));
   const [showImageArea, setShowImageArea] = useState(false);
+
+  const [isPending, startTransition] = useTransition();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -41,9 +43,11 @@ export default function DictionaryInput({ initialText }: DictionaryInputProps) {
 
   function handleQuerySubmit() {
     if (text.trim()) {
-      const params = new URLSearchParams(window.location.search);
-      params.set("query", encodeURIComponent(text));
-      router.push(`?${params.toString()}`);
+      startTransition(() => {
+        const params = new URLSearchParams(window.location.search);
+        params.set("query", encodeURIComponent(text));
+        router.push(`?${params.toString()}`);
+      });
     }
   }
 
@@ -87,8 +91,8 @@ export default function DictionaryInput({ initialText }: DictionaryInputProps) {
             <Upload />
           </Button>
 
-          <Button onClick={handleQuerySubmit}>
-            <Send />
+          <Button onClick={handleQuerySubmit} disabled={isPending}>
+            {isPending ? <Loader className="animate-spin" /> : <Send />}
           </Button>
         </div>
 
