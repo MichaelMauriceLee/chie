@@ -1,6 +1,7 @@
-"use client";
-import NotFoundPage from "@/components/not-found-page";
+import NotFoundMessage from "@/components/not-found/message";
 import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next"; 
+import en from "../messages/en.json";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,16 +13,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata: Metadata = {
+  title: en.Metadata.title,
+  description: en.Metadata.description,
+};
+
 export default function NotFound() {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NotFoundPage
-          title="404 - Page Not Found"
-          description="Sorry, we couldn’t find the page you’re looking for."
-          backHome="Go back home"
+        <NotFoundMessage
+          title={en.NotFound.title}
+          description={en.NotFound.description}
+          backHome={en.NotFound.backHome}
         />
       </body>
     </html>
