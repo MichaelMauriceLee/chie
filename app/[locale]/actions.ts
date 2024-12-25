@@ -3,39 +3,6 @@
 import { OCRResponse } from "@/models/serverActions";
 import { cache } from "react";
 
-export const getSpeechToken = cache(async () => {
-  const apiKey = process.env.SPEECH_KEY;
-
-  if (!apiKey) {
-    throw new Error("Speech key is missing");
-  }
-
-  try {
-    const response = await fetch(
-      "https://westus2.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
-      {
-        method: "POST",
-        headers: {
-          "Ocp-Apim-Subscription-Key": apiKey,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch speech token: ${response.statusText}`);
-    }
-
-    const token = await response.text();
-
-    return { token, region: "westus2" };
-  } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Unknown error occurred"
-    );
-  }
-});
-
 export const analyzeImage = cache(async (imageBase64: string) => {
   const apiKey = process.env.CV_KEY;
 

@@ -1,11 +1,38 @@
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
 import { ChatGPTResponse, DictionaryResponse } from "@/models/serverActions";
+import DictionaryDisplay from "./dictionary-display";
+
+async function getSpeechToken() {
+  const apiKey = process.env.SPEECH_KEY;
+
+  if (!apiKey) {
+    throw new Error("Speech key is missing");
+  }
+
+  try {
+    const response = await fetch(
+      "https://westus2.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
+      {
+        method: "POST",
+        headers: {
+          "Ocp-Apim-Subscription-Key": apiKey,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch speech token: ${response.statusText}`);
+    }
+
+    const token = await response.text();
+
+    return { token, region: "westus2" };
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Unknown error occurred"
+    );
+  }
+}
 
 async function askDictionary(query: string) {
   const apiKey = process.env.OPENAI_KEY;
@@ -33,7 +60,7 @@ async function askDictionary(query: string) {
   
                   1. If the input is a general question about grammar or language, provide a detailed explanation in the "explanation" field.
                   2. If the input is a sentence or word, do the following:
-                    - Translate it into English if it is not already in English.
+                    - Translate it into English.
                     - Break down the sentence or word into individual components.
                     - For each component, provide:
                       - **Text**: The word itself.
@@ -52,8 +79,10 @@ async function askDictionary(query: string) {
                   };
   
                   export type DictionaryResponse = {
-                    explanation?: string; // A general explanation for questions
+                    explanation?: string; // A general explanation for questions and translations
                     words?: Word[]; // The breakdown of words and their details
+                    pronunciation?: string; // How the sentence is pronounced (only relevant if translating)
+                    detectedLanguage?: string; // locale string used to feed into Azure TTS (i.e. ja-JP)
                   };
                   \`\`\`
                 `,
@@ -90,76 +119,24 @@ async function askDictionary(query: string) {
 }
 
 export default async function DictionaryResult({ query }: { query: string }) {
-  const data = await askDictionary(query);
+  const dictionaryDataPromise = askDictionary(query);
+
+  const tokenPromise = getSpeechToken();
+
+  const [data, speechToken] = await Promise.all([
+    dictionaryDataPromise,
+    tokenPromise,
+  ]);
 
   if (!data) {
-    return null; 
+    return null;
   }
 
   return (
-    <Card className="mt-4">
-      {data.explanation && (
-        <CardHeader>
-          <p>{data.explanation}</p>
-        </CardHeader>
-      )}
-      <CardContent>
-        {data.words && data.words.length > 0 && (
-          <Accordion type="single" collapsible>
-            {data.words.map((word, index) => (
-              <AccordionItem key={index} value={`word-${index}`}>
-                <AccordionTrigger>
-                  <span className="font-semibold">{word.text}</span>
-                  {word.pronunciation && (
-                    <span className="text-sm text-gray-500 ml-2">
-                      ({word.pronunciation})
-                    </span>
-                  )}
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="mt-2">
-                    <h3 className="text-sm font-medium">Meanings:</h3>
-                    <ul className="list-disc ml-5">
-                      {word.meanings.map((meaning, idx) => (
-                        <li key={idx}>{meaning}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  {word.words && word.words.length > 0 && (
-                    <div className="mt-4">
-                      <h3 className="text-sm font-medium">Compound Words:</h3>
-                      <Accordion type="single" collapsible>
-                        {word.words.map((subWord, subIdx) => (
-                          <AccordionItem
-                            key={subIdx}
-                            value={`subword-${subIdx}`}
-                          >
-                            <AccordionTrigger>
-                              {subWord.text}{" "}
-                              {subWord.pronunciation && (
-                                <span className="text-sm text-gray-500 ml-2">
-                                  ({subWord.pronunciation})
-                                </span>
-                              )}
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              <ul className="list-disc ml-5">
-                                {subWord.meanings.map((subMeaning, subId) => (
-                                  <li key={subId}>{subMeaning}</li>
-                                ))}
-                              </ul>
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
-                    </div>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        )}
-      </CardContent>
-    </Card>
+    <DictionaryDisplay
+      data={data}
+      token={speechToken.token}
+      region={speechToken.region}
+    />
   );
 }

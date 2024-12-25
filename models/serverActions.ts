@@ -33,8 +33,10 @@ export type Word = {
 };
 
 export type DictionaryResponse = {
-  explanation?: string; // any general queries will also go in here
+  explanation?: string; 
   words?: Word[];
+  pronunciation?: string;
+  detectedLanguage?: string;
 };
 
 export type ChatGPTMessage = {

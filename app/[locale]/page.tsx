@@ -19,22 +19,24 @@ export default async function Home({
 
       <DictionaryInput initialText={query ?? ""} />
 
-      <Suspense
-        fallback={
-          <Card className="mt-4">
-            <CardHeader>
-              <Skeleton className="h-4 w-2/3 mb-2" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-3 w-full mb-2" />
-              <Skeleton className="h-3 w-5/6 mb-2" />
-              <Skeleton className="h-3 w-4/5" />
-            </CardContent>
-          </Card>
-        }
-      >
-        {query && <DictionaryResult query={decodeURIComponent(query)} />}
-      </Suspense>
+      {query && (
+        <Suspense
+          fallback={
+            <Card className="mt-4">
+              <CardHeader>
+                <Skeleton className="h-4 w-2/3 mb-2" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-3 w-full mb-2" />
+                <Skeleton className="h-3 w-5/6 mb-2" />
+                <Skeleton className="h-3 w-4/5" />
+              </CardContent>
+            </Card>
+          }
+        >
+          <DictionaryResult query={decodeURIComponent(query)} />
+        </Suspense>
+      )}
     </div>
   );
 }
