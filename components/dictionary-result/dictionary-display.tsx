@@ -19,7 +19,7 @@ import { useAtom } from "jotai";
 import { selectedDeckAtom } from "@/store/atoms";
 import { postNote } from "@/lib/agent";
 import { format } from "date-fns";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
 type DictionaryDisplayProps = {
@@ -106,13 +106,12 @@ export default function DictionaryDisplay({
             {data.sentence}
           </div>
           <Button
-            className="bg-blue-500 text-white rounded hover:bg-blue-600"
             onClick={(e) => {
               e.stopPropagation();
               speakText(data.sentence ?? "", data.detectedLanguage ?? "en-US");
             }}
           >
-            🔊
+            <Volume2 />
           </Button>
         </CardHeader>
       )}
@@ -133,12 +132,10 @@ export default function DictionaryDisplay({
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 ml-2">
                     {word.pronunciation && (
                       <div>
                         <Button
-                          variant="ghost"
-                          className="bg-blue-500 ml-2 text-white hover:bg-blue-600 p-2"
                           onClick={(e) => {
                             e.stopPropagation();
                             speakText(
@@ -147,17 +144,12 @@ export default function DictionaryDisplay({
                             );
                           }}
                         >
-                          🔊
+                          <Volume2 />
                         </Button>
                       </div>
                     )}
                     <Button
                       variant="ghost"
-                      className={`rounded-full flex items-center justify-center p-2 h-8 ${
-                        selectedDeck
-                          ? "bg-green-500 text-white hover:bg-green-600"
-                          : "bg-gray-400 text-gray-700 cursor-not-allowed"
-                      }`}
                       onClick={(e) => {
                         e.stopPropagation();
                         addToAnki(
@@ -205,11 +197,9 @@ export default function DictionaryDisplay({
                                   </span>
                                 )}
                               </span>
-                              <div className="flex items-center space-x-2">
+                              <div className="flex items-center space-x-2 ml-2">
                                 {subWord.pronunciation && (
                                   <Button
-                                    variant="ghost"
-                                    className="bg-blue-500 ml-2 text-white hover:bg-blue-600 p-2"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       speakText(
@@ -218,16 +208,11 @@ export default function DictionaryDisplay({
                                       );
                                     }}
                                   >
-                                    🔊
+                                    <Volume2 />
                                   </Button>
                                 )}
                                 <Button
                                   variant="ghost"
-                                  className={`rounded-full flex items-center justify-center p-2 h-8 ${
-                                    selectedDeck
-                                      ? "bg-green-500 text-white hover:bg-green-600"
-                                      : "bg-gray-400 text-gray-700 cursor-not-allowed"
-                                  }`}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     addToAnki(
