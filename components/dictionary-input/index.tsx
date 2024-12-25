@@ -72,7 +72,7 @@ export default function DictionaryInput({ initialText }: DictionaryInputProps) {
                 scrollbar-thumb-rounded 
                 scrollbar-thumb-gray-300 
                 hover:scrollbar-thumb-gray-400
-              "
+            "
           />
           {text && (
             <Button
