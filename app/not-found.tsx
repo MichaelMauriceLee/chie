@@ -1,6 +1,5 @@
 "use client";
 import NotFoundPage from "@/components/not-found-page";
-import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 const geistSans = Geist({
@@ -12,11 +11,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-export const metadata: Metadata = {
-  title: "Chie",
-  description: "Next Generation Multi-Lingual Dictionary",
-};
 
 export default function NotFound() {
   return (
