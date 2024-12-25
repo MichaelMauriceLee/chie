@@ -26,29 +26,14 @@ export default function DictionaryDisplay({
   region,
   token,
 }: DictionaryDisplayProps) {
-  function processTextForSpeech(text: string): string {
-    const match = text.match(/\(([^)]+)\)/);
-    if (match) {
-      const insideParenthesis = match[1];
-      if (insideParenthesis.includes(",")) {
-        return insideParenthesis.split(",")[0].trim();
-      } else {
-        return insideParenthesis.trim();
-      }
-    }
-    return text.split(",")[0].trim();
-  }
-
   function speakText(text: string, detectedLanguage: string) {
     const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
     speechConfig.speechSynthesisLanguage = detectedLanguage;
     const audioConfig = AudioConfig.fromDefaultSpeakerOutput();
     const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
 
-    const processedText = processTextForSpeech(text);
-
     synthesizer.speakTextAsync(
-      processedText,
+      text,
       () => {
         synthesizer.close();
       },
@@ -61,25 +46,26 @@ export default function DictionaryDisplay({
 
   return (
     <Card className="mt-4 shadow-lg border border-gray-200 rounded-lg">
-      {data.explanation && (
-        <CardHeader className="flex flex-col gap-4">
+      {data.sentence && (
+        <CardHeader className="flex flex-row items-center space-x-3">
           <div className="text-lg font-semibold text-gray-800">
-            {data.explanation}
+            {data.sentence}
           </div>
-          {data.sentence && (
-            <Button
-              className="self-start mt-2 px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-              onClick={() =>
-                speakText(data.sentence ?? "", data.detectedLanguage ?? "en-US")
-              }
-            >
-              🔊 Play Pronunciation
-            </Button>
-          )}
+          <Button
+            className="bg-blue-500 text-white rounded hover:bg-blue-600"
+            onClick={(e) => {
+              e.stopPropagation();
+              speakText(data.sentence ?? "", data.detectedLanguage ?? "en-US");
+            }}
+          >
+            🔊
+          </Button>
         </CardHeader>
       )}
 
-      <CardContent className="p-6">
+      {data.explanation && <CardContent> {data.explanation}</CardContent>}
+
+      <CardContent>
         {data.words && data.words.length > 0 && (
           <Accordion type="single" collapsible className="space-y-4">
             {data.words.map((word, index) => (
@@ -97,12 +83,13 @@ export default function DictionaryDisplay({
                     <Button
                       variant="ghost"
                       className="ml-4 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                      onClick={() =>
+                      onClick={(e) => {
+                        e.stopPropagation();
                         speakText(
                           word.text ?? "",
                           data.detectedLanguage ?? "en-US"
-                        )
-                      }
+                        );
+                      }}
                     >
                       🔊
                     </Button>
@@ -140,12 +127,13 @@ export default function DictionaryDisplay({
                                 <Button
                                   variant="ghost"
                                   className="ml-4 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                  onClick={() =>
+                                  onClick={(e) => {
+                                    e.stopPropagation()
                                     speakText(
-                                      subWord.pronunciation ?? "",
+                                      subWord.text ?? "",
                                       data.detectedLanguage ?? "en-US"
-                                    )
-                                  }
+                                    );
+                                  }}
                                 >
                                   🔊
                                 </Button>
