@@ -123,50 +123,55 @@ export default function DictionaryDisplay({
           <Accordion type="single" collapsible className="space-y-4">
             {data.words.map((word, index) => (
               <AccordionItem key={index} value={`word-${index}`}>
-                <AccordionTrigger className="flex justify-between items-center p-3 bg-gray-100 hover:bg-gray-200 rounded-lg">
-                  <div className="text-md font-medium text-gray-800">
-                    {word.text}
-                    {word.pronunciation && (
-                      <span className="ml-2 text-sm text-gray-500">
-                        ({word.pronunciation})
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center space-x-2 ml-2">
-                    {word.pronunciation && (
-                      <div>
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            speakText(
-                              word.text ?? "",
-                              data.detectedLanguage ?? "en-US"
-                            );
-                          }}
-                        >
-                          <Volume2 />
-                        </Button>
-                      </div>
-                    )}
-                    <Button
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToAnki(
-                          word.text,
-                          word.pronunciation,
-                          word.meanings,
-                          data.sentence || ""
-                        );
-                      }}
-                      disabled={!selectedDeck || !!activeAdd}
-                    >
-                      {activeAdd === word.text ? (
-                        <Loader2 className="animate-spin w-4 h-4" />
-                      ) : (
-                        <Plus />
+                <AccordionTrigger
+                  asChild
+                  className="flex justify-between items-center p-3 bg-gray-100 hover:bg-gray-200 rounded-lg"
+                >
+                  <div>
+                    <div className="text-md font-medium text-gray-800">
+                      {word.text}
+                      {word.pronunciation && (
+                        <span className="ml-2 text-sm text-gray-500">
+                          ({word.pronunciation})
+                        </span>
                       )}
-                    </Button>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-2">
+                      {word.pronunciation && (
+                        <div>
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              speakText(
+                                word.text ?? "",
+                                data.detectedLanguage ?? "en-US"
+                              );
+                            }}
+                          >
+                            <Volume2 />
+                          </Button>
+                        </div>
+                      )}
+                      <Button
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToAnki(
+                            word.text,
+                            word.pronunciation,
+                            word.meanings,
+                            data.sentence || ""
+                          );
+                        }}
+                        disabled={!selectedDeck || !!activeAdd}
+                      >
+                        {activeAdd === word.text ? (
+                          <Loader2 className="animate-spin w-4 h-4" />
+                        ) : (
+                          <Plus />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="mt-2 bg-white p-4 border border-gray-100 rounded">
@@ -188,48 +193,53 @@ export default function DictionaryDisplay({
                             key={subIdx}
                             value={`subword-${subIdx}`}
                           >
-                            <AccordionTrigger className="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg">
-                              <span className="text-sm text-gray-800">
-                                {subWord.text}
-                                {subWord.pronunciation && (
-                                  <span className="ml-2 text-xs text-gray-500">
-                                    ({subWord.pronunciation})
-                                  </span>
-                                )}
-                              </span>
-                              <div className="flex items-center space-x-2 ml-2">
-                                {subWord.pronunciation && (
+                            <AccordionTrigger
+                              asChild
+                              className="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg"
+                            >
+                              <div>
+                                <span className="text-sm text-gray-800">
+                                  {subWord.text}
+                                  {subWord.pronunciation && (
+                                    <span className="ml-2 text-xs text-gray-500">
+                                      ({subWord.pronunciation})
+                                    </span>
+                                  )}
+                                </span>
+                                <div className="flex items-center space-x-2 ml-2">
+                                  {subWord.pronunciation && (
+                                    <Button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        speakText(
+                                          subWord.text ?? "",
+                                          data.detectedLanguage ?? "en-US"
+                                        );
+                                      }}
+                                    >
+                                      <Volume2 />
+                                    </Button>
+                                  )}
                                   <Button
+                                    variant="ghost"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      speakText(
-                                        subWord.text ?? "",
-                                        data.detectedLanguage ?? "en-US"
+                                      addToAnki(
+                                        subWord.text,
+                                        subWord.pronunciation,
+                                        subWord.meanings,
+                                        data.sentence || ""
                                       );
                                     }}
+                                    disabled={!selectedDeck || !!activeAdd}
                                   >
-                                    <Volume2 />
+                                    {activeAdd === subWord.text ? (
+                                      <Loader2 className="animate-spin w-4 h-4" />
+                                    ) : (
+                                      <Plus />
+                                    )}
                                   </Button>
-                                )}
-                                <Button
-                                  variant="ghost"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    addToAnki(
-                                      subWord.text,
-                                      subWord.pronunciation,
-                                      subWord.meanings,
-                                      data.sentence || ""
-                                    );
-                                  }}
-                                  disabled={!selectedDeck || !!activeAdd}
-                                >
-                                  {activeAdd === subWord.text ? (
-                                    <Loader2 className="animate-spin w-4 h-4" />
-                                  ) : (
-                                    <Plus />
-                                  )}
-                                </Button>
+                                </div>
                               </div>
                             </AccordionTrigger>
                             <AccordionContent className="mt-2 bg-white p-3 border border-gray-50 rounded">
