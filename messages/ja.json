@@ -1,0 +1,14 @@
+{
+    "Metadata": {
+        "title": "知恵",
+        "description": "次世代多言語辞書"
+    },
+    "Home": {
+        "ask-a-question-placeholder": "質問を入力してください..."
+    },
+    "NotFound": {
+        "title": "404 - ページが見つかりません",
+        "description": "申し訳ありませんが、お探しのページが見つかりませんでした。",
+        "backHome": "ホームに戻る"
+    }
+}
