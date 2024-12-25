@@ -8,6 +8,8 @@ import React, {
 import LoadingIndicator from "./loading-indicator";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
+import { OCRBlock, OCRCoordinate, OCRWord } from "@/models/serverActions";
+import { analyzeImage } from "@/app/[locale]/actions";
 
 type ImageDisplayProps = {
   image: string;
@@ -16,50 +18,7 @@ type ImageDisplayProps = {
   setImage: (params: string | null) => void;
 };
 
-export type Coordinate = {
-  x: number;
-  y: number;
-};
-
-export type Word = {
-  text: string;
-  boundingPolygon: Coordinate[];
-  confidence: number;
-};
-
-export type Line = {
-  text: string;
-  boundingPolygon: Coordinate[];
-  words: Word[];
-};
-
-export type Block = {
-  lines: Line[];
-};
-
-export type OCRResponse = {
-  readResult: {
-    blocks: Block[];
-  };
-};
-
-async function postAnalyzeImage(image: string) {
-  const response = await fetch("/api/analyzeImage", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ image }),
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to initiate image analysis: ${response.statusText}`
-    );
-  }
-
-  return (await response.json()) as OCRResponse;
-}
-
-function pointInPolygon(polygon: Coordinate[], testPoint: Coordinate): boolean {
+function pointInPolygon(polygon: OCRCoordinate[], testPoint: OCRCoordinate): boolean {
   let inside = false;
 
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -89,9 +48,9 @@ export default function ImageDisplay({
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(new Image());
-  const tempWordArrayRef = useRef<Word[]>([]);
+  const tempWordArrayRef = useRef<OCRWord[]>([]);
 
-  const [imageSearchResult, setImageSearchResult] = useState<Block[] | null>(
+  const [imageSearchResult, setImageSearchResult] = useState<OCRBlock[] | null>(
     null
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -99,7 +58,7 @@ export default function ImageDisplay({
 
   const [isCanvasVisible, setIsCanvasVisible] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragStartPosition, setDragStartPosition] = useState<Coordinate | null>(
+  const [dragStartPosition, setDragStartPosition] = useState<OCRCoordinate | null>(
     null
   );
 
@@ -117,7 +76,7 @@ export default function ImageDisplay({
     setImageSearchResult(null);
 
     try {
-      const data = await postAnalyzeImage(image);
+      const data = await analyzeImage(image);
       setImageSearchResult(data.readResult.blocks);
     } catch (err: unknown) {
       const resolvedError =
@@ -187,7 +146,7 @@ export default function ImageDisplay({
   }, [canvas]);
 
   const translateImagePoint = useCallback(
-    (point: Coordinate): [number, number] => {
+    (point: OCRCoordinate): [number, number] => {
       const { ratio, centerShiftX, centerShiftY } =
         getImageTransformationParameters();
       return [point.x * ratio + centerShiftX, point.y * ratio + centerShiftY];
@@ -205,7 +164,7 @@ export default function ImageDisplay({
   }, [canvas, ctx]);
 
   const drawPolygon = useCallback(
-    (polygon: Coordinate[], strokeColor: string) => {
+    (polygon: OCRCoordinate[], strokeColor: string) => {
       if (!ctx || polygon.length < 1) return;
 
       ctx.beginPath();

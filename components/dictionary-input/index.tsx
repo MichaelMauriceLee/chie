@@ -1,0 +1,99 @@
+"use client";
+
+import { X, Upload, Send } from "lucide-react";
+import ImageArea from "../image-area";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import { Textarea } from "../ui/textarea";
+import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+
+type DictionaryInputProps = {
+  initialText: string;
+};
+
+export default function DictionaryInput({ initialText }: DictionaryInputProps) {
+  const t = useTranslations("Home");
+  const [text, setText] = useState(initialText);
+  const [showImageArea, setShowImageArea] = useState(false);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const router = useRouter();
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleQuerySubmit();
+    }
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setText(e.target.value);
+
+    if (textareaRef.current) {
+      const el = textareaRef.current;
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }
+
+  function handleQuerySubmit() {
+    if (text.trim()) {
+      const params = new URLSearchParams(window.location.search);
+      params.set("query", encodeURIComponent(text));
+      router.push(`?${params.toString()}`);
+    }
+  }
+
+  return (
+    <Card className="w-full">
+      <CardContent>
+        <div className="relative my-3">
+          <Textarea
+            ref={textareaRef}
+            value={text}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            rows={1}
+            placeholder={t("ask-a-question-placeholder")}
+            className="
+                w-full 
+                pr-10 
+                resize-none 
+                overflow-y-auto 
+                max-h-[10rem] 
+                scrollbar-thin 
+                scrollbar-thumb-rounded 
+                scrollbar-thumb-gray-300 
+                hover:scrollbar-thumb-gray-400
+              "
+          />
+          {text && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-4 top-1/2 -translate-y-1/2"
+              onClick={() => setText("")}
+            >
+              <X size={16} />
+            </Button>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between mb-3">
+          <Button onClick={() => setShowImageArea(!showImageArea)}>
+            <Upload />
+          </Button>
+
+          <Button onClick={handleQuerySubmit}>
+            <Send />
+          </Button>
+        </div>
+
+        {showImageArea && <ImageArea setKeyword={setText} />}
+      </CardContent>
+    </Card>
+  );
+}

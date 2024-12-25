@@ -85,7 +85,7 @@ export default function DropArea({ setFile }: DropAreaProps) {
     <ContextMenu>
       <ContextMenuTrigger>
         <div
-          className={`flex flex-col items-center justify-center border-2 border-dotted h-96 w-full cursor-pointer ${
+          className={`flex flex-col items-center justify-center border-2 border-dotted h-96 w-full cursor-pointer hover:bg-blue-500 hover:text-white ${
             isDragging ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"
           }`}
           onPaste={onPhotoPaste}
@@ -94,7 +94,7 @@ export default function DropArea({ setFile }: DropAreaProps) {
           onDragLeave={onDragLeave}
           onDrop={onDrop}
           onClick={onClick}
-          role="button"
+          role="button"text-white
           tabIndex={0}
         >
           <Upload className="w-10 h-10 mb-2" />
