@@ -19,7 +19,8 @@ import { useAtom } from "jotai";
 import { selectedDeckAtom } from "@/store/atoms";
 import { postNote } from "@/lib/agent";
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 type DictionaryDisplayProps = {
   data: DictionaryResponse;
@@ -60,7 +61,7 @@ export default function DictionaryDisplay({
     sentence: string
   ) {
     if (!selectedDeck) {
-      alert("Please select a deck first in the settings.");
+      toast.error("Please select a deck first in the settings.");
       return;
     }
 
@@ -88,10 +89,10 @@ export default function DictionaryDisplay({
     try {
       setActiveAdd(word);
       await postNote(note);
-      alert(`Added "${word}" to deck "${selectedDeck}"`);
+      toast.success(`Added "${word}" to deck "${selectedDeck}"`);
     } catch (error) {
       console.error("Failed to add card to Anki:", error);
-      alert("Failed to add card to Anki.");
+      toast.error("Failed to add card to Anki.");
     } finally {
       setActiveAdd(null);
     }
@@ -134,23 +135,25 @@ export default function DictionaryDisplay({
                   </div>
                   <div className="flex items-center space-x-2">
                     {word.pronunciation && (
-                      <Button
-                        variant="ghost"
-                        className="px-2 py-1 ml-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          speakText(
-                            word.text ?? "",
-                            data.detectedLanguage ?? "en-US"
-                          );
-                        }}
-                      >
-                        🔊
-                      </Button>
+                      <div>
+                        <Button
+                          variant="ghost"
+                          className="bg-blue-500 ml-2 text-white hover:bg-blue-600 p-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            speakText(
+                              word.text ?? "",
+                              data.detectedLanguage ?? "en-US"
+                            );
+                          }}
+                        >
+                          🔊
+                        </Button>
+                      </div>
                     )}
                     <Button
                       variant="ghost"
-                      className={`px-2 py-1 rounded flex items-center justify-center ${
+                      className={`rounded-full flex items-center justify-center p-2 h-8 ${
                         selectedDeck
                           ? "bg-green-500 text-white hover:bg-green-600"
                           : "bg-gray-400 text-gray-700 cursor-not-allowed"
@@ -169,7 +172,7 @@ export default function DictionaryDisplay({
                       {activeAdd === word.text ? (
                         <Loader2 className="animate-spin w-4 h-4" />
                       ) : (
-                        "+"
+                        <Plus />
                       )}
                     </Button>
                   </div>
@@ -206,7 +209,7 @@ export default function DictionaryDisplay({
                                 {subWord.pronunciation && (
                                   <Button
                                     variant="ghost"
-                                    className="px-2 py-1 ml-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    className="bg-blue-500 ml-2 text-white hover:bg-blue-600 p-2"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       speakText(
@@ -220,7 +223,7 @@ export default function DictionaryDisplay({
                                 )}
                                 <Button
                                   variant="ghost"
-                                  className={`px-2 py-1 rounded flex items-center justify-center ${
+                                  className={`rounded-full flex items-center justify-center p-2 h-8 ${
                                     selectedDeck
                                       ? "bg-green-500 text-white hover:bg-green-600"
                                       : "bg-gray-400 text-gray-700 cursor-not-allowed"
@@ -239,7 +242,7 @@ export default function DictionaryDisplay({
                                   {activeAdd === subWord.text ? (
                                     <Loader2 className="animate-spin w-4 h-4" />
                                   ) : (
-                                    "+"
+                                    <Plus />
                                   )}
                                 </Button>
                               </div>

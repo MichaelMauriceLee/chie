@@ -8,6 +8,7 @@ import React, {
 import LoadingIndicator from "./loading-indicator";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
 import { OCRBlock, OCRCoordinate, OCRWord } from "@/models/serverActions";
 import { analyzeImage } from "@/app/[locale]/actions";
 
@@ -18,7 +19,10 @@ type ImageDisplayProps = {
   setImage: (params: string | null) => void;
 };
 
-function pointInPolygon(polygon: OCRCoordinate[], testPoint: OCRCoordinate): boolean {
+function pointInPolygon(
+  polygon: OCRCoordinate[],
+  testPoint: OCRCoordinate
+): boolean {
   let inside = false;
 
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -58,9 +62,8 @@ export default function ImageDisplay({
 
   const [isCanvasVisible, setIsCanvasVisible] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragStartPosition, setDragStartPosition] = useState<OCRCoordinate | null>(
-    null
-  );
+  const [dragStartPosition, setDragStartPosition] =
+    useState<OCRCoordinate | null>(null);
 
   const [showLineBoundingBox, setShowLineBoundingBox] = useState<boolean>(true);
   const [showWordBoundingBox, setShowWordBoundingBox] =
@@ -391,24 +394,24 @@ export default function ImageDisplay({
         </div>
 
         <div className="flex flex-row items-center space-x-4">
-          <div className="space-y-1">
-            <div className="space-x-1">
+          <div className="space-y-2">
+            <div className="flex items-center space-x-1">
               <Checkbox
                 checked={showLineBoundingBox}
                 onCheckedChange={(checked) =>
                   setShowLineBoundingBox(Boolean(checked))
                 }
               />
-              <label htmlFor="showLineBoxes">Lines</label>
+              <Label htmlFor="showLineBoxes">Lines</Label>
             </div>
-            <div className="space-x-1">
+            <div className="flex items-center space-x-1">
               <Checkbox
                 checked={showWordBoundingBox}
                 onCheckedChange={(checked) =>
                   setShowWordBoundingBox(Boolean(checked))
                 }
               />
-              <label htmlFor="showWordBoxes">Words</label>
+              <Label htmlFor="showWordBoxes">Words</Label>
             </div>
           </div>
 
