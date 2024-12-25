@@ -4,7 +4,10 @@
         "description": "Next Generation Multi-Lingual Dictionary"
     },
     "Home": {
-        "ask-a-question-placeholder": "Ask a question..."
+        "ask-a-question-placeholder": "Ask a question...",
+        "close": "Close",
+        "settings": "Settings",
+        "paste-image-from-clipboard": "Paste image from clipboard"
     },
     "NotFound": {
         "title": "404 - Page Not Found",

@@ -26,9 +26,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-
 import { getDeckNames } from "@/lib/agent";
-import { Textarea } from "@/components/ui/textarea"; // <-- Make sure you have this in your project
+import { Textarea } from "@/components/ui/textarea";
 
 type ResponseType = {
   choices: { message: { content: string } }[];
@@ -53,7 +52,6 @@ export default function Home() {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Initialize the Microsoft Speech SDK
   async function initializeSpeechSDK() {
     const res = await fetch("/api/speechToken", { method: "POST" });
     const data: TokenResponse = await res.json();
@@ -68,7 +66,6 @@ export default function Home() {
     initializeSpeechSDK();
   }, []);
 
-  // Submit user query
   async function handleQuerySubmit() {
     if (loading) return;
     setLoading(true);
@@ -79,7 +76,6 @@ export default function Home() {
     const data = await res.json();
     const responseContent = data.response.choices[0].message.content;
 
-    // Match language from response to set TTS language
     const languageMatch = responseContent.match(/Detected Language: (\S+)/);
     if (languageMatch && speechConfig) {
       speechConfig.speechSynthesisLanguage = languageMatch[1];
@@ -89,26 +85,23 @@ export default function Home() {
     setLoading(false);
   }
 
-  // Pressing Enter => submit (unless Shift is held)
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Avoid newline
+      e.preventDefault();
       handleQuerySubmit();
     }
   }
 
-  // Auto-resize logic
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setQuery(e.target.value);
 
     if (textareaRef.current) {
       const el = textareaRef.current;
-      el.style.height = "auto"; // reset the height
+      el.style.height = "auto";
       el.style.height = `${el.scrollHeight}px`;
     }
   }
 
-  // Process text to remove extraneous parentheses for TTS
   function processTextForSpeech(text: string): string {
     const match = text.match(/\(([^)]+)\)/);
     if (match) {
@@ -122,7 +115,6 @@ export default function Home() {
     return text.split(",")[0].trim();
   }
 
-  // Speak text via TTS
   function speakText(text: string) {
     if (speechConfig) {
       const audioConfig = AudioConfig.fromDefaultSpeakerOutput();
@@ -145,7 +137,6 @@ export default function Home() {
     }
   }
 
-  // Parse response into distinct sections
   function parseResponseContent(content: string) {
     const sections = content.split("\n\n");
     const sentence = sections[0];
@@ -153,7 +144,6 @@ export default function Home() {
     return { sentence, breakdown };
   }
 
-  // Render text with 🔊 buttons on certain tokens
   function renderWithAudioButtons(text: string) {
     const parts = text.split(/(###.*?###)/g);
     return parts.map((part, index) => {
@@ -171,7 +161,6 @@ export default function Home() {
     });
   }
 
-  // Handle sync with Anki
   async function handleSyncAnki() {
     try {
       const decks = await getDeckNames();
@@ -242,7 +231,6 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      {/* Display the AI response */}
       {response && (
         <pre className="whitespace-pre-wrap mt-4">
           {(() => {
@@ -265,14 +253,13 @@ export default function Home() {
         </pre>
       )}
 
-      {/* Settings dialog */}
       <Dialog
         open={isSettingsDialogOpen}
         onOpenChange={(isOpen) => setIsSettingsDialogOpen(isOpen)}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Settings</DialogTitle>
+            <DialogTitle>{t("settings")}</DialogTitle>
           </DialogHeader>
           <section className="mt-4">
             <h2 className="text-lg font-semibold mb-2">Anki Sync</h2>
@@ -304,7 +291,7 @@ export default function Home() {
           </section>
           <DialogFooter>
             <Button onClick={() => setIsSettingsDialogOpen(false)}>
-              Close
+              {t("close")}
             </Button>
           </DialogFooter>
         </DialogContent>

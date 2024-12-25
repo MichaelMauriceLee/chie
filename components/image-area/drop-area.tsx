@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useState } from "react";
 import {
   ContextMenu,
@@ -6,12 +8,15 @@ import {
   ContextMenuItem,
 } from "@/components/ui/context-menu";
 import { Upload, ClipboardPaste } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type DropAreaProps = {
   setFile: (param: File | null) => void;
 };
 
 export default function DropArea({ setFile }: DropAreaProps) {
+  const t = useTranslations("Home");
+
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -94,8 +99,8 @@ export default function DropArea({ setFile }: DropAreaProps) {
         >
           <Upload className="w-10 h-10 mb-2" />
           <span className="text-lg">Drag and drop an image here</span>
-          <span className="text-sm">OR click to upload</span>
-          <span className="text-sm">OR press Ctrl + V to paste</span>
+          <span className="text-sm">or click to upload</span>
+          <span className="text-sm">or press Ctrl + V to paste</span>
           <input
             className="hidden"
             ref={fileInputRef}
@@ -110,7 +115,7 @@ export default function DropArea({ setFile }: DropAreaProps) {
       <ContextMenuContent>
         <ContextMenuItem onClick={pasteFromClipboard}>
           <ClipboardPaste className="w-5 h-5 mr-2" />
-          Paste image from clipboard
+          {t("paste-image-from-clipboard")}
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
