@@ -13,6 +13,7 @@ export default async function Home({
 }) {
   const metadataLabels = await getTranslations("Metadata");
   const settingsDialogLabels = await getTranslations("SettingsDialog");
+  const dictionaryInputLabels = await getTranslations("DictionaryInput");
   const { query } = await searchParams;
 
   return (
@@ -42,7 +43,14 @@ export default async function Home({
         />
       </div>
 
-      <DictionaryInput initialText={query ?? ""} />
+      <DictionaryInput
+        initialText={query ?? ""}
+        i18n={{
+          askAQuestionPlaceholder: dictionaryInputLabels(
+            "askAQuestionPlaceholder"
+          ),
+        }}
+      />
 
       {query && (
         <Suspense

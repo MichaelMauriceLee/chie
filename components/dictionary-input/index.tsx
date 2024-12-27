@@ -6,22 +6,24 @@ import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Textarea } from "../ui/textarea";
 import { useRef, useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 type DictionaryInputProps = {
   initialText: string;
+  i18n: {
+    askAQuestionPlaceholder: string;
+  };
 };
 
-export default function DictionaryInput({ initialText }: DictionaryInputProps) {
-  const t = useTranslations("DictionaryInput");
+export default function DictionaryInput({
+  initialText,
+  i18n,
+}: DictionaryInputProps) {
   const [text, setText] = useState(decodeURIComponent(initialText));
   const [showImageArea, setShowImageArea] = useState(false);
-
   const [isPending, startTransition] = useTransition();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   const router = useRouter();
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -61,7 +63,7 @@ export default function DictionaryInput({ initialText }: DictionaryInputProps) {
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             rows={1}
-            placeholder={t("askAQuestionPlaceholder")}
+            placeholder={i18n.askAQuestionPlaceholder}
             className="
                 w-full 
                 pr-10 
@@ -87,11 +89,16 @@ export default function DictionaryInput({ initialText }: DictionaryInputProps) {
         </div>
 
         <div className="flex items-center justify-between mb-3">
-          <Button onClick={() => setShowImageArea(!showImageArea)}>
+          <Button
+            onClick={() => setShowImageArea(!showImageArea)}
+          >
             <Upload />
           </Button>
 
-          <Button onClick={handleQuerySubmit} disabled={isPending}>
+          <Button
+            onClick={handleQuerySubmit}
+            disabled={isPending}
+          >
             {isPending ? <Loader className="animate-spin" /> : <Send />}
           </Button>
         </div>
