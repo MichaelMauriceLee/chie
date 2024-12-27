@@ -89,16 +89,11 @@ export default function DictionaryInput({
         </div>
 
         <div className="flex items-center justify-between mb-3">
-          <Button
-            onClick={() => setShowImageArea(!showImageArea)}
-          >
+          <Button onClick={() => setShowImageArea(!showImageArea)}>
             <Upload />
           </Button>
 
-          <Button
-            onClick={handleQuerySubmit}
-            disabled={isPending}
-          >
+          <Button onClick={handleQuerySubmit} disabled={isPending}>
             {isPending ? <Loader className="animate-spin" /> : <Send />}
           </Button>
         </div>

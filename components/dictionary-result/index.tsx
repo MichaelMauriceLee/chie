@@ -178,10 +178,6 @@ export default async function DictionaryResult({
           originalSentence: dictionaryDisplayLabels("labels.originalSentence"),
           addedOn: dictionaryDisplayLabels("labels.addedOn"),
         },
-        success: {
-          added: (params: { word: string; deck: string }) =>
-            dictionaryDisplayLabels("success.added", params),
-        },
         dateFormat: dictionaryDisplayLabels("dateFormat"),
       }}
     />

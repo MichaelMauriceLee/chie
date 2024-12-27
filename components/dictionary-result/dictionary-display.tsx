@@ -23,6 +23,7 @@ import { postNote } from "@/lib/agent";
 import { format } from "date-fns";
 import { Loader2, Plus, Volume2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 type DictionaryDisplayProps = {
   data: DictionaryResponse;
@@ -43,9 +44,6 @@ type DictionaryDisplayProps = {
       originalSentence: string;
       addedOn: string;
     };
-    success: {
-      added: (params: { word: string; deck: string }) => string;
-    };
     dateFormat: string;
   };
 };
@@ -56,6 +54,8 @@ export default function DictionaryDisplay({
   token,
   i18n,
 }: DictionaryDisplayProps) {
+  const t = useTranslations("DictionaryDisplay");
+
   const [selectedDeck] = useAtom(selectedDeckAtom);
 
   const [activeAdd, setActiveAdd] = useState<string | null>(null);
@@ -222,7 +222,7 @@ export default function DictionaryDisplay({
     try {
       setActiveAdd(word);
       await postNote(note);
-      toast.success(i18n.success.added({ word, deck: selectedDeck }), {
+      toast.success(t("success.added", { word, deck: selectedDeck }), {
         position: "top-center",
       });
     } catch (error) {
