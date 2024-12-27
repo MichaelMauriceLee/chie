@@ -12,6 +12,8 @@ import { Card, CardHeader, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import {
   AudioConfig,
+  PushAudioOutputStream,
+  PushAudioOutputStreamCallback,
   SpeechConfig,
   SpeechSynthesizer,
 } from "microsoft-cognitiveservices-speech-sdk";
@@ -22,7 +24,6 @@ import { format } from "date-fns";
 import { Loader2, Plus, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { FieldTypes } from "@/models/note";
 
 type DictionaryDisplayProps = {
   data: DictionaryResponse;
@@ -71,36 +72,65 @@ export default function DictionaryDisplay({
 
   async function saveAudioFile(
     text: string,
-    detectedLanguage: string,
-    filename: string
+    detectedLanguage: string
   ): Promise<string | null> {
     return new Promise((resolve, reject) => {
       try {
         const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
         speechConfig.speechSynthesisLanguage = detectedLanguage;
-        const audioConfig = AudioConfig.fromAudioFileOutput(filename);
+
+        class CustomAudioCallback implements PushAudioOutputStreamCallback {
+          private audioChunks: Uint8Array[] = [];
+
+          write(dataBuffer: ArrayBuffer) {
+            this.audioChunks.push(new Uint8Array(dataBuffer));
+          }
+
+          close() {
+            try {
+              const audioData = new Uint8Array(
+                this.audioChunks.reduce(
+                  (total, chunk) => total + chunk.length,
+                  0
+                )
+              );
+              let offset = 0;
+              this.audioChunks.forEach((chunk) => {
+                audioData.set(chunk, offset);
+                offset += chunk.length;
+              });
+
+              const base64String = btoa(String.fromCharCode(...audioData));
+
+              const dataUri = `data:audio/mpeg;base64,${base64String}`;
+
+              resolve(dataUri);
+            } catch (error) {
+              console.error("Error processing audio chunks:", error);
+              reject(null);
+            }
+          }
+        }
+
+        const audioCallback = new CustomAudioCallback();
+        const pushStream = PushAudioOutputStream.create(audioCallback);
+        const audioConfig = AudioConfig.fromStreamOutput(pushStream);
+
         const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
 
         synthesizer.speakTextAsync(
           text,
           () => {
             synthesizer.close();
-            resolve(filename);
           },
           (error) => {
             synthesizer.close();
             console.error("Audio generation failed:", error);
-            toast.error(t("errors.audioGenerationFailed"), {
-              position: "top-center",
-            });
             reject(null);
           }
         );
       } catch (error) {
         console.error(error);
-        toast.error(t("errors.audioGenerationFailed"), {
-          position: "top-center",
-        });
         reject(null);
       }
     });
@@ -119,16 +149,13 @@ export default function DictionaryDisplay({
       return;
     }
 
-    const filename = `${word}.mp3`;
-
     let audioPath;
     try {
-      audioPath = await saveAudioFile(
-        sentence,
-        data.detectedLanguage ?? "en-US",
-        filename
-      );
+      audioPath = await saveAudioFile(word, data.detectedLanguage ?? "en-US");
     } catch {
+      toast.error(t("errors.audioGenerationFailed"), {
+        position: "top-center",
+      });
       return;
     }
 
@@ -136,39 +163,42 @@ export default function DictionaryDisplay({
       return;
     }
 
-    const front = word;
-    const back = `
-      <strong>${t("labels.pronunciation")}:</strong> ${
-      pronunciation || t("labels.notAvailable")
-    }<br />
-      <strong>${t("labels.meanings")}:</strong> ${meanings.join(", ")}<br />
-      <strong>${t("labels.originalSentence")}:</strong> ${
-      sentence || t("labels.notAvailable")
-    }<br />
-      <strong>${t("labels.addedOn")}:</strong> ${format(
-      new Date(),
-      t("dateFormat")
-    )}
-    `;
-
     const note = {
       deckName: selectedDeck,
       modelName: "Basic",
       fields: {
-        Front: front,
-        Back: back,
+        Front: word,
+        Back: `
+          <div>
+            <div style="margin-bottom: 1em;">
+              <audio controls style="margin-top: 0.5em;">
+                <source src="${audioPath}" type="audio/mpeg" />
+                ${t("labels.audioNotSupported")}
+              </audio>
+            </div>
+            <div style="margin-bottom: 1em;">
+              <strong>${t("labels.pronunciation")}:</strong><br />
+              ${pronunciation || t("labels.notAvailable")}
+            </div>
+            <div style="margin-bottom: 1em;">
+              <strong>${t("labels.meanings")}:</strong><br />
+              ${meanings.join(", ")}
+            </div>
+            <div style="margin-bottom: 1em;">
+              <strong>${t("labels.originalSentence")}:</strong><br />
+              ${sentence || t("labels.notAvailable")}
+            </div>
+            <div>
+              <strong>${t("labels.addedOn")}:</strong><br />
+              ${format(new Date(), t("dateFormat"))}
+            </div>
+          </div>
+        `,
       },
       options: {
         allowDuplicate: false,
       },
       tags: ["dictionary"],
-      audio: [
-        {
-          url: `file://${audioPath}`,
-          filename: filename,
-          fields: [FieldTypes.Back],
-        },
-      ],
     };
 
     try {

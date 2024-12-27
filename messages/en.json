@@ -25,7 +25,8 @@
             "meanings": "Meanings",
             "originalSentence": "Original Sentence",
             "addedOn": "Added on",
-            "notAvailable": "N/A"
+            "notAvailable": "N/A",
+            "audioNotSupported": "Your browser does not support the audio element."
         },
         "dateFormat": "MMMM dd, yyyy, hh:mm a"
     },

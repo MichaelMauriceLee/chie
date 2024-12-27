@@ -25,7 +25,8 @@
             "meanings": "意味",
             "originalSentence": "元の文章",
             "addedOn": "追加日",
-            "notAvailable": "該当なし"
+            "notAvailable": "該当なし",
+            "audioNotSupported": "お使いのブラウザはオーディオ要素をサポートしていません。"
         },
         "dateFormat": "yyyy年MM月dd日 hh:mm a"
     },
