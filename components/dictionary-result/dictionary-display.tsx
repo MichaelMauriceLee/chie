@@ -23,21 +23,39 @@ import { postNote } from "@/lib/agent";
 import { format } from "date-fns";
 import { Loader2, Plus, Volume2 } from "lucide-react";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
 
 type DictionaryDisplayProps = {
   data: DictionaryResponse;
   region: string;
   token: string;
+  i18n: {
+    errors: {
+      speechFailed: string;
+      audioGenerationFailed: string;
+      addFailed: string;
+      noDeckSelected: string;
+    };
+    labels: {
+      audioNotSupported: string;
+      pronunciation: string;
+      notAvailable: string;
+      meanings: string;
+      originalSentence: string;
+      addedOn: string;
+    };
+    success: {
+      added: (params: { word: string; deck: string }) => string;
+    };
+    dateFormat: string;
+  };
 };
 
 export default function DictionaryDisplay({
   data,
   region,
   token,
+  i18n,
 }: DictionaryDisplayProps) {
-  const t = useTranslations("DictionaryDisplay");
-
   const [selectedDeck] = useAtom(selectedDeckAtom);
 
   const [activeAdd, setActiveAdd] = useState<string | null>(null);
@@ -57,14 +75,14 @@ export default function DictionaryDisplay({
         (error) => {
           synthesizer.close();
           console.error(error);
-          toast.error(t("errors.speechFailed"), {
+          toast.error(i18n.errors.speechFailed, {
             position: "top-center",
           });
         }
       );
     } catch (error) {
       console.error(error);
-      toast.error(t("errors.speechFailed"), {
+      toast.error(i18n.errors.speechFailed, {
         position: "top-center",
       });
     }
@@ -143,7 +161,7 @@ export default function DictionaryDisplay({
     sentence: string
   ) {
     if (!selectedDeck) {
-      toast.error(t("errors.noDeckSelected"), {
+      toast.error(i18n.errors.noDeckSelected, {
         position: "top-center",
       });
       return;
@@ -153,7 +171,7 @@ export default function DictionaryDisplay({
     try {
       audioPath = await saveAudioFile(word, data.detectedLanguage ?? "en-US");
     } catch {
-      toast.error(t("errors.audioGenerationFailed"), {
+      toast.error(i18n.errors.audioGenerationFailed, {
         position: "top-center",
       });
       return;
@@ -173,24 +191,24 @@ export default function DictionaryDisplay({
             <div style="margin-bottom: 1em;">
               <audio controls style="margin-top: 0.5em;">
                 <source src="${audioPath}" type="audio/mpeg" />
-                ${t("labels.audioNotSupported")}
+                ${i18n.labels.audioNotSupported}
               </audio>
             </div>
             <div style="margin-bottom: 1em;">
-              <strong>${t("labels.pronunciation")}:</strong><br />
-              ${pronunciation || t("labels.notAvailable")}
+              <strong>${i18n.labels.pronunciation}:</strong><br />
+              ${pronunciation || i18n.labels.notAvailable}
             </div>
             <div style="margin-bottom: 1em;">
-              <strong>${t("labels.meanings")}:</strong><br />
+              <strong>${i18n.labels.meanings}:</strong><br />
               ${meanings.join(", ")}
             </div>
             <div style="margin-bottom: 1em;">
-              <strong>${t("labels.originalSentence")}:</strong><br />
-              ${sentence || t("labels.notAvailable")}
+              <strong>${i18n.labels.originalSentence}:</strong><br />
+              ${sentence || i18n.labels.notAvailable}
             </div>
             <div>
-              <strong>${t("labels.addedOn")}:</strong><br />
-              ${format(new Date(), t("dateFormat"))}
+              <strong>${i18n.labels.addedOn}:</strong><br />
+              ${format(new Date(), i18n.dateFormat)}
             </div>
           </div>
         `,
@@ -204,12 +222,12 @@ export default function DictionaryDisplay({
     try {
       setActiveAdd(word);
       await postNote(note);
-      toast.success(t("success.added", { word, deck: selectedDeck }), {
+      toast.success(i18n.success.added({ word, deck: selectedDeck }), {
         position: "top-center",
       });
     } catch (error) {
-      console.error(t("errors.addFailed"), error);
-      toast.error(t("errors.addFailed"), {
+      console.error(i18n.errors.addFailed, error);
+      toast.error(i18n.errors.addFailed, {
         position: "top-center",
       });
     } finally {
@@ -295,7 +313,7 @@ export default function DictionaryDisplay({
                 </AccordionTrigger>
                 <AccordionContent className="mt-2 bg-white p-4 border border-gray-100 rounded">
                   <h3 className="text-sm font-medium mb-2">
-                    {t("labels.meanings")}
+                    {i18n.labels.meanings}
                   </h3>
                   <ul className="list-disc ml-5 space-y-1 text-gray-700">
                     {word.meanings.map((meaning, idx) => (

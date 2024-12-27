@@ -1,5 +1,6 @@
 import { ChatGPTResponse, DictionaryResponse } from "@/models/serverActions";
 import DictionaryDisplay from "./dictionary-display";
+import { getTranslations } from "next-intl/server";
 
 async function getSpeechToken() {
   const apiKey = process.env.SPEECH_KEY;
@@ -66,9 +67,9 @@ async function askDictionary(query: string, language: string) {
                   - Break down the sentence or word into individual components.
                   - For each component, provide:
                     - **Text**: The word itself.
-                    - **Pronunciation**: A human-friendly pronunciation guide.
+                    - **Pronunciation**: A human-friendly pronunciation guide in ${language}.
                     - **Meanings**: A list of possible meanings in ${language}.
-                    - **Compound Words**: If the word is part of a compound word, provide the breakdown of its components with their text, pronunciations, and meanings.
+                    - **Compound Words**: If the word is a compound word, provide the breakdown of its components with their text, pronunciations, and meanings.
 
                 3. Provide the **"sentence"** field, which should include:
                   - The original sentence or phrase (minus any unrelated filler words or questions).
@@ -83,13 +84,13 @@ async function askDictionary(query: string, language: string) {
                 \`\`\`typescript
                 type Word = {
                   text: string;           // The original word or component
-                  pronunciation: string;  // Human-friendly pronunciation (if desired)
+                  pronunciation: string;  // Human-friendly pronunciation
                   meanings: string[];     // Possible meanings
                   words: Word[];          // Nested components for compound words
                 };
 
                 type DictionaryResponse = {
-                  explanation: string;       // A general explanation or direct translation
+                  explanation: string;        // A general explanation or direct translation
                   words?: Word[];             // The breakdown of words and their details
                   sentence?: string;          // The original sentence (cleaned of filler words or questions)
                   detectedLanguage?: string;  // Locale string (e.g. ja-JP) for Azure TTS
@@ -140,12 +141,13 @@ export default async function DictionaryResult({
   language,
 }: DictionaryResultProps) {
   const dictionaryDataPromise = askDictionary(query, language);
-
   const tokenPromise = getSpeechToken();
+  const translationsPromise = getTranslations("DictionaryDisplay");
 
-  const [data, speechToken] = await Promise.all([
+  const [data, speechToken, dictionaryDisplayLabels] = await Promise.all([
     dictionaryDataPromise,
     tokenPromise,
+    translationsPromise,
   ]);
 
   if (!data) {
@@ -157,6 +159,31 @@ export default async function DictionaryResult({
       data={data}
       token={speechToken.token}
       region={speechToken.region}
+      i18n={{
+        errors: {
+          speechFailed: dictionaryDisplayLabels("errors.speechFailed"),
+          audioGenerationFailed: dictionaryDisplayLabels(
+            "errors.audioGenerationFailed"
+          ),
+          addFailed: dictionaryDisplayLabels("errors.addFailed"),
+          noDeckSelected: dictionaryDisplayLabels("errors.noDeckSelected"),
+        },
+        labels: {
+          audioNotSupported: dictionaryDisplayLabels(
+            "labels.audioNotSupported"
+          ),
+          pronunciation: dictionaryDisplayLabels("labels.pronunciation"),
+          notAvailable: dictionaryDisplayLabels("labels.notAvailable"),
+          meanings: dictionaryDisplayLabels("labels.meanings"),
+          originalSentence: dictionaryDisplayLabels("labels.originalSentence"),
+          addedOn: dictionaryDisplayLabels("labels.addedOn"),
+        },
+        success: {
+          added: (params: { word: string; deck: string }) =>
+            dictionaryDisplayLabels("success.added", params),
+        },
+        dateFormat: dictionaryDisplayLabels("dateFormat"),
+      }}
     />
   );
 }
