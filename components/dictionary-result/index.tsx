@@ -66,7 +66,7 @@ async function askDictionary(query: string, language: string) {
                   - Break down the sentence or word into individual components.
                   - For each component, provide:
                     - **Text**: The word itself.
-                    - **Pronunciation**: A human-friendly pronunciation guide (if relevant).
+                    - **Pronunciation**: A human-friendly pronunciation guide.
                     - **Meanings**: A list of possible meanings in ${language}.
                     - **Compound Words**: If the word is part of a compound word, provide the breakdown of its components with their text, pronunciations, and meanings.
 
@@ -75,6 +75,8 @@ async function askDictionary(query: string, language: string) {
                   - This field ensures the user's exact input (or a cleaned-up version) is preserved.
 
                 4. For any direct translation or explanation that does not fall into "words" or "sentence," place it in the "explanation" field in ${language}.
+
+                5. Always populate the "explanation" field with some relevant information about grammar, usage, or context, even if no direct question was asked. This ensures the output consistently provides valuable linguistic insight in every response.
 
                 Format the output as JSON matching the following TypeScript models:
 
@@ -87,7 +89,7 @@ async function askDictionary(query: string, language: string) {
                 };
 
                 type DictionaryResponse = {
-                  explanation?: string;       // A general explanation or direct translation
+                  explanation: string;       // A general explanation or direct translation
                   words?: Word[];             // The breakdown of words and their details
                   sentence?: string;          // The original sentence (cleaned of filler words or questions)
                   detectedLanguage?: string;  // Locale string (e.g. ja-JP) for Azure TTS
@@ -120,7 +122,7 @@ async function askDictionary(query: string, language: string) {
       content = content.slice(7, -3).trim();
     }
 
-    console.log(content)
+    console.log(content);
 
     return JSON.parse(content) as DictionaryResponse;
   } catch (error) {

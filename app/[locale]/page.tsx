@@ -18,11 +18,22 @@ export default async function Home({
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-  const metadataLabels = await getTranslations("Metadata");
-  const settingsDialogLabels = await getTranslations("SettingsDialog");
-  const dictionaryInputLabels = await getTranslations("DictionaryInput");
-  const { locale } = await params;
-  const { query } = await searchParams;
+  const [
+    metadataLabels,
+    settingsDialogLabels,
+    dictionaryInputLabels,
+    resolvedParams,
+    resolvedSearchParams,
+  ] = await Promise.all([
+    getTranslations("Metadata"),
+    getTranslations("SettingsDialog"),
+    getTranslations("DictionaryInput"),
+    params,
+    searchParams,
+  ]);
+
+  const { locale } = resolvedParams;
+  const { query } = resolvedSearchParams;
 
   const languageName =
     LOCALE_LANGUAGE_MAP[locale as keyof typeof LOCALE_LANGUAGE_MAP] ||

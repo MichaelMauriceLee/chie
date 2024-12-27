@@ -33,7 +33,7 @@ export type Word = {
 };
 
 export type DictionaryResponse = {
-  explanation?: string; 
+  explanation: string; 
   words?: Word[];
   sentence?: string;
   detectedLanguage?: string;
