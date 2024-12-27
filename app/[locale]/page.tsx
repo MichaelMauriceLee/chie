@@ -92,6 +92,7 @@ export default async function Home({
               </CardContent>
             </Card>
           }
+          key={query}
         >
           <ErrorBoundary
             fallback={
