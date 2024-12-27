@@ -14,6 +14,7 @@ import { Label } from "../ui/label";
 import { OCRBlock, OCRCoordinate, OCRWord } from "@/models/serverActions";
 import { analyzeImage } from "@/app/[locale]/actions";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 type ImageDisplayProps = {
   image: string;
@@ -63,7 +64,6 @@ export default function ImageDisplay({
     null
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
 
   const [isCanvasVisible, setIsCanvasVisible] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -80,7 +80,6 @@ export default function ImageDisplay({
 
   const fetchAnalysis = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
     setImageSearchResult(null);
 
     try {
@@ -89,12 +88,14 @@ export default function ImageDisplay({
     } catch (err: unknown) {
       const resolvedError =
         err instanceof Error ? err : new Error("Unknown error occurred.");
-      setError(resolvedError);
+      toast.error(`${t("error.message")}: ${resolvedError.message}`, {
+        position: "top-center",
+      });
       console.error(resolvedError);
     } finally {
       setIsLoading(false);
     }
-  }, [image]);
+  }, [image, t]);
 
   useEffect(() => {
     if (image) {
@@ -375,11 +376,6 @@ export default function ImageDisplay({
     <>
       <div className="h-96 w-full relative" ref={canvasWrapperRef}>
         {isLoading && <LoadingIndicator />}
-        {error && (
-          <div className="text-red-500">
-            {t("error.message")}: {error.message}
-          </div>
-        )}
 
         <canvas
           className={`${isCanvasVisible ? "border border-black" : ""} `}

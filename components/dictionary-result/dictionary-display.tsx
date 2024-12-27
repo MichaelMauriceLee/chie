@@ -42,21 +42,31 @@ export default function DictionaryDisplay({
   const [activeAdd, setActiveAdd] = useState<string | null>(null);
 
   function speakText(text: string, detectedLanguage: string) {
-    const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
-    speechConfig.speechSynthesisLanguage = detectedLanguage;
-    const audioConfig = AudioConfig.fromDefaultSpeakerOutput();
-    const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
+    try {
+      const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
+      speechConfig.speechSynthesisLanguage = detectedLanguage;
+      const audioConfig = AudioConfig.fromDefaultSpeakerOutput();
+      const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
 
-    synthesizer.speakTextAsync(
-      text,
-      () => {
-        synthesizer.close();
-      },
-      (error) => {
-        console.error(error);
-        synthesizer.close();
-      }
-    );
+      synthesizer.speakTextAsync(
+        text,
+        () => {
+          synthesizer.close();
+        },
+        (error) => {
+          synthesizer.close();
+          console.error(error);
+          toast.error(t("errors.speechFailed"), {
+            position: "top-center",
+          });
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error(t("errors.speechFailed"), {
+        position: "top-center",
+      });
+    }
   }
 
   async function saveAudioFile(
@@ -65,23 +75,34 @@ export default function DictionaryDisplay({
     filename: string
   ): Promise<string | null> {
     return new Promise((resolve, reject) => {
-      const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
-      speechConfig.speechSynthesisLanguage = detectedLanguage;
-      const audioConfig = AudioConfig.fromAudioFileOutput(filename);
-      const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
+      try {
+        const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
+        speechConfig.speechSynthesisLanguage = detectedLanguage;
+        const audioConfig = AudioConfig.fromAudioFileOutput(filename);
+        const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
 
-      synthesizer.speakTextAsync(
-        text,
-        () => {
-          synthesizer.close();
-          resolve(filename);
-        },
-        (error) => {
-          synthesizer.close();
-          console.error("Audio generation failed:", error);
-          reject(null);
-        }
-      );
+        synthesizer.speakTextAsync(
+          text,
+          () => {
+            synthesizer.close();
+            resolve(filename);
+          },
+          (error) => {
+            synthesizer.close();
+            console.error("Audio generation failed:", error);
+            toast.error(t("errors.audioGenerationFailed"), {
+              position: "top-center",
+            });
+            reject(null);
+          }
+        );
+      } catch (error) {
+        console.error(error);
+        toast.error(t("errors.audioGenerationFailed"), {
+          position: "top-center",
+        });
+        reject(null);
+      }
     });
   }
 
@@ -92,20 +113,26 @@ export default function DictionaryDisplay({
     sentence: string
   ) {
     if (!selectedDeck) {
-      toast.error(t("errors.noDeckSelected"));
+      toast.error(t("errors.noDeckSelected"), {
+        position: "top-center",
+      });
       return;
     }
 
     const filename = `${word}.mp3`;
 
-    const audioPath = await saveAudioFile(
-      sentence,
-      data.detectedLanguage ?? "en-US",
-      filename
-    );
+    let audioPath;
+    try {
+      audioPath = await saveAudioFile(
+        sentence,
+        data.detectedLanguage ?? "en-US",
+        filename
+      );
+    } catch {
+      return;
+    }
 
     if (!audioPath) {
-      toast.error(t("errors.audioGenerationFailed"));
       return;
     }
 
@@ -147,10 +174,14 @@ export default function DictionaryDisplay({
     try {
       setActiveAdd(word);
       await postNote(note);
-      toast.success(t("success.added", { word, deck: selectedDeck }));
+      toast.success(t("success.added", { word, deck: selectedDeck }), {
+        position: "top-center",
+      });
     } catch (error) {
       console.error(t("errors.addFailed"), error);
-      toast.error(t("errors.addFailed"));
+      toast.error(t("errors.addFailed"), {
+        position: "top-center",
+      });
     } finally {
       setActiveAdd(null);
     }

@@ -46,10 +46,13 @@ export default function SettingsDialog() {
       const decks = await getDeckNames();
       setDeckNames(decks);
       localStorage.setItem("deckNames", JSON.stringify(decks));
+      toast.success(t("success.sync-completed"), {
+        position: "top-center",
+      });
     } catch (error) {
       console.error(t("error.sync-failed"), error);
       toast.error(t("error.sync-failed"), {
-        position: "top-center", 
+        position: "top-center",
       });
     } finally {
       setIsSyncing(false);
