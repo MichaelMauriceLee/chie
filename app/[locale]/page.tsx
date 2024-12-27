@@ -98,11 +98,11 @@ export default async function Home({
               <Card className="mt-4">
                 <CardHeader>
                   <h3 className="text-red-600">
-                    {errorBoundaryLabels("errorTitle")}
+                    {errorBoundaryLabels("title")}
                   </h3>
                 </CardHeader>
                 <CardContent>
-                  <p>{errorBoundaryLabels("errorMessage")}</p>
+                  <p>{errorBoundaryLabels("description")}</p>
                 </CardContent>
               </Card>
             }
