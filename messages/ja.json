@@ -1,7 +1,7 @@
 {
     "Metadata": {
         "title": "知恵",
-        "description": "次世代の多言語辞書"
+        "description": "次世代多言語辞書"
     },
     "Home": {
         "close": "閉じる",
@@ -12,36 +12,36 @@
     },
     "DictionaryDisplay": {
         "errors": {
-            "noDeckSelected": "まず設定でデッキを選択してください。",
-            "addFailed": "カードをAnkiに追加できませんでした。",
+            "noDeckSelected": "最初に設定でデッキを選択してください。",
+            "addFailed": "Ankiにカードを追加できませんでした。",
             "audioGenerationFailed": "単語の音声を生成できませんでした。",
             "speechFailed": "単語の音声を再生できませんでした。"
         },
         "success": {
-            "added": "「{word}」をデッキ「{deck}」に追加しました。"
+            "added": "デッキ \"{deck}\" に \"{word}\" を追加しました。"
         },
         "labels": {
             "pronunciation": "発音",
             "meanings": "意味",
-            "originalSentence": "元の文章",
-            "addedOn": "追加日",
-            "notAvailable": "該当なし",
-            "audioNotSupported": "お使いのブラウザはオーディオ要素をサポートしていません。"
+            "originalSentence": "元の文",
+            "addedOn": "追加日時",
+            "notAvailable": "N/A",
+            "audioNotSupported": "お使いのブラウザは音声要素をサポートしていません。"
         },
         "dateFormat": "yyyy年MM月dd日 hh:mm a"
     },
     "NotFound": {
         "title": "404 - ページが見つかりません",
-        "description": "お探しのページは見つかりませんでした。",
+        "description": "お探しのページが見つかりませんでした。",
         "backHome": "ホームに戻る"
     },
     "ImageCropper": {
-        "instructions": "ウィンドウを配置し、ボタンを押して画像を切り取り、解析を開始してください。",
+        "instructions": "ウィンドウを配置し、画像をトリミングして分析を開始するボタンを押してください。",
         "clearButton": "クリア",
-        "cropButton": "画像を切り取る"
+        "cropButton": "画像をトリミング"
     },
     "DropArea": {
-        "drag-drop": "ここに画像をドラッグ＆ドロップ",
+        "drag-drop": "ここに画像をドラッグ＆ドロップしてください",
         "click-upload": "またはクリックしてアップロード",
         "ctrl-v": "またはCtrl + Vで貼り付け",
         "paste-from-clipboard": "クリップボードから画像を貼り付け",
@@ -55,19 +55,24 @@
         },
         "title": "設定",
         "description": "一般設定とAnkiデッキを管理します。",
+        "locale": {
+            "title": "言語設定",
+            "en": "英語",
+            "ja": "日本語"
+        },
         "anki": {
             "title": "Anki",
-            "sync-button": "同期",
-            "select-deck": "同期するデッキを選択:",
-            "placeholder": "デッキを選択してください"
+            "syncButton": "同期",
+            "selectDeck": "同期するデッキを選択してください：",
+            "placeholder": "デッキを選択",
+            "success": {
+                "syncCompleted": "同期が正常に完了しました。"
+            },
+            "error": {
+                "syncFailed": "Ankiとの同期に失敗しました。"
+            }
         },
-        "save-button": "保存",
-        "success": {
-            "sync-completed": "同期が正常に完了しました。"
-        },
-        "error": {
-            "sync-failed": "Ankiとの同期に失敗しました。"
-        }
+        "saveButton": "保存"
     },
     "ImageDisplay": {
         "error": {
@@ -75,9 +80,9 @@
             "unknown": "不明なエラーが発生しました"
         },
         "instructions": {
-            "zoom": "画像上にカーソルを置き、スクロールホイールで拡大縮小します。",
-            "pan": "左クリックを押しながらドラッグして移動します。",
-            "select": "Ctrlキーを押しながら左クリックして単語を選択・検索します。"
+            "zoom": "画像の上にマウスカーソルを置き、スクロールホイールでズームしてください。",
+            "pan": "左クリックを押しながらドラッグしてパンします。",
+            "select": "Ctrlキーを押しながら左クリックして単語を選択して検索します。"
         },
         "options": {
             "lines": "行",

@@ -11,14 +11,35 @@ export default async function Home({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-  const t = await getTranslations("Metadata");
+  const metadataLabels = await getTranslations("Metadata");
+  const settingsDialogLabels = await getTranslations("SettingsDialog");
   const { query } = await searchParams;
 
   return (
     <div className="min-h-screen px-10 pt-4 flex flex-col gap-4">
       <div className="flex w-full items-center justify-between">
-        <h1 className="text-6xl font-bold">{t("title")}</h1>
-        <SettingsDialog />
+        <h1 className="text-6xl font-bold">{metadataLabels("title")}</h1>
+        <SettingsDialog
+          i18n={{
+            title: settingsDialogLabels("title"),
+            description: settingsDialogLabels("description"),
+            saveButton: settingsDialogLabels("saveButton"),
+            ariaLabel: settingsDialogLabels("aria.settings"),
+            locale: {
+              title: settingsDialogLabels("locale.title"),
+              en: settingsDialogLabels("locale.en"),
+              ja: settingsDialogLabels("locale.ja"),
+            },
+            anki: {
+              title: settingsDialogLabels("anki.title"),
+              syncButton: settingsDialogLabels("anki.syncButton"),
+              selectDeck: settingsDialogLabels("anki.selectDeck"),
+              placeholder: settingsDialogLabels("anki.placeholder"),
+              success: settingsDialogLabels("anki.success.syncCompleted"),
+              error: settingsDialogLabels("anki.error.syncFailed"),
+            },
+          }}
+        />
       </div>
 
       <DictionaryInput initialText={query ?? ""} />
