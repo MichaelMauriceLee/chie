@@ -1,7 +1,7 @@
 {
     "Metadata": {
         "title": "知恵",
-        "description": "次世代多言語辞書"
+        "description": "次世代の多言語辞書"
     },
     "Home": {
         "close": "閉じる",
@@ -13,8 +13,9 @@
     "DictionaryDisplay": {
         "errors": {
             "noDeckSelected": "まず設定でデッキを選択してください。",
-            "addFailed": "Ankiにカードを追加できませんでした。",
-            "audioGenerationFailed": "単語の音声生成に失敗しました。"
+            "addFailed": "カードをAnkiに追加できませんでした。",
+            "audioGenerationFailed": "単語の音声を生成できませんでした。",
+            "speechFailed": "単語の音声を再生できませんでした。"
         },
         "success": {
             "added": "「{word}」をデッキ「{deck}」に追加しました。"
@@ -22,7 +23,7 @@
         "labels": {
             "pronunciation": "発音",
             "meanings": "意味",
-            "originalSentence": "原文",
+            "originalSentence": "元の文章",
             "addedOn": "追加日",
             "notAvailable": "該当なし"
         },
@@ -30,11 +31,11 @@
     },
     "NotFound": {
         "title": "404 - ページが見つかりません",
-        "description": "お探しのページが見つかりませんでした。申し訳ありません。",
+        "description": "お探しのページは見つかりませんでした。",
         "backHome": "ホームに戻る"
     },
     "ImageCropper": {
-        "instructions": "ウィンドウを調整してからボタンを押して画像を切り取り、解析を開始してください。",
+        "instructions": "ウィンドウを配置し、ボタンを押して画像を切り取り、解析を開始してください。",
         "clearButton": "クリア",
         "cropButton": "画像を切り取る"
     },
@@ -44,7 +45,7 @@
         "ctrl-v": "またはCtrl + Vで貼り付け",
         "paste-from-clipboard": "クリップボードから画像を貼り付け",
         "error": {
-            "paste-failed": "クリップボードから画像を貼り付けできませんでした。"
+            "paste-failed": "クリップボードから画像を貼り付けできませんでした"
         }
     },
     "SettingsDialog": {
@@ -57,9 +58,12 @@
             "title": "Anki",
             "sync-button": "同期",
             "select-deck": "同期するデッキを選択:",
-            "placeholder": "デッキを選択"
+            "placeholder": "デッキを選択してください"
         },
         "save-button": "保存",
+        "success": {
+            "sync-completed": "同期が正常に完了しました。"
+        },
         "error": {
             "sync-failed": "Ankiとの同期に失敗しました。"
         }
@@ -70,9 +74,9 @@
             "unknown": "不明なエラーが発生しました"
         },
         "instructions": {
-            "zoom": "マウスカーソルを画像上に移動し、スクロールホイールでズームインしてください。",
-            "pan": "左クリックを押したままドラッグして移動します。",
-            "select": "Ctrlキーを押しながら左クリックして単語を選択して検索します。"
+            "zoom": "画像上にカーソルを置き、スクロールホイールで拡大縮小します。",
+            "pan": "左クリックを押しながらドラッグして移動します。",
+            "select": "Ctrlキーを押しながら左クリックして単語を選択・検索します。"
         },
         "options": {
             "lines": "行",

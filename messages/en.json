@@ -14,7 +14,8 @@
         "errors": {
             "noDeckSelected": "Please select a deck first in the settings.",
             "addFailed": "Failed to add card to Anki.",
-            "audioGenerationFailed": "Failed to generate audio for the word."
+            "audioGenerationFailed": "Failed to generate audio for the word.",
+            "speechFailed": "Failed to play the audio for the word."
         },
         "success": {
             "added": "Added \"{word}\" to deck \"{deck}\"."
@@ -60,6 +61,9 @@
             "placeholder": "Choose a deck"
         },
         "save-button": "Save",
+        "success": {
+            "sync-completed": "Sync completed successfully."
+        },
         "error": {
             "sync-failed": "Failed to sync with Anki."
         }
