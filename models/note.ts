@@ -1,6 +1,6 @@
 export enum FieldTypes {
-  front = "Front",
-  back = "Back",
+  Front = "Front",
+  Back = "Back",
 }
 
 export type Media = {

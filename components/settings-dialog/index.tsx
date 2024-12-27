@@ -23,6 +23,7 @@ import { Settings, RefreshCcw, Loader } from "lucide-react";
 import { deckNamesAtom, selectedDeckAtom } from "@/store/atoms";
 import { getDeckNames } from "@/lib/agent";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 export default function SettingsDialog() {
   const t = useTranslations("SettingsDialog");
@@ -47,6 +48,9 @@ export default function SettingsDialog() {
       localStorage.setItem("deckNames", JSON.stringify(decks));
     } catch (error) {
       console.error(t("error.sync-failed"), error);
+      toast.error(t("error.sync-failed"), {
+        position: "top-center", 
+      });
     } finally {
       setIsSyncing(false);
     }

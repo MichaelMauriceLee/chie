@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import { Loader2, Plus, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { FieldTypes } from "@/models/note";
 
 type DictionaryDisplayProps = {
   data: DictionaryResponse;
@@ -58,6 +59,32 @@ export default function DictionaryDisplay({
     );
   }
 
+  async function saveAudioFile(
+    text: string,
+    detectedLanguage: string,
+    filename: string
+  ): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      const speechConfig = SpeechConfig.fromAuthorizationToken(token, region);
+      speechConfig.speechSynthesisLanguage = detectedLanguage;
+      const audioConfig = AudioConfig.fromAudioFileOutput(filename);
+      const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
+
+      synthesizer.speakTextAsync(
+        text,
+        () => {
+          synthesizer.close();
+          resolve(filename);
+        },
+        (error) => {
+          synthesizer.close();
+          console.error("Audio generation failed:", error);
+          reject(null);
+        }
+      );
+    });
+  }
+
   async function addToAnki(
     word: string,
     pronunciation: string,
@@ -66,6 +93,19 @@ export default function DictionaryDisplay({
   ) {
     if (!selectedDeck) {
       toast.error(t("errors.noDeckSelected"));
+      return;
+    }
+
+    const filename = `${word}.mp3`;
+
+    const audioPath = await saveAudioFile(
+      sentence,
+      data.detectedLanguage ?? "en-US",
+      filename
+    );
+
+    if (!audioPath) {
+      toast.error(t("errors.audioGenerationFailed"));
       return;
     }
 
@@ -95,6 +135,13 @@ export default function DictionaryDisplay({
         allowDuplicate: false,
       },
       tags: ["dictionary"],
+      audio: [
+        {
+          url: `file://${audioPath}`,
+          filename: filename,
+          fields: [FieldTypes.Back],
+        },
+      ],
     };
 
     try {

@@ -13,7 +13,8 @@
     "DictionaryDisplay": {
         "errors": {
             "noDeckSelected": "まず設定でデッキを選択してください。",
-            "addFailed": "Ankiにカードを追加できませんでした。"
+            "addFailed": "Ankiにカードを追加できませんでした。",
+            "audioGenerationFailed": "単語の音声生成に失敗しました。"
         },
         "success": {
             "added": "「{word}」をデッキ「{deck}」に追加しました。"

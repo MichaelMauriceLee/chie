@@ -13,7 +13,8 @@
     "DictionaryDisplay": {
         "errors": {
             "noDeckSelected": "Please select a deck first in the settings.",
-            "addFailed": "Failed to add card to Anki."
+            "addFailed": "Failed to add card to Anki.",
+            "audioGenerationFailed": "Failed to generate audio for the word."
         },
         "success": {
             "added": "Added \"{word}\" to deck \"{deck}\"."
