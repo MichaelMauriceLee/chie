@@ -34,7 +34,7 @@ async function getSpeechToken() {
   }
 }
 
-async function askDictionary(query: string) {
+async function askDictionary(query: string, language: string) {
   const apiKey = process.env.OPENAI_KEY;
 
   if (!apiKey) {
@@ -59,22 +59,22 @@ async function askDictionary(query: string) {
 
                 When given a sentence or phrase, follow these steps:
 
-                1. If the input is a general question about grammar or language, provide a detailed explanation in the "explanation" field.
+                1. If the input is a general question about grammar or language, provide a detailed explanation in the "explanation" field in ${language}.
 
                 2. If the input is a sentence or word, do the following:
-                  - Translate it into English if it is not already in English.
+                  - Translate it into ${language} if it is not already in ${language}.
                   - Break down the sentence or word into individual components.
                   - For each component, provide:
                     - **Text**: The word itself.
                     - **Pronunciation**: A human-friendly pronunciation guide (if relevant).
-                    - **Meanings**: A list of possible meanings.
+                    - **Meanings**: A list of possible meanings in ${language}.
                     - **Compound Words**: If the word is part of a compound word, provide the breakdown of its components with their text, pronunciations, and meanings.
 
                 3. Provide the **"sentence"** field, which should include:
                   - The original sentence or phrase (minus any unrelated filler words or questions).
                   - This field ensures the user's exact input (or a cleaned-up version) is preserved.
 
-                4. For any direct translation or explanation that does not fall into "words" or "sentence," place it in the "explanation" field.
+                4. For any direct translation or explanation that does not fall into "words" or "sentence," place it in the "explanation" field in ${language}.
 
                 Format the output as JSON matching the following TypeScript models:
 
@@ -120,14 +120,24 @@ async function askDictionary(query: string) {
       content = content.slice(7, -3).trim();
     }
 
+    console.log(content)
+
     return JSON.parse(content) as DictionaryResponse;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Unknown error");
   }
 }
 
-export default async function DictionaryResult({ query }: { query: string }) {
-  const dictionaryDataPromise = askDictionary(query);
+type DictionaryResultProps = {
+  query: string;
+  language: string;
+};
+
+export default async function DictionaryResult({
+  query,
+  language,
+}: DictionaryResultProps) {
+  const dictionaryDataPromise = askDictionary(query, language);
 
   const tokenPromise = getSpeechToken();
 

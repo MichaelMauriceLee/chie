@@ -6,15 +6,27 @@ import DictionaryResult from "@/components/dictionary-result";
 import SettingsDialog from "@/components/settings-dialog";
 import { getTranslations } from "next-intl/server";
 
+const LOCALE_LANGUAGE_MAP = {
+  en: "English",
+  ja: "Japanese",
+};
+
 export default async function Home({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
   const metadataLabels = await getTranslations("Metadata");
   const settingsDialogLabels = await getTranslations("SettingsDialog");
   const dictionaryInputLabels = await getTranslations("DictionaryInput");
+  const { locale } = await params;
   const { query } = await searchParams;
+
+  const languageName =
+    LOCALE_LANGUAGE_MAP[locale as keyof typeof LOCALE_LANGUAGE_MAP] ||
+    "English";
 
   return (
     <div className="min-h-screen px-10 pt-4 flex flex-col gap-4">
@@ -67,7 +79,10 @@ export default async function Home({
             </Card>
           }
         >
-          <DictionaryResult query={decodeURIComponent(query)} />
+          <DictionaryResult
+            query={decodeURIComponent(query)}
+            language={languageName}
+          />
         </Suspense>
       )}
     </div>
