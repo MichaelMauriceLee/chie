@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import DictionaryResult from "@/components/dictionary-result";
 import SettingsDialog from "@/components/settings-dialog";
+import ErrorBoundary from "@/components/error-boundary";
 import { getTranslations } from "next-intl/server";
 
 const LOCALE_LANGUAGE_MAP = {
@@ -22,12 +23,14 @@ export default async function Home({
     metadataLabels,
     settingsDialogLabels,
     dictionaryInputLabels,
+    errorBoundaryLabels,
     resolvedParams,
     resolvedSearchParams,
   ] = await Promise.all([
     getTranslations("Metadata"),
     getTranslations("SettingsDialog"),
     getTranslations("DictionaryInput"),
+    getTranslations("ErrorBoundary"),
     params,
     searchParams,
   ]);
@@ -90,10 +93,25 @@ export default async function Home({
             </Card>
           }
         >
-          <DictionaryResult
-            query={decodeURIComponent(query)}
-            language={languageName}
-          />
+          <ErrorBoundary
+            fallback={
+              <Card className="mt-4">
+                <CardHeader>
+                  <h3 className="text-red-600">
+                    {errorBoundaryLabels("errorTitle")}
+                  </h3>
+                </CardHeader>
+                <CardContent>
+                  <p>{errorBoundaryLabels("errorMessage")}</p>
+                </CardContent>
+              </Card>
+            }
+          >
+            <DictionaryResult
+              query={decodeURIComponent(query)}
+              language={languageName}
+            />
+          </ErrorBoundary>
         </Suspense>
       )}
     </div>

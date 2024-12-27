@@ -91,5 +91,9 @@
         "buttons": {
             "clear": "クリア"
         }
+    },
+    "ErrorBoundary": {
+        "title": "問題が発生しました",
+        "description": "辞書の結果を読み込めませんでした。後でもう一度お試しください。"
     }
 }

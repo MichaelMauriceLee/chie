@@ -91,5 +91,9 @@
         "buttons": {
             "clear": "Clear"
         }
+    },
+    "ErrorBoundary": {
+        "title": "An error occurred",
+        "description": "We couldn't load the dictionary result. Please try again later."
     }
 }
