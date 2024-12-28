@@ -84,22 +84,22 @@ export default async function Home({
         }}
       />
 
-      {query ? (
-        <Suspense
-          fallback={
-            <Card className="mt-4">
-              <CardHeader>
-                <Skeleton className="h-4 w-2/3 mb-2" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-3 w-full mb-2" />
-                <Skeleton className="h-3 w-5/6 mb-2" />
-                <Skeleton className="h-3 w-4/5" />
-              </CardContent>
-            </Card>
-          }
-          key={query}
-        >
+      <Suspense
+        fallback={
+          <Card className="mt-4">
+            <CardHeader>
+              <Skeleton className="h-4 w-2/3 mb-2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-3 w-full mb-2" />
+              <Skeleton className="h-3 w-5/6 mb-2" />
+              <Skeleton className="h-3 w-4/5" />
+            </CardContent>
+          </Card>
+        }
+        key={query}
+      >
+        {query ? (
           <ErrorBoundary
             fallback={
               <Card className="mt-4">
@@ -119,26 +119,10 @@ export default async function Home({
               language={languageName}
             />
           </ErrorBoundary>
-        </Suspense>
-      ) : (
-        <Suspense
-          fallback={
-            <Card className="mt-4">
-              <CardHeader>
-                <Skeleton className="h-4 w-2/3 mb-2" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-3 w-full mb-2" />
-                <Skeleton className="h-3 w-5/6 mb-2" />
-                <Skeleton className="h-3 w-4/5" />
-              </CardContent>
-            </Card>
-          }
-          key={query}
-        >
+        ) : (
           <Info />
-        </Suspense>
-      )}
+        )}
+      </Suspense>
     </div>
   );
 }
