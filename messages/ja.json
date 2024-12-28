@@ -72,7 +72,12 @@
                 "syncFailed": "Ankiとの同期に失敗しました。"
             }
         },
-        "saveButton": "保存"
+        "saveButton": "保存",
+        "theme": {
+            "title": "テーマ",
+            "light": "ライト",
+            "dark": "ダーク"
+        }
     },
     "ImageDisplay": {
         "error": {

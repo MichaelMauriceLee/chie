@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { RefreshCcw, Loader, Settings } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useAtom } from "jotai";
-import { deckNamesAtom, selectedDeckAtom } from "@/store/atoms";
+import { deckNamesAtom, selectedDeckAtom, themeAtom } from "@/store/atoms";
 import { getDeckNames } from "@/lib/agent";
 
 type SettingsDialogProps = {
@@ -44,6 +44,11 @@ type SettingsDialogProps = {
       success: string;
       error: string;
     };
+    theme: {
+      title: string;
+      light: string;
+      dark: string;
+    };
   };
 };
 
@@ -54,8 +59,11 @@ export default function SettingsDialog({ i18n }: SettingsDialogProps) {
 
   const [deckNames, setDeckNames] = useAtom(deckNamesAtom);
   const [selectedDeck, setSelectedDeck] = useAtom(selectedDeckAtom);
+  const [theme, setTheme] = useAtom(themeAtom);
+
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [tempSelectedDeck, setTempSelectedDeck] = useState(selectedDeck);
+  const [tempTheme, setTempTheme] = useState(theme);
   const [isSyncing, setIsSyncing] = useState(false);
   const [selectedLocale, setSelectedLocale] = useState<string>(
     pathname?.split("/")[1] || "en"
@@ -64,8 +72,9 @@ export default function SettingsDialog({ i18n }: SettingsDialogProps) {
   useEffect(() => {
     if (!isSettingsOpen) {
       setTempSelectedDeck(selectedDeck);
+      setTempTheme(theme);
     }
-  }, [isSettingsOpen, selectedDeck]);
+  }, [isSettingsOpen, selectedDeck, theme]);
 
   async function handleAnkiSync() {
     setIsSyncing(true);
@@ -91,7 +100,12 @@ export default function SettingsDialog({ i18n }: SettingsDialogProps) {
     const currentLocale = pathname?.split("/")[1] || "en";
 
     setSelectedDeck(tempSelectedDeck);
+    setTheme(tempTheme);
     localStorage.setItem("selectedDeck", tempSelectedDeck);
+    localStorage.setItem("theme", tempTheme);
+
+    const root = document.documentElement;
+    root.classList.toggle("dark", tempTheme === "dark");
 
     setIsSettingsOpen(false);
 
@@ -119,6 +133,22 @@ export default function SettingsDialog({ i18n }: SettingsDialogProps) {
           <SheetDescription>{i18n.description}</SheetDescription>
         </SheetHeader>
         <div className="my-4 space-y-4">
+          <section>
+            <h2 className="text-lg font-medium mb-2">{i18n.theme.title}</h2>
+            <Select
+              value={tempTheme}
+              onValueChange={(value) => setTempTheme(value as "light" | "dark")} // Update temporary theme
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={i18n.theme.title} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">{i18n.theme.light}</SelectItem>
+                <SelectItem value="dark">{i18n.theme.dark}</SelectItem>
+              </SelectContent>
+            </Select>
+          </section>
+
           <section>
             <h2 className="text-lg font-medium mb-2">{i18n.locale.title}</h2>
             <Select value={selectedLocale} onValueChange={setSelectedLocale}>

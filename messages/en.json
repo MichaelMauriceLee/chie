@@ -72,7 +72,12 @@
                 "syncFailed": "Failed to sync with Anki."
             }
         },
-        "saveButton": "Save"
+        "saveButton": "Save",
+        "theme": {
+            "title": "Theme",
+            "light": "Light",
+            "dark": "Dark"
+        }
     },
     "ImageDisplay": {
         "error": {

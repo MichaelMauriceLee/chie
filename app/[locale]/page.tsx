@@ -65,6 +65,11 @@ export default async function Home({
               success: settingsDialogLabels("anki.success.syncCompleted"),
               error: settingsDialogLabels("anki.error.syncFailed"),
             },
+            theme: {
+              title: settingsDialogLabels("theme.title"),
+              light: settingsDialogLabels("theme.light"),
+              dark: settingsDialogLabels("theme.dark"),
+            },
           }}
         />
       </div>
