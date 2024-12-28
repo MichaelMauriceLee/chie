@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { DictionaryResponse } from "@/models/serverActions";
+import { DictionaryResponse, Word } from "@/models/serverActions";
 import {
   Accordion,
   AccordionItem,
@@ -217,6 +217,77 @@ export default function DictionaryDisplay({
     }
   }
 
+  function renderWord(word: Word, level: number = 0) {
+    const marginClass = `ml-${level * 4}`; // Adjust margin for nested words
+
+    return (
+      <AccordionItem key={word.text} value={`word-${word.text}`}>
+        <AccordionTrigger asChild>
+          <div
+            className={`flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg ${marginClass}`}
+          >
+            <div>
+              <div className="text-md font-medium text-gray-800 dark:text-gray-100">
+                {word.text}
+                {word.pronunciation && (
+                  <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                    ({word.pronunciation})
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  speakText(word.text, data.detectedLanguage ?? "en-US");
+                }}
+              >
+                <Volume2 />
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToAnki(
+                    word.text,
+                    word.pronunciation,
+                    word.meanings,
+                    data.sentence || ""
+                  );
+                }}
+                disabled={!selectedDeck || !!activeAdd}
+              >
+                {activeAdd === word.text ? (
+                  <Loader2 className="animate-spin w-4 h-4" />
+                ) : (
+                  <Plus />
+                )}
+              </Button>
+            </div>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="mt-2 bg-white dark:bg-gray-800 p-4 border border-gray-100 dark:border-gray-700 rounded">
+          <h3 className="text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
+            {t("labels.meanings")}
+          </h3>
+          <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
+            {word.meanings.map((meaning, idx) => (
+              <li key={idx}>{meaning}</li>
+            ))}
+          </ul>
+          {word.words && word.words.length > 0 && (
+            <Accordion type="single" collapsible className="mt-4 space-y-2">
+              {word.words.map((nestedWord) =>
+                renderWord(nestedWord, level + 1)
+              )}
+            </Accordion>
+          )}
+        </AccordionContent>
+      </AccordionItem>
+    );
+  }
+
   return (
     <Card className="mt-4 shadow-lg border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800">
       {data.sentence && (
@@ -225,10 +296,9 @@ export default function DictionaryDisplay({
             {data.sentence}
           </div>
           <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              speakText(data.sentence ?? "", data.detectedLanguage ?? "en-US");
-            }}
+            onClick={() =>
+              speakText(data.sentence ?? "", data.detectedLanguage ?? "en-US")
+            }
           >
             <Volume2 />
           </Button>
@@ -244,71 +314,7 @@ export default function DictionaryDisplay({
       <CardContent>
         {data.words && data.words.length > 0 && (
           <Accordion type="single" collapsible className="space-y-4">
-            {data.words.map((word, index) => (
-              <AccordionItem key={index} value={`word-${index}`}>
-                <AccordionTrigger
-                  asChild
-                  className="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
-                >
-                  <div>
-                    <div className="text-md font-medium text-gray-800 dark:text-gray-100">
-                      {word.text}
-                      {word.pronunciation && (
-                        <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                          ({word.pronunciation})
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center space-x-2 ml-2">
-                      {word.pronunciation && (
-                        <div>
-                          <Button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              speakText(
-                                word.text ?? "",
-                                data.detectedLanguage ?? "en-US"
-                              );
-                            }}
-                          >
-                            <Volume2 />
-                          </Button>
-                        </div>
-                      )}
-                      <Button
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToAnki(
-                            word.text,
-                            word.pronunciation,
-                            word.meanings,
-                            data.sentence || ""
-                          );
-                        }}
-                        disabled={!selectedDeck || !!activeAdd}
-                      >
-                        {activeAdd === word.text ? (
-                          <Loader2 className="animate-spin w-4 h-4" />
-                        ) : (
-                          <Plus />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="mt-2 bg-white dark:bg-gray-800 p-4 border border-gray-100 dark:border-gray-700 rounded">
-                  <h3 className="text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
-                    {t("labels.meanings")}
-                  </h3>
-                  <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
-                    {word.meanings.map((meaning, idx) => (
-                      <li key={idx}>{meaning}</li>
-                    ))}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+            {data.words.map((word) => renderWord(word))}
           </Accordion>
         )}
       </CardContent>

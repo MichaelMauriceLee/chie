@@ -121,8 +121,6 @@ async function askDictionary(query: string, language: string) {
       content = content.slice(7, -3).trim();
     }
 
-    console.log(content);
-
     return JSON.parse(content) as DictionaryResponse;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Unknown error");
