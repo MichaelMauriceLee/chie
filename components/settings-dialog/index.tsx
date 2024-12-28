@@ -76,6 +76,12 @@ export default function SettingsDialog({ i18n }: SettingsDialogProps) {
     }
   }, [isSettingsOpen, selectedDeck, theme]);
 
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+    }
+  }, [theme]);
+
   async function handleAnkiSync() {
     setIsSyncing(true);
     try {
@@ -103,9 +109,6 @@ export default function SettingsDialog({ i18n }: SettingsDialogProps) {
     setTheme(tempTheme);
     localStorage.setItem("selectedDeck", tempSelectedDeck);
     localStorage.setItem("theme", tempTheme);
-
-    const root = document.documentElement;
-    root.classList.toggle("dark", tempTheme === "dark");
 
     setIsSettingsOpen(false);
 
