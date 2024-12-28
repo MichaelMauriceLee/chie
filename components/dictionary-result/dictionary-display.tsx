@@ -236,10 +236,10 @@ export default function DictionaryDisplay({
   }
 
   return (
-    <Card className="mt-4 shadow-lg border border-gray-200 rounded-lg">
+    <Card className="mt-4 shadow-lg border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800">
       {data.sentence && (
         <CardHeader className="flex flex-row items-center space-x-3">
-          <div className="text-lg font-semibold text-gray-800">
+          <div className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             {data.sentence}
           </div>
           <Button
@@ -253,7 +253,11 @@ export default function DictionaryDisplay({
         </CardHeader>
       )}
 
-      {data.explanation && <CardContent>{data.explanation}</CardContent>}
+      {data.explanation && (
+        <CardContent className="text-gray-700 dark:text-gray-300">
+          {data.explanation}
+        </CardContent>
+      )}
 
       <CardContent>
         {data.words && data.words.length > 0 && (
@@ -262,13 +266,13 @@ export default function DictionaryDisplay({
               <AccordionItem key={index} value={`word-${index}`}>
                 <AccordionTrigger
                   asChild
-                  className="flex justify-between items-center p-3 bg-gray-100 hover:bg-gray-200 rounded-lg"
+                  className="flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
                 >
                   <div>
-                    <div className="text-md font-medium text-gray-800">
+                    <div className="text-md font-medium text-gray-800 dark:text-gray-100">
                       {word.text}
                       {word.pronunciation && (
-                        <span className="ml-2 text-sm text-gray-500">
+                        <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
                           ({word.pronunciation})
                         </span>
                       )}
@@ -311,11 +315,11 @@ export default function DictionaryDisplay({
                     </div>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="mt-2 bg-white p-4 border border-gray-100 rounded">
-                  <h3 className="text-sm font-medium mb-2">
+                <AccordionContent className="mt-2 bg-white dark:bg-gray-800 p-4 border border-gray-100 dark:border-gray-700 rounded">
+                  <h3 className="text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
                     {i18n.labels.meanings}
                   </h3>
-                  <ul className="list-disc ml-5 space-y-1 text-gray-700">
+                  <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
                     {word.meanings.map((meaning, idx) => (
                       <li key={idx}>{meaning}</li>
                     ))}

@@ -54,7 +54,7 @@ export default function DictionaryInput({
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-white dark:bg-gray-800 border dark:border-gray-700">
       <CardContent>
         <div className="relative my-3">
           <Textarea
@@ -73,14 +73,18 @@ export default function DictionaryInput({
                 scrollbar-thin 
                 scrollbar-thumb-rounded 
                 scrollbar-thumb-gray-300 
-                hover:scrollbar-thumb-gray-400
+                hover:scrollbar-thumb-gray-400 
+                dark:bg-gray-700 
+                dark:text-gray-100 
+                dark:scrollbar-thumb-gray-600 
+                dark:hover:scrollbar-thumb-gray-500
             "
           />
           {text && (
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-4 top-1/2 -translate-y-1/2"
+              className="absolute right-4 top-1/2 -translate-y-1/2 dark:text-gray-100"
               onClick={() => setText("")}
             >
               <X size={16} />
@@ -94,7 +98,11 @@ export default function DictionaryInput({
           </Button>
 
           <Button onClick={handleQuerySubmit} disabled={isPending}>
-            {isPending ? <Loader className="animate-spin" /> : <Send />}
+            {isPending ? (
+              <Loader className="animate-spin dark:text-gray-100" />
+            ) : (
+              <Send />
+            )}
           </Button>
         </div>
 

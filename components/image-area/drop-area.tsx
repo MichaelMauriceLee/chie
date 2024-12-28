@@ -85,9 +85,15 @@ export default function DropArea({ setFile }: DropAreaProps) {
     <ContextMenu>
       <ContextMenuTrigger>
         <div
-          className={`flex flex-col items-center justify-center border-2 border-dotted h-96 w-full cursor-pointer hover:bg-blue-500 hover:text-white ${
-            isDragging ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"
-          }`}
+          className={`flex flex-col items-center justify-center border-2 border-dotted h-96 w-full cursor-pointer transition-colors duration-300 
+          ${isDragging ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}
+          hover:bg-blue-500 hover:text-white
+          dark:${
+            isDragging
+              ? "bg-blue-700 text-gray-100"
+              : "bg-gray-700 text-gray-300"
+          }
+          dark:hover:bg-blue-600 dark:hover:text-white`}
           onPaste={onPhotoPaste}
           onDragEnter={onDragEnter}
           onDragOver={onDragOver}
@@ -112,8 +118,11 @@ export default function DropArea({ setFile }: DropAreaProps) {
         </div>
       </ContextMenuTrigger>
 
-      <ContextMenuContent>
-        <ContextMenuItem onClick={pasteFromClipboard}>
+      <ContextMenuContent className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200 shadow-md rounded-lg p-2">
+        <ContextMenuItem
+          onClick={pasteFromClipboard}
+          className="hover:bg-blue-100 dark:hover:bg-blue-700 dark:hover:text-white transition-colors rounded-md px-2 py-1"
+        >
           <ClipboardPaste className="w-5 h-5 mr-2" />
           {t("paste-from-clipboard")}
         </ContextMenuItem>
