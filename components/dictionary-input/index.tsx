@@ -99,7 +99,7 @@ export default function DictionaryInput({
 
           <Button onClick={handleQuerySubmit} disabled={isPending}>
             {isPending ? (
-              <Loader className="animate-spin dark:text-gray-100" />
+              <Loader className="animate-spin dark:text-gray-800" />
             ) : (
               <Send />
             )}
