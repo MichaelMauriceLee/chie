@@ -63,20 +63,19 @@ async function askDictionary(query: string, language: string) {
 
                 2. If the input is a sentence or word, do the following:
                   - Translate it into ${language} if it is not already in ${language}.
-                  - Break down the sentence or word into individual components.
-                  - For each component, provide:
+                  - Break down the sentence or word into individual components using the following structure:
                     - **Text**: The word itself.
                     - **Pronunciation**: A human-friendly pronunciation guide in ${language}.
                     - **Meanings**: A list of possible meanings in ${language}.
                     - **Compound Words**: If the word is a compound word, provide the breakdown of its components with their text, pronunciations, and meanings.
 
-                3. Provide the **"sentence"** field, which should include:
-                  - The original sentence or phrase (minus any unrelated filler words or questions).
-                  - This field ensures the user's exact input (or a cleaned-up version) is preserved.
 
-                4. For any direct translation or explanation that does not fall into "words" or "sentence," place it in the "explanation" field in ${language}.
-
-                5. Always populate the "explanation" field with some relevant information about grammar, usage, or context, even if no direct question was asked. This ensures the output consistently provides valuable linguistic insight in every response.
+                3. For sentences:
+                  - Translate the sentence into ${language} if needed.
+                  - Provide the original sentence or phrase (minus unrelated filler words or questions) in the "sentence" field to preserve the user's input.
+                  
+                4. Always populate the "explanation" field:
+                  - Include grammar, usage, or contextual insights in ${language} even if no direct question was asked. This ensures the output consistently provides valuable linguistic information.
 
                 Format the output as JSON matching the following TypeScript models:
 
