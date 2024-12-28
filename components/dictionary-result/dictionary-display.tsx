@@ -218,7 +218,7 @@ export default function DictionaryDisplay({
   }
 
   function renderWord(word: Word, level: number = 0) {
-    const marginClass = `ml-${level * 4}`; // Adjust margin for nested words
+    const marginClass = `ml-${level * 4}`; 
 
     return (
       <AccordionItem key={word.text} value={`word-${word.text}`}>

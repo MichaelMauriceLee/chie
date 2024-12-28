@@ -100,5 +100,26 @@
     "ErrorBoundary": {
         "title": "問題が発生しました",
         "description": "辞書の結果を読み込めませんでした。後でもう一度お試しください。"
+    },
+    "Info": {
+        "welcome": {
+            "title": "ようこそ",
+            "description": "<strong>Chie</strong>へようこそ。次世代の多言語辞書です。Chieは、英語や日本語を含む複数の言語で翻訳、文の分解、詳細な説明をサポートします。言語学習者からプロフェッショナルまで、新しい単語やフレーズを簡単に理解し習得できるように設計されています。"
+        },
+        "features": {
+            "title": "特徴",
+            "translation": "<strong>翻訳:</strong> 対応している言語間で単語や文を簡単に翻訳できます。",
+            "wordAnalysis": "<strong>単語分析:</strong> 文を構成要素に分解し、それぞれの意味や発音を取得できます。",
+            "ankiIntegration": "<strong>Anki統合:</strong> 効果的なフラッシュカード学習のために、新しい単語をAnkiデッキにシームレスに追加できます。",
+            "imageAudioSupport": "<strong>画像と音声サポート:</strong> 画像内の単語を検索したり、AIを使って音声を文字起こしできます。"
+        },
+        "gettingStarted": {
+            "title": "始めに",
+            "description": "Chieを最大限に活用するために、以下の手順でAnkiの設定を行ってください:",
+            "stepOne": "インストール",
+            "ankiConnectLink": "AnkiConnect",
+            "stepTwo": "次の内容でAnkiConnectの設定ファイルを置き換えます:",
+            "stepThree": "設定後、Ankiをバックグラウンドで起動したままにしておくと、Chieから直接カードを追加できます。"
+        }
     }
 }

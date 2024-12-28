@@ -6,6 +6,7 @@ import DictionaryResult from "@/components/dictionary-result";
 import SettingsDialog from "@/components/settings-dialog";
 import ErrorBoundary from "@/components/error-boundary";
 import { getTranslations } from "next-intl/server";
+import Info from "@/components/info";
 
 const LOCALE_LANGUAGE_MAP = {
   en: "English",
@@ -83,7 +84,7 @@ export default async function Home({
         }}
       />
 
-      {query && (
+      {query ? (
         <Suspense
           fallback={
             <Card className="mt-4">
@@ -118,6 +119,24 @@ export default async function Home({
               language={languageName}
             />
           </ErrorBoundary>
+        </Suspense>
+      ) : (
+        <Suspense
+          fallback={
+            <Card className="mt-4">
+              <CardHeader>
+                <Skeleton className="h-4 w-2/3 mb-2" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-3 w-full mb-2" />
+                <Skeleton className="h-3 w-5/6 mb-2" />
+                <Skeleton className="h-3 w-4/5" />
+              </CardContent>
+            </Card>
+          }
+          key={query}
+        >
+          <Info />
         </Suspense>
       )}
     </div>

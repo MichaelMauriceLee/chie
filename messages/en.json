@@ -100,5 +100,26 @@
     "ErrorBoundary": {
         "title": "An error occurred",
         "description": "We couldn't load the dictionary result. Please try again later."
+    },
+    "Info": {
+        "welcome": {
+            "title": "Welcome",
+            "description": "Welcome to <strong>Chie</strong>, your next-generation multilingual dictionary. Chie supports translations, word breakdowns, and detailed explanations across multiple languages, including English and Japanese. Whether you're a language learner or a professional, Chie is designed to make understanding and mastering new words and phrases as easy as possible."
+        },
+        "features": {
+            "title": "Features",
+            "translation": "<strong>Translation:</strong> Translate words and sentences between supported languages with ease.",
+            "wordAnalysis": "<strong>Word Analysis:</strong> Get a breakdown of sentences into individual components, including meanings and pronunciations.",
+            "ankiIntegration": "<strong>Anki Integration:</strong> Seamlessly add new words to your Anki decks for effective flashcard-based learning.",
+            "imageAudioSupport": "<strong>Image and Audio Support:</strong> Lookup words in images or transcribe audio using AI-powered tools."
+        },
+        "gettingStarted": {
+            "title": "Getting Started",
+            "description": "To get the most out of Chie, follow these steps to set up Anki integration:",
+            "stepOne": "Install",
+            "ankiConnectLink": "AnkiConnect",
+            "stepTwo": "Replace the AnkiConnect configuration file with the following:",
+            "stepThree": "Once configured, keep Anki running in the background to add cards directly from Chie."
+        }
     }
 }
