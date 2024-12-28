@@ -1,6 +1,5 @@
 import { ChatGPTResponse, DictionaryResponse } from "@/models/serverActions";
 import DictionaryDisplay from "./dictionary-display";
-import { getTranslations } from "next-intl/server";
 
 async function getSpeechToken() {
   const apiKey = process.env.SPEECH_KEY;
@@ -142,12 +141,10 @@ export default async function DictionaryResult({
 }: DictionaryResultProps) {
   const dictionaryDataPromise = askDictionary(query, language);
   const tokenPromise = getSpeechToken();
-  const translationsPromise = getTranslations("DictionaryDisplay");
 
-  const [data, speechToken, dictionaryDisplayLabels] = await Promise.all([
+  const [data, speechToken] = await Promise.all([
     dictionaryDataPromise,
     tokenPromise,
-    translationsPromise,
   ]);
 
   if (!data) {
@@ -159,27 +156,6 @@ export default async function DictionaryResult({
       data={data}
       token={speechToken.token}
       region={speechToken.region}
-      i18n={{
-        errors: {
-          speechFailed: dictionaryDisplayLabels("errors.speechFailed"),
-          audioGenerationFailed: dictionaryDisplayLabels(
-            "errors.audioGenerationFailed"
-          ),
-          addFailed: dictionaryDisplayLabels("errors.addFailed"),
-          noDeckSelected: dictionaryDisplayLabels("errors.noDeckSelected"),
-        },
-        labels: {
-          audioNotSupported: dictionaryDisplayLabels(
-            "labels.audioNotSupported"
-          ),
-          pronunciation: dictionaryDisplayLabels("labels.pronunciation"),
-          notAvailable: dictionaryDisplayLabels("labels.notAvailable"),
-          meanings: dictionaryDisplayLabels("labels.meanings"),
-          originalSentence: dictionaryDisplayLabels("labels.originalSentence"),
-          addedOn: dictionaryDisplayLabels("labels.addedOn"),
-        },
-        dateFormat: dictionaryDisplayLabels("dateFormat"),
-      }}
     />
   );
 }

@@ -29,30 +29,12 @@ type DictionaryDisplayProps = {
   data: DictionaryResponse;
   region: string;
   token: string;
-  i18n: {
-    errors: {
-      speechFailed: string;
-      audioGenerationFailed: string;
-      addFailed: string;
-      noDeckSelected: string;
-    };
-    labels: {
-      audioNotSupported: string;
-      pronunciation: string;
-      notAvailable: string;
-      meanings: string;
-      originalSentence: string;
-      addedOn: string;
-    };
-    dateFormat: string;
-  };
 };
 
 export default function DictionaryDisplay({
   data,
   region,
   token,
-  i18n,
 }: DictionaryDisplayProps) {
   const t = useTranslations("DictionaryDisplay");
 
@@ -75,14 +57,14 @@ export default function DictionaryDisplay({
         (error) => {
           synthesizer.close();
           console.error(error);
-          toast.error(i18n.errors.speechFailed, {
+          toast.error(t("speechFailed"), {
             position: "top-center",
           });
         }
       );
     } catch (error) {
       console.error(error);
-      toast.error(i18n.errors.speechFailed, {
+      toast.error(t("speechFailed"), {
         position: "top-center",
       });
     }
@@ -161,7 +143,7 @@ export default function DictionaryDisplay({
     sentence: string
   ) {
     if (!selectedDeck) {
-      toast.error(i18n.errors.noDeckSelected, {
+      toast.error(t("errors.noDeckSelected"), {
         position: "top-center",
       });
       return;
@@ -171,7 +153,7 @@ export default function DictionaryDisplay({
     try {
       audioPath = await saveAudioFile(word, data.detectedLanguage ?? "en-US");
     } catch {
-      toast.error(i18n.errors.audioGenerationFailed, {
+      toast.error(t("errors.audioGenerationFailed"), {
         position: "top-center",
       });
       return;
@@ -191,24 +173,24 @@ export default function DictionaryDisplay({
             <div style="margin-bottom: 1em;">
               <audio controls style="margin-top: 0.5em;">
                 <source src="${audioPath}" type="audio/mpeg" />
-                ${i18n.labels.audioNotSupported}
+                ${t("labels.audioNotSupported")}
               </audio>
             </div>
             <div style="margin-bottom: 1em;">
-              <strong>${i18n.labels.pronunciation}:</strong><br />
-              ${pronunciation || i18n.labels.notAvailable}
+              <strong>${t("labels.pronunciation")}:</strong><br />
+              ${pronunciation || t("labels.notAvailable")}
             </div>
             <div style="margin-bottom: 1em;">
-              <strong>${i18n.labels.meanings}:</strong><br />
+              <strong>${t("labels.meanings")}:</strong><br />
               ${meanings.join(", ")}
             </div>
             <div style="margin-bottom: 1em;">
-              <strong>${i18n.labels.originalSentence}:</strong><br />
-              ${sentence || i18n.labels.notAvailable}
+              <strong>${t("labels.originalSentence")}:</strong><br />
+              ${sentence || t("labels.notAvailable")}
             </div>
             <div>
-              <strong>${i18n.labels.addedOn}:</strong><br />
-              ${format(new Date(), i18n.dateFormat)}
+              <strong>${t("labels.addedOn")}:</strong><br />
+              ${format(new Date(), t("dateFormat"))}
             </div>
           </div>
         `,
@@ -226,8 +208,8 @@ export default function DictionaryDisplay({
         position: "top-center",
       });
     } catch (error) {
-      console.error(i18n.errors.addFailed, error);
-      toast.error(i18n.errors.addFailed, {
+      console.error(t("errors.addFailed"), error);
+      toast.error(t("errors.addFailed"), {
         position: "top-center",
       });
     } finally {
@@ -317,7 +299,7 @@ export default function DictionaryDisplay({
                 </AccordionTrigger>
                 <AccordionContent className="mt-2 bg-white dark:bg-gray-800 p-4 border border-gray-100 dark:border-gray-700 rounded">
                   <h3 className="text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
-                    {i18n.labels.meanings}
+                    {t("labels.meanings")}
                   </h3>
                   <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
                     {word.meanings.map((meaning, idx) => (
