@@ -24,6 +24,7 @@ import { format } from "date-fns";
 import { Loader2, Plus, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { v4 as uuidv4 } from "uuid";
 
 type DictionaryDisplayProps = {
   data: DictionaryResponse;
@@ -218,13 +219,13 @@ export default function DictionaryDisplay({
   }
 
   function renderWord(word: Word, level: number = 0) {
-    const marginClass = `ml-${level * 4}`; 
-
     return (
-      <AccordionItem key={word.text} value={`word-${word.text}`}>
+      <AccordionItem key={`word.text-${uuidv4()}`} value={`word-${word.text}`}>
         <AccordionTrigger asChild>
           <div
-            className={`flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg ${marginClass}`}
+            className={`flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg ml-${
+              level * 4
+            }`}
           >
             <div>
               <div className="text-md font-medium text-gray-800 dark:text-gray-100">
