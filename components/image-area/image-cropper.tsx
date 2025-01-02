@@ -3,7 +3,7 @@ import { Cropper, ReactCropperElement } from "react-cropper";
 import { Button } from "../ui/button";
 import { useTranslations } from "next-intl";
 
-type ImageCropperProps = {
+type Props = {
   file: File | null;
   setFile: (params: File | null) => void;
   setImage: (params: string | null) => void;
@@ -13,7 +13,7 @@ export default function ImageCropper({
   file,
   setFile,
   setImage,
-}: ImageCropperProps) {
+}: Readonly<Props>) {
   const t = useTranslations("ImageCropper");
 
   const cropperRef = useRef<ReactCropperElement>(null);

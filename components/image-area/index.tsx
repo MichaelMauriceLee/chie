@@ -3,11 +3,11 @@ import DropArea from "./drop-area";
 import ImageCropper from "./image-cropper";
 import ImageDisplay from "./image-display";
 
-type ImageAreaProps = {
+type Props = {
   setKeyword: (params: string) => void;
 };
 
-export default function ImageArea({ setKeyword }: ImageAreaProps) {
+export default function ImageArea({ setKeyword }: Readonly<Props>) {
   const [file, setFile] = useState<File | null>(null);
   const [image, setImage] = useState<string | null>(null);
 

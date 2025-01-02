@@ -8,7 +8,7 @@ import { Textarea } from "../ui/textarea";
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-type DictionaryInputProps = {
+type Props = {
   initialText: string;
   i18n: {
     askAQuestionPlaceholder: string;
@@ -18,7 +18,7 @@ type DictionaryInputProps = {
 export default function DictionaryInput({
   initialText,
   i18n,
-}: DictionaryInputProps) {
+}: Readonly<Props>) {
   const [text, setText] = useState(decodeURIComponent(initialText));
   const [showImageArea, setShowImageArea] = useState(false);
   const [isPending, startTransition] = useTransition();

@@ -25,7 +25,7 @@ import { useAtom } from "jotai";
 import { deckNamesAtom, selectedDeckAtom, themeAtom } from "@/store/atoms";
 import { getDeckNames } from "@/lib/agent";
 
-type SettingsDialogProps = {
+type Props = {
   i18n: {
     title: string;
     description: string;
@@ -52,7 +52,7 @@ type SettingsDialogProps = {
   };
 };
 
-export default function SettingsDialog({ i18n }: SettingsDialogProps) {
+export default function SettingsDialog({ i18n }: Readonly<Props>) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();

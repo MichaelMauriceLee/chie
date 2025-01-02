@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useRouter, usePathname } from "next/navigation";
 import { routing } from "@/i18n/routing";
 
-type BackHomeButtonProps = {
+type Props = {
   label: string;
 };
 
-export default function BackHomeButton({ label }: BackHomeButtonProps) {
+export default function BackHomeButton({ label }: Readonly<Props>) {
   const router = useRouter();
   const pathname = usePathname();
 

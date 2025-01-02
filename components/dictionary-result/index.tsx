@@ -127,7 +127,7 @@ async function askDictionary(query: string, language: string) {
   }
 }
 
-type DictionaryResultProps = {
+type Props = {
   query: string;
   language: string;
 };
@@ -135,7 +135,7 @@ type DictionaryResultProps = {
 export default async function DictionaryResult({
   query,
   language,
-}: DictionaryResultProps) {
+}: Readonly<Props>) {
   const dictionaryDataPromise = askDictionary(query, language);
   const tokenPromise = getSpeechToken();
 

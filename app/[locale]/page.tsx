@@ -13,13 +13,12 @@ const LOCALE_LANGUAGE_MAP = {
   ja: "Japanese",
 };
 
-export default async function Home({
-  params,
-  searchParams,
-}: {
+type Props = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ [key: string]: string | undefined }>;
-}) {
+};
+
+export default async function Home({ params, searchParams }: Readonly<Props>) {
   const [
     metadataLabels,
     settingsDialogLabels,

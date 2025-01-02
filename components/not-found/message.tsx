@@ -1,6 +1,6 @@
 import BackHomeButton from "./button";
 
-type NotFoundMessageProps = {
+type Props = {
   title: string;
   description: string;
   backHome: string;
@@ -10,7 +10,7 @@ export default function NotFoundMessage({
   title,
   description,
   backHome,
-}: NotFoundMessageProps) {
+}: Readonly<Props>) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
       <h1 className="text-5xl font-bold text-gray-900">{title}</h1>

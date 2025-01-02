@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { v4 as uuidv4 } from "uuid";
 
-type DictionaryDisplayProps = {
+type Props = {
   data: DictionaryResponse;
   region: string;
   token: string;
@@ -36,7 +36,7 @@ export default function DictionaryDisplay({
   data,
   region,
   token,
-}: DictionaryDisplayProps) {
+}: Readonly<Props>) {
   const t = useTranslations("DictionaryDisplay");
 
   const [selectedDeck] = useAtom(selectedDeckAtom);

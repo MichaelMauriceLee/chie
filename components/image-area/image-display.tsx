@@ -16,7 +16,7 @@ import { analyzeImage } from "@/app/[locale]/actions";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-type ImageDisplayProps = {
+type Props = {
   image: string;
   setKeyword: (params: string) => void;
   setFile: (params: File | null) => void;
@@ -52,7 +52,7 @@ export default function ImageDisplay({
   setKeyword,
   setFile,
   setImage,
-}: ImageDisplayProps) {
+}: Readonly<Props>) {
   const t = useTranslations("ImageDisplay");
 
   const canvasWrapperRef = useRef<HTMLDivElement>(null);

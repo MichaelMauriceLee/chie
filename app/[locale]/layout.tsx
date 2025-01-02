@@ -40,13 +40,15 @@ export async function generateMetadata({
   };
 }
 
+type Props = {
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+};
+
 export default async function LocaleLayout({
   children,
   params,
-}: Readonly<{
-  children: ReactNode;
-  params: Promise<{ locale: string }>;
-}>) {
+}: Readonly<Props>) {
   const { locale } = await params;
 
   if (!routing.locales.includes(locale as never)) {

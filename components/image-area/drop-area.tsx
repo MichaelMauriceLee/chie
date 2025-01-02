@@ -10,11 +10,11 @@ import {
 import { Upload, ClipboardPaste } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-type DropAreaProps = {
+type Props = {
   setFile: (param: File | null) => void;
 };
 
-export default function DropArea({ setFile }: DropAreaProps) {
+export default function DropArea({ setFile }: Readonly<Props>) {
   const t = useTranslations("DropArea");
 
   const [isDragging, setIsDragging] = useState(false);
