@@ -28,7 +28,7 @@ export type OCRResponse = {
 export type Word = {
   text: string;
   pronunciation: string;
-  meanings: string[];
+  meaning: string[];
   words: Word[];
 };
 
@@ -37,16 +37,4 @@ export type DictionaryResponse = {
   words?: Word[];
   sentence?: string;
   detectedLanguage?: string;
-};
-
-export type ChatGPTMessage = {
-  content: string;
-};
-
-export type ChatGPTChoice = {
-  message: ChatGPTMessage;
-};
-
-export type ChatGPTResponse = {
-  choices: ChatGPTChoice[];
 };

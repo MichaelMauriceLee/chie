@@ -253,7 +253,7 @@ export default function DictionaryDisplay({
                   addToAnki(
                     word.text,
                     word.pronunciation,
-                    word.meanings,
+                    word.meaning,
                     data.sentence || ""
                   );
                 }}
@@ -273,7 +273,7 @@ export default function DictionaryDisplay({
             {t("labels.meanings")}
           </h3>
           <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
-            {word.meanings.map((meaning, idx) => (
+            {word.meaning.map((meaning, idx) => (
               <li key={idx}>{meaning}</li>
             ))}
           </ul>
