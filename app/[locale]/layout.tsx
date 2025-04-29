@@ -11,6 +11,7 @@ import { routing } from "@/i18n/routing";
 import { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import AppInitializer from "@/components/app-initializer";
+import { Provider } from "jotai";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,9 +66,11 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
-          <AppInitializer />
-          {children}
-          <Toaster />
+          <Provider>
+            <AppInitializer />
+            {children}
+            <Toaster />
+          </Provider>
         </NextIntlClientProvider>
       </body>
     </html>
