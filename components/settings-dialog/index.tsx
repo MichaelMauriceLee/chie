@@ -22,7 +22,13 @@ import { toast } from "sonner";
 import { RefreshCcw, Loader, Settings } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useAtom } from "jotai";
-import { deckNamesAtom, selectedDeckAtom, themeAtom } from "@/store/atoms";
+import {
+  deckNamesAtom,
+  selectedDeckAtom,
+  themeAtom,
+  wordSelectionModeAtom,
+  WordSelectionMode,
+} from "@/store/atoms";
 import { getDeckNames } from "@/lib/agent";
 
 type Props = {
@@ -60,10 +66,15 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
   const [deckNames, setDeckNames] = useAtom(deckNamesAtom);
   const [selectedDeck, setSelectedDeck] = useAtom(selectedDeckAtom);
   const [theme, setTheme] = useAtom(themeAtom);
+  const [wordSelectionMode, setWordSelectionMode] = useAtom(
+    wordSelectionModeAtom
+  );
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [tempSelectedDeck, setTempSelectedDeck] = useState(selectedDeck);
   const [tempTheme, setTempTheme] = useState(theme);
+  const [tempWordSelectionMode, setTempWordSelectionMode] =
+    useState(wordSelectionMode);
   const [isSyncing, setIsSyncing] = useState(false);
   const [selectedLocale, setSelectedLocale] = useState<string>(
     pathname?.split("/")[1] || "en"
@@ -73,8 +84,9 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
     if (!isSettingsOpen) {
       setTempSelectedDeck(selectedDeck);
       setTempTheme(theme);
+      setTempWordSelectionMode(wordSelectionMode);
     }
-  }, [isSettingsOpen, selectedDeck, theme]);
+  }, [isSettingsOpen, selectedDeck, theme, wordSelectionMode]);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -107,8 +119,10 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
 
     setSelectedDeck(tempSelectedDeck);
     setTheme(tempTheme);
+    setWordSelectionMode(tempWordSelectionMode);
     localStorage.setItem("selectedDeck", tempSelectedDeck);
     localStorage.setItem("theme", tempTheme);
+    localStorage.setItem("wordSelectionMode", tempWordSelectionMode);
 
     setIsSettingsOpen(false);
 
@@ -166,6 +180,26 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
                       {localeLabel}
                     </SelectItem>
                   ))}
+              </SelectContent>
+            </Select>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-medium mb-2">Word Selection Mode</h2>
+            <Select
+              value={tempWordSelectionMode}
+              onValueChange={(value) =>
+                setTempWordSelectionMode(value as WordSelectionMode)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Mode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={WordSelectionMode.Override}>
+                  Override
+                </SelectItem>
+                <SelectItem value={WordSelectionMode.Add}>Add On</SelectItem>
               </SelectContent>
             </Select>
           </section>

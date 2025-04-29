@@ -6,6 +6,15 @@ export const deckNamesAtom = atom<string[]>([]);
 
 export const selectedDeckAtom = atom<string>("");
 
+export enum WordSelectionMode {
+  Override = "override",
+  Add = "add",
+}
+
+export const wordSelectionModeAtom = atom<WordSelectionMode>(
+  WordSelectionMode.Add
+);
+
 export const initializeThemeAtom = atom(
   (get) => get(themeAtom),
   (_get, set) => {
@@ -26,7 +35,7 @@ export const initializeDeckNamesAtom = atom(
   (_get, set) => {
     if (typeof window !== "undefined") {
       const storedDeckNames = JSON.parse(
-        localStorage.getItem("deckNames") || "[]"
+        localStorage.getItem("deckNames") ?? "[]"
       );
       set(deckNamesAtom, storedDeckNames);
     }
@@ -37,8 +46,21 @@ export const initializeSelectedDeckAtom = atom(
   (get) => get(selectedDeckAtom),
   (_get, set) => {
     if (typeof window !== "undefined") {
-      const storedSelectedDeck = localStorage.getItem("selectedDeck") || "";
+      const storedSelectedDeck = localStorage.getItem("selectedDeck") ?? "";
       set(selectedDeckAtom, storedSelectedDeck);
+    }
+  }
+);
+
+export const initializeWordSelectionModeAtom = atom(
+  (get) => get(wordSelectionModeAtom),
+  (_get, set) => {
+    if (typeof window !== "undefined") {
+      const storedMode = localStorage.getItem(
+        "wordSelectionMode"
+      ) as WordSelectionMode;
+      const mode = storedMode || WordSelectionMode.Add;
+      set(wordSelectionModeAtom, mode);
     }
   }
 );

@@ -15,12 +15,14 @@ import { OCRBlock, OCRCoordinate, OCRWord } from "@/models/serverActions";
 import { analyzeImage } from "@/app/[locale]/actions";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { useAtom } from "jotai";
+import { wordSelectionModeAtom, WordSelectionMode } from "@/store/atoms";
 
 type Props = {
   image: string;
-  setKeyword: (params: string) => void;
-  setFile: (params: File | null) => void;
-  setImage: (params: string | null) => void;
+  setKeyword: React.Dispatch<React.SetStateAction<string>>;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
+  setImage: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 function pointInPolygon(
@@ -54,6 +56,8 @@ export default function ImageDisplay({
   setImage,
 }: Readonly<Props>) {
   const t = useTranslations("ImageDisplay");
+
+  const [wordSelectionMode] = useAtom(wordSelectionModeAtom);
 
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -332,13 +336,22 @@ export default function ImageDisplay({
   const onMouseUp = useCallback(
     (evt: React.MouseEvent<HTMLCanvasElement>) => {
       if (isDragging && evt.ctrlKey) {
-        setKeyword(tempWordArrayRef.current.map((el) => el.text).join(""));
+        const selectedWords = tempWordArrayRef.current
+          .map((el) => el.text)
+          .join("");
+
+        if (wordSelectionMode === WordSelectionMode.Add) {
+          setKeyword((prev) => (prev ?? "") + selectedWords);
+        } else {
+          setKeyword(selectedWords);
+        }
       }
+
       setIsDragging(false);
       setDragStartPosition(null);
       tempWordArrayRef.current = [];
     },
-    [isDragging, setKeyword]
+    [isDragging, setKeyword, wordSelectionMode]
   );
 
   const panImage = useCallback(
