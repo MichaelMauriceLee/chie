@@ -11,7 +11,7 @@ import { Upload, ClipboardPaste } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 type Props = {
-  setFile: (param: File | null) => void;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
 };
 
 export default function DropArea({ setFile }: Readonly<Props>) {

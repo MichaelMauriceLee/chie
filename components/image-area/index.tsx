@@ -4,7 +4,7 @@ import ImageCropper from "./image-cropper";
 import ImageDisplay from "./image-display";
 
 type Props = {
-  setKeyword: (params: string) => void;
+  setKeyword: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export default function ImageArea({ setKeyword }: Readonly<Props>) {

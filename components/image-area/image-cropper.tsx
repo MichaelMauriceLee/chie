@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 
 type Props = {
   file: File | null;
-  setFile: (params: File | null) => void;
-  setImage: (params: string | null) => void;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
+  setImage: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export default function ImageCropper({
