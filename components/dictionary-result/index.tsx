@@ -1,27 +1,6 @@
 import DictionaryDisplay from "./dictionary-display";
 import { DictionaryResponse } from "@/models/serverActions";
 
-async function getSpeechToken() {
-  const apiKey = process.env.SPEECH_KEY;
-  if (!apiKey) throw new Error("Speech key is missing");
-
-  const response = await fetch(
-    "https://westus2.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
-    {
-      method: "POST",
-      headers: {
-        "Ocp-Apim-Subscription-Key": apiKey,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    }
-  );
-
-  if (!response.ok)
-    throw new Error(`Failed to fetch speech token: ${response.statusText}`);
-  const token = await response.text();
-  return { token, region: "westus2" };
-}
-
 async function askDictionary(
   query: string,
   displayLanguage: string,
@@ -31,11 +10,7 @@ async function askDictionary(
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("Missing OpenRouter API key");
 
-  const langText =
-    targetLanguage === "auto" ? "the appropriate language" : targetLanguage;
-
   let pronunciationNote = "";
-
   if (targetLanguage === "ja") {
     if (jpStyle === "romaji") {
       pronunciationNote = "Use romaji for pronunciation.";
@@ -49,10 +24,12 @@ async function askDictionary(
 
     Input: ${query}
 
-    1. Translate the input into ${langText}, if necessary.
+    1. Translate the input into ${
+      targetLanguage === "auto" ? "the appropriate language" : targetLanguage
+    }, if necessary.
     2. Break the input down into individual words or components:
       - Text: original word/component
-      - Pronunciation: human-friendly pronunciation in ${langText}
+      - Pronunciation: human-friendly pronunciation in ${targetLanguage}
       - Meanings: list of possible meanings
       - If compound, also break into sub-words with the same structure.
     3. Always provide a general explanation about grammar, usage, or context in ${displayLanguage}.
@@ -63,17 +40,17 @@ async function askDictionary(
 
     \
     type Word = {
-      text: string;
-      pronunciation: string;
-      meaning: string[];
-      words: Word[];
+      text: string;           // The original word or component
+      pronunciation: string;  // Human-friendly pronunciation
+      meaning: string[];      // Dictionary definition meanings
+      words: Word[];          // Nested components for compound words
     };
 
     type DictionaryResponse = {
-      explanation: string;
-      words?: Word[];
-      sentence?: string;
-      detectedLanguage?: string;
+      explanation: string;        // A general explanation or direct translation
+      words?: Word[];             // The breakdown of words and their details
+      sentence?: string;          // The original sentence (cleaned of filler words or questions)
+      detectedLanguage?: string;  // Locale string (e.g. ja-JP) for Azure TTS
     };
     \
   `;
@@ -171,6 +148,8 @@ type Props = {
   displayLanguage: string;
   targetLanguage: string;
   japanesePronunciationStyle?: "romaji" | "hiragana-katakana";
+  speechToken: string;
+  speechRegion: string;
 };
 
 export default async function DictionaryResult({
@@ -178,24 +157,19 @@ export default async function DictionaryResult({
   displayLanguage,
   targetLanguage,
   japanesePronunciationStyle,
+  speechToken,
+  speechRegion,
 }: Readonly<Props>) {
-  const [data, speechToken] = await Promise.all([
-    askDictionary(
-      query,
-      displayLanguage,
-      targetLanguage,
-      japanesePronunciationStyle
-    ),
-    getSpeechToken(),
-  ]);
+  const data = await askDictionary(
+    query,
+    displayLanguage,
+    targetLanguage,
+    japanesePronunciationStyle
+  );
 
   if (!data) return null;
 
   return (
-    <DictionaryDisplay
-      data={data}
-      token={speechToken.token}
-      region={speechToken.region}
-    />
+    <DictionaryDisplay data={data} token={speechToken} region={speechRegion} />
   );
 }

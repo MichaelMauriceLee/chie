@@ -7,6 +7,7 @@ import SettingsDialog from "@/components/settings-dialog";
 import ErrorBoundary from "@/components/error-boundary";
 import { getTranslations } from "next-intl/server";
 import Info from "@/components/info";
+import { getSpeechToken } from "@/lib/speech";
 
 const LOCALE_LANGUAGE_MAP = {
   en: "English",
@@ -26,6 +27,7 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
     errorBoundaryLabels,
     resolvedParams,
     resolvedSearchParams,
+    speechToken,
   ] = await Promise.all([
     getTranslations("Metadata"),
     getTranslations("SettingsDialog"),
@@ -33,6 +35,7 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
     getTranslations("ErrorBoundary"),
     params,
     searchParams,
+    getSpeechToken(),
   ]);
 
   const { locale } = resolvedParams;
@@ -140,6 +143,8 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
                   ? (jpStyle as "romaji" | "hiragana-katakana")
                   : undefined
               }
+              speechToken={speechToken.token}
+              speechRegion={speechToken.region}
             />
           </ErrorBoundary>
         ) : (
