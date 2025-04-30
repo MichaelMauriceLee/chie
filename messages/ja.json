@@ -56,7 +56,7 @@
         "title": "設定",
         "description": "一般設定とAnkiデッキを管理します。",
         "locale": {
-            "title": "言語設定",
+            "title": "表示言語",
             "en": "英語",
             "ja": "日本語"
         },
@@ -82,6 +82,17 @@
             "title": "テーマ",
             "light": "ライト",
             "dark": "ダーク"
+        },
+        "dictionaryTargetLanguage": {
+            "title": "辞書の対象言語",
+            "auto": "自動検出",
+            "en": "英語",
+            "ja": "日本語"
+        },
+        "japanesePronunciationStyle": {
+            "title": "日本語の発音形式",
+            "romaji": "ローマ字",
+            "hiraganaKatakana": "ひらがな / カタカナ"
         }
     },
     "ImageDisplay": {

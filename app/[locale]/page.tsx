@@ -36,9 +36,9 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
   ]);
 
   const { locale } = resolvedParams;
-  const { query } = resolvedSearchParams;
+  const { query, targetLang, jpStyle } = resolvedSearchParams;
 
-  const languageName =
+  const displayLanguage =
     LOCALE_LANGUAGE_MAP[locale as keyof typeof LOCALE_LANGUAGE_MAP] ||
     "English";
 
@@ -74,6 +74,19 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
               title: settingsDialogLabels("theme.title"),
               light: settingsDialogLabels("theme.light"),
               dark: settingsDialogLabels("theme.dark"),
+            },
+            dictionaryTargetLanguage: {
+              title: settingsDialogLabels("dictionaryTargetLanguage.title"),
+              auto: settingsDialogLabels("dictionaryTargetLanguage.auto"),
+              en: settingsDialogLabels("dictionaryTargetLanguage.en"),
+              ja: settingsDialogLabels("dictionaryTargetLanguage.ja"),
+            },
+            japanesePronunciationStyle: {
+              title: settingsDialogLabels("japanesePronunciationStyle.title"),
+              romaji: settingsDialogLabels("japanesePronunciationStyle.romaji"),
+              hiraganaKatakana: settingsDialogLabels(
+                "japanesePronunciationStyle.hiraganaKatakana"
+              ),
             },
           }}
         />
@@ -120,7 +133,13 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
           >
             <DictionaryResult
               query={decodeURIComponent(query)}
-              language={languageName}
+              displayLanguage={displayLanguage}
+              targetLanguage={targetLang ?? "auto"}
+              japanesePronunciationStyle={
+                targetLang === "ja" && jpStyle
+                  ? (jpStyle as "romaji" | "hiragana-katakana")
+                  : undefined
+              }
             />
           </ErrorBoundary>
         ) : (

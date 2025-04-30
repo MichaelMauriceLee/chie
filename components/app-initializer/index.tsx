@@ -1,31 +1,33 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSetAtom } from "jotai";
-import {
-  initializeDeckNamesAtom,
-  initializeSelectedDeckAtom,
-  initializeThemeAtom,
-  initializeWordSelectionModeAtom,
-} from "@/store/atoms";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 export default function AppInitializer() {
-  const hydrateDeckNames = useSetAtom(initializeDeckNamesAtom);
-  const hydrateSelectedDeck = useSetAtom(initializeSelectedDeckAtom);
-  const hydrateTheme = useSetAtom(initializeThemeAtom);
-  const hydrateWordSelectionMode = useSetAtom(initializeWordSelectionModeAtom);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    hydrateDeckNames();
-    hydrateSelectedDeck();
-    hydrateTheme();
-    hydrateWordSelectionMode();
-  }, [
-    hydrateDeckNames,
-    hydrateSelectedDeck,
-    hydrateTheme,
-    hydrateWordSelectionMode,
-  ]);
+    const targetLang = searchParams.get("targetLang");
+    const jpStyle = searchParams.get("jpStyle");
+
+    if (!targetLang || (targetLang === "ja" && !jpStyle)) {
+      const localTargetLang =
+        localStorage.getItem("dictionaryTargetLanguage") ?? "auto";
+      const localJPStyle =
+        localStorage.getItem("japanesePronunciationStyle") ?? "romaji";
+
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set("targetLang", localTargetLang);
+
+      if (localTargetLang === "ja" && !jpStyle) {
+        newParams.set("jpStyle", localJPStyle);
+      }
+
+      router.replace(`${pathname}?${newParams.toString()}`);
+    }
+  }, [pathname, router, searchParams]);
 
   return null;
 }

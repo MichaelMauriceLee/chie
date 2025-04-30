@@ -3,43 +3,80 @@ import { DictionaryResponse } from "@/models/serverActions";
 
 async function getSpeechToken() {
   const apiKey = process.env.SPEECH_KEY;
+  if (!apiKey) throw new Error("Speech key is missing");
 
-  if (!apiKey) {
-    throw new Error("Speech key is missing");
-  }
-
-  try {
-    const response = await fetch(
-      "https://westus2.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
-      {
-        method: "POST",
-        headers: {
-          "Ocp-Apim-Subscription-Key": apiKey,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch speech token: ${response.statusText}`);
+  const response = await fetch(
+    "https://westus2.api.cognitive.microsoft.com/sts/v1.0/issuetoken",
+    {
+      method: "POST",
+      headers: {
+        "Ocp-Apim-Subscription-Key": apiKey,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     }
+  );
 
-    const token = await response.text();
-
-    return { token, region: "westus2" };
-  } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Unknown error occurred"
-    );
-  }
+  if (!response.ok)
+    throw new Error(`Failed to fetch speech token: ${response.statusText}`);
+  const token = await response.text();
+  return { token, region: "westus2" };
 }
 
 async function askDictionary(
   query: string,
-  language: string
+  displayLanguage: string,
+  targetLanguage: string,
+  jpStyle?: "romaji" | "hiragana-katakana"
 ): Promise<DictionaryResponse> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("Missing OpenRouter API key");
+
+  const langText =
+    targetLanguage === "auto" ? "the appropriate language" : targetLanguage;
+
+  let pronunciationNote = "";
+
+  if (targetLanguage === "ja") {
+    if (jpStyle === "romaji") {
+      pronunciationNote = "Use romaji for pronunciation.";
+    } else if (jpStyle === "hiragana-katakana") {
+      pronunciationNote = "Use hiragana/katakana for pronunciation.";
+    }
+  }
+
+  const systemPrompt = `
+    You are a multilingual dictionary assistant.
+
+    Input: ${query}
+
+    1. Translate the input into ${langText}, if necessary.
+    2. Break the input down into individual words or components:
+      - Text: original word/component
+      - Pronunciation: human-friendly pronunciation in ${langText}
+      - Meanings: list of possible meanings
+      - If compound, also break into sub-words with the same structure.
+    3. Always provide a general explanation about grammar, usage, or context in ${displayLanguage}.
+
+    ${pronunciationNote}
+
+    Respond ONLY in minified JSON matching the following TypeScript models:
+
+    \
+    type Word = {
+      text: string;
+      pronunciation: string;
+      meaning: string[];
+      words: Word[];
+    };
+
+    type DictionaryResponse = {
+      explanation: string;
+      words?: Word[];
+      sentence?: string;
+      detectedLanguage?: string;
+    };
+    \
+  `;
 
   const response = await fetch(
     "https://openrouter.ai/api/v1/chat/completions",
@@ -51,41 +88,7 @@ async function askDictionary(
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash-preview",
-        messages: [
-          {
-            role: "user",
-            content: ` 
-              You are a multilingual dictionary assistant.
-
-              Input: ${query}
-
-              1. Translate the input into ${language}, if necessary.
-              2. Break the input down into individual words or components:
-                - Text: original word/component
-                - Pronunciation: human-friendly pronunciation in ${language}
-                - Meanings: list of possible meanings
-                - If compound, also break into sub-words with the same structure.
-              3. Always provide a general explanation about grammar, usage, or context in ${language}.
-
-              Respond ONLY in minified JSON matching the following TypeScript models:
-
-              \`\`\`typescript
-              type Word = {
-                text: string;           // The original word or component
-                pronunciation: string;  // Human-friendly pronunciation
-                meaning: string[];      // Possible meanings
-                words: Word[];          // Nested components for compound words
-              };
-
-              type DictionaryResponse = {
-                explanation: string;        // A general explanation or direct translation
-                words?: Word[];             // The breakdown of words and their details
-                sentence?: string;          // The original sentence (cleaned of filler words or questions)
-                detectedLanguage?: string;  // Locale string (e.g. ja-JP) for Azure TTS
-              };
-              \`\`\``,
-          },
-        ],
+        messages: [{ role: "user", content: systemPrompt.trim() }],
         response_format: {
           type: "json_schema",
           json_schema: {
@@ -104,34 +107,23 @@ async function askDictionary(
                   items: {
                     type: "object",
                     properties: {
-                      text: { type: "string", description: "The individual word(s)" },
-                      pronunciation: { type: "string", description: "Human-friendly pronunciation" },
+                      text: {
+                        type: "string",
+                        description: "The original word or component",
+                      },
+                      pronunciation: {
+                        type: "string",
+                        description: "Human-friendly pronunciation",
+                      },
                       meaning: {
                         type: "array",
-                        description: "Dictionary definiton meanings of the word",
+                        description: "Dictionary definition meanings",
                         items: { type: "string" },
                       },
                       words: {
                         type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            text: { type: "string", description: "The individual word(s)" },
-                            pronunciation: { type: "string", description: "Human-friendly pronunciation" },
-                            meaning: {
-                              type: "array",
-                              description: "Dictionary definiton meanings of the word",
-                              items: { type: "string" },
-                            },
-                            words: { type: "array", items: {} },
-                          },
-                          required: [
-                            "text",
-                            "pronunciation",
-                            "meaning",
-                            "words",
-                          ],
-                        },
+                        description: "Nested components (for compound words)",
+                        items: {},
                       },
                     },
                     required: ["text", "pronunciation", "meaning", "words"],
@@ -144,7 +136,7 @@ async function askDictionary(
                 },
                 detectedLanguage: {
                   type: "string",
-                  description: "BCP-47 language tag for TTS, e.g., 'ja-JP'.",
+                  description: "Locale string for Azure TTS (e.g., 'ja-JP')",
                 },
               },
               required: ["explanation", "sentence", "detectedLanguage"],
@@ -167,8 +159,7 @@ async function askDictionary(
   if (!rawContent) throw new Error("No content returned from OpenRouter");
 
   try {
-    const parsed = JSON.parse(rawContent);
-    return parsed as DictionaryResponse;
+    return JSON.parse(rawContent);
   } catch {
     console.error("Failed to parse content as JSON:", rawContent);
     throw new Error("Invalid JSON returned from Gemini");
@@ -177,24 +168,28 @@ async function askDictionary(
 
 type Props = {
   query: string;
-  language: string;
+  displayLanguage: string;
+  targetLanguage: string;
+  japanesePronunciationStyle?: "romaji" | "hiragana-katakana";
 };
 
 export default async function DictionaryResult({
   query,
-  language,
+  displayLanguage,
+  targetLanguage,
+  japanesePronunciationStyle,
 }: Readonly<Props>) {
-  const dictionaryDataPromise = askDictionary(query, language);
-  const tokenPromise = getSpeechToken();
-
   const [data, speechToken] = await Promise.all([
-    dictionaryDataPromise,
-    tokenPromise,
+    askDictionary(
+      query,
+      displayLanguage,
+      targetLanguage,
+      japanesePronunciationStyle
+    ),
+    getSpeechToken(),
   ]);
 
-  if (!data) {
-    return null;
-  }
+  if (!data) return null;
 
   return (
     <DictionaryDisplay

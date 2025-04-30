@@ -56,9 +56,20 @@
         "title": "Settings",
         "description": "Manage general settings and your Anki decks.",
         "locale": {
-            "title": "Language Settings",
+            "title": "Display Language",
             "en": "English",
             "ja": "Japanese"
+        },
+        "dictionaryTargetLanguage": {
+            "title": "Target Dictionary Language",
+            "auto": "Auto Detect",
+            "en": "English",
+            "ja": "Japanese"
+        },
+        "japanesePronunciationStyle": {
+            "title": "Japanese Pronunciation Style",
+            "romaji": "Romaji",
+            "hiraganaKatakana": "Hiragana / Katakana"
         },
         "anki": {
             "title": "Anki",
