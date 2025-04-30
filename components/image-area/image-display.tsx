@@ -107,6 +107,77 @@ export default function ImageDisplay({
     }
   }, [image, fetchAnalysis]);
 
+  const getImageTransformationParameters = useCallback(() => {
+    if (!canvas || !imgRef.current.width || !imgRef.current.height) {
+      return { ratio: 1, centerShiftX: 0, centerShiftY: 0 };
+    }
+    const hRatio = canvas.width / imgRef.current.width;
+    const vRatio = canvas.height / imgRef.current.height;
+    const ratio = Math.min(hRatio, vRatio);
+    const centerShiftX = (canvas.width - imgRef.current.width * ratio) / 2;
+    const centerShiftY = (canvas.height - imgRef.current.height * ratio) / 2;
+    return {
+      ratio,
+      centerShiftX,
+      centerShiftY,
+    };
+  }, [canvas]);
+
+  const translateImagePoint = useCallback(
+    (point: OCRCoordinate): [number, number] => {
+      const { ratio, centerShiftX, centerShiftY } =
+        getImageTransformationParameters();
+      return [point.x * ratio + centerShiftX, point.y * ratio + centerShiftY];
+    },
+    [getImageTransformationParameters]
+  );
+
+  const drawPolygon = useCallback(
+    (polygon: OCRCoordinate[], strokeColor: string) => {
+      if (!ctx || polygon.length < 1) return;
+
+      ctx.beginPath();
+      const [startX, startY] = translateImagePoint(polygon[0]);
+      ctx.moveTo(startX, startY);
+
+      for (let i = 1; i < polygon.length; i++) {
+        const [x, y] = translateImagePoint(polygon[i]);
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(startX, startY);
+
+      ctx.strokeStyle = strokeColor;
+      ctx.stroke();
+    },
+    [ctx, translateImagePoint]
+  );
+
+  const drawWord = useCallback(
+    (word: OCRWord) => {
+      if (showWordBoundingBox) {
+        drawPolygon(word.boundingPolygon, "#830d30");
+      }
+    },
+    [drawPolygon, showWordBoundingBox]
+  );
+
+  const drawLine = useCallback(
+    (line: OCRBlock["lines"][number]) => {
+      if (showLineBoundingBox) {
+        drawPolygon(line.boundingPolygon, "#0066ff");
+      }
+      line.words.forEach(drawWord);
+    },
+    [drawPolygon, showLineBoundingBox, drawWord]
+  );
+
+  const drawBlock = useCallback(
+    (block: OCRBlock) => {
+      block.lines.forEach(drawLine);
+    },
+    [drawLine]
+  );
+
   const transformMousePoint = useCallback(
     (x: number, y: number) => {
       if (!ctx) return { x: 0, y: 0 };
@@ -142,31 +213,6 @@ export default function ImageDisplay({
     [canvas, transformMousePoint]
   );
 
-  const getImageTransformationParameters = useCallback(() => {
-    if (!canvas || !imgRef.current.width || !imgRef.current.height) {
-      return { ratio: 1, centerShiftX: 0, centerShiftY: 0 };
-    }
-    const hRatio = canvas.width / imgRef.current.width;
-    const vRatio = canvas.height / imgRef.current.height;
-    const ratio = Math.min(hRatio, vRatio);
-    const centerShiftX = (canvas.width - imgRef.current.width * ratio) / 2;
-    const centerShiftY = (canvas.height - imgRef.current.height * ratio) / 2;
-    return {
-      ratio,
-      centerShiftX,
-      centerShiftY,
-    };
-  }, [canvas]);
-
-  const translateImagePoint = useCallback(
-    (point: OCRCoordinate): [number, number] => {
-      const { ratio, centerShiftX, centerShiftY } =
-        getImageTransformationParameters();
-      return [point.x * ratio + centerShiftX, point.y * ratio + centerShiftY];
-    },
-    [getImageTransformationParameters]
-  );
-
   const clearCanvas = useCallback(() => {
     if (ctx && canvas) {
       ctx.save();
@@ -175,26 +221,6 @@ export default function ImageDisplay({
       ctx.restore();
     }
   }, [canvas, ctx]);
-
-  const drawPolygon = useCallback(
-    (polygon: OCRCoordinate[], strokeColor: string) => {
-      if (!ctx || polygon.length < 1) return;
-
-      ctx.beginPath();
-      const [startX, startY] = translateImagePoint(polygon[0]);
-      ctx.moveTo(startX, startY);
-
-      for (let i = 1; i < polygon.length; i++) {
-        const [x, y] = translateImagePoint(polygon[i]);
-        ctx.lineTo(x, y);
-      }
-      ctx.lineTo(startX, startY);
-
-      ctx.strokeStyle = strokeColor;
-      ctx.stroke();
-    },
-    [ctx, translateImagePoint]
-  );
 
   const drawImageAndBoundingBoxes = useCallback(() => {
     if (!image || !ctx || !canvas) return;
@@ -217,20 +243,7 @@ export default function ImageDisplay({
       imgRef.current.height * ratio
     );
 
-    if (imageSearchResult) {
-      imageSearchResult.forEach((block) => {
-        block.lines.forEach((line) => {
-          if (showLineBoundingBox) {
-            drawPolygon(line.boundingPolygon, "#0066ff");
-          }
-          line.words.forEach((word) => {
-            if (showWordBoundingBox) {
-              drawPolygon(word.boundingPolygon, "#830d30");
-            }
-          });
-        });
-      });
-    }
+    imageSearchResult?.forEach(drawBlock);
   }, [
     image,
     ctx,
@@ -238,9 +251,7 @@ export default function ImageDisplay({
     clearCanvas,
     getImageTransformationParameters,
     imageSearchResult,
-    drawPolygon,
-    showLineBoundingBox,
-    showWordBoundingBox,
+    drawBlock,
   ]);
 
   useEffect(() => {
