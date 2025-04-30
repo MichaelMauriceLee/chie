@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/context-menu";
 import { Upload, ClipboardPaste } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
 type Props = {
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
@@ -27,19 +28,19 @@ export default function DropArea({ setFile }: Readonly<Props>) {
     }
   }
 
-  function onPhotoPaste(evt: React.ClipboardEvent<HTMLDivElement>) {
+  function onPhotoPaste(evt: React.ClipboardEvent<HTMLButtonElement>) {
     const files = evt.clipboardData?.files;
     if (files && files.length !== 0) {
       setFile(files[0]);
     }
   }
 
-  function onDragEnter(evt: React.DragEvent<HTMLDivElement>) {
+  function onDragEnter(evt: React.DragEvent<HTMLButtonElement>) {
     evt.preventDefault();
     setIsDragging(true);
   }
 
-  function onDragOver(evt: React.DragEvent<HTMLDivElement>) {
+  function onDragOver(evt: React.DragEvent<HTMLButtonElement>) {
     evt.preventDefault();
   }
 
@@ -47,7 +48,7 @@ export default function DropArea({ setFile }: Readonly<Props>) {
     setIsDragging(false);
   }
 
-  function onDrop(evt: React.DragEvent<HTMLDivElement>) {
+  function onDrop(evt: React.DragEvent<HTMLButtonElement>) {
     evt.preventDefault();
     setIsDragging(false);
 
@@ -84,29 +85,21 @@ export default function DropArea({ setFile }: Readonly<Props>) {
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <div
-          className={`
-            flex flex-col items-center justify-center border-2 border-dotted h-96 w-full cursor-pointer transition-colors duration-300 
-            ${
-              isDragging
-                ? "bg-gray-200 text-gray-900"
-                : "bg-gray-100 text-gray-800"
-            }
-            hover:bg-gray-200
-            ${
-              isDragging
-                ? "dark:bg-gray-600  dark:text-gray-400"
-                : "dark:bg-gray-700  dark:text-gray-300"
-            }
-          dark:hover:bg-gray-600 dark:hover:text-gray-400`}
+        <button
+          type="button"
           onPaste={onPhotoPaste}
           onDragEnter={onDragEnter}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           onDrop={onDrop}
           onClick={onClick}
-          role="button"
-          tabIndex={0}
+          className={cn(
+            "flex flex-col items-center justify-center border-2 border-dotted h-96 w-full transition-colors duration-300",
+            isDragging
+              ? "bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-gray-400"
+              : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+            "hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-400"
+          )}
         >
           <Upload className="w-10 h-10 mb-2" />
           <span className="text-lg">{t("drag-drop")}</span>
@@ -120,7 +113,7 @@ export default function DropArea({ setFile }: Readonly<Props>) {
             accept="image/*"
             onChange={onPhotoUpload}
           />
-        </div>
+        </button>
       </ContextMenuTrigger>
 
       <ContextMenuContent className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200 shadow-md rounded-lg p-2">
