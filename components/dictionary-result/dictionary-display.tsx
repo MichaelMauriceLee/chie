@@ -246,25 +246,27 @@ export default function DictionaryDisplay({
               >
                 <Volume2 />
               </Button>
-              <Button
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  addToAnki(
-                    word.text,
-                    word.pronunciation,
-                    word.meaning,
-                    data.sentence || ""
-                  );
-                }}
-                disabled={!selectedDeck || !!activeAdd}
-              >
-                {activeAdd === word.text ? (
-                  <Loader2 className="animate-spin w-4 h-4" />
-                ) : (
-                  <Plus />
-                )}
-              </Button>
+              {typeof selectedDeck === "string" && (
+                <Button
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToAnki(
+                      word.text,
+                      word.pronunciation,
+                      word.meaning,
+                      data.sentence ?? ""
+                    );
+                  }}
+                  disabled={!!activeAdd}
+                >
+                  {activeAdd === word.text ? (
+                    <Loader2 className="animate-spin w-4 h-4" />
+                  ) : (
+                    <Plus />
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </AccordionTrigger>
