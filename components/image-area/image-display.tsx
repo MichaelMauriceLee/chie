@@ -63,6 +63,7 @@ export default function ImageDisplay({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(new Image());
   const tempWordArrayRef = useRef<OCRWord[]>([]);
+  const [cursorStyle, setCursorStyle] = useState<string>("default");
 
   const [imageSearchResult, setImageSearchResult] = useState<OCRBlock[] | null>(
     null
@@ -336,8 +337,10 @@ export default function ImageDisplay({
     (evt: React.MouseEvent<HTMLCanvasElement>) => {
       if (evt.ctrlKey) {
         findWordInImage(evt);
+        setCursorStyle("crosshair");
       } else {
         setDragStartPosition(getMousePos(evt));
+        setCursorStyle("grabbing");
       }
       setIsDragging(true);
     },
@@ -361,8 +364,10 @@ export default function ImageDisplay({
       setIsDragging(false);
       setDragStartPosition(null);
       tempWordArrayRef.current = [];
+      setCursorStyle("default");
+      window.requestAnimationFrame(drawImageAndBoundingBoxes);
     },
-    [isDragging, setKeyword, wordSelectionMode]
+    [isDragging, setKeyword, wordSelectionMode, drawImageAndBoundingBoxes]
   );
 
   const panImage = useCallback(
@@ -402,7 +407,8 @@ export default function ImageDisplay({
         {isLoading && <LoadingIndicator />}
 
         <canvas
-          className={`${isCanvasVisible ? "border border-black" : ""} `}
+          className={`${isCanvasVisible ? "border border-black" : ""}`}
+          style={{ cursor: cursorStyle }}
           ref={canvasRef}
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}
