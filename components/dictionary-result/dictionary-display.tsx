@@ -81,7 +81,7 @@ export default function DictionaryDisplay({
         speechConfig.speechSynthesisLanguage = detectedLanguage;
 
         class CustomAudioCallback implements PushAudioOutputStreamCallback {
-          private audioChunks: Uint8Array[] = [];
+          private readonly audioChunks: Uint8Array[] = [];
 
           write(dataBuffer: ArrayBuffer) {
             this.audioChunks.push(new Uint8Array(dataBuffer));
@@ -276,7 +276,7 @@ export default function DictionaryDisplay({
           </h3>
           <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
             {word.meaning.map((meaning, idx) => (
-              <li key={idx}>{meaning}</li>
+              <li key={`${meaning}-${idx}`}>{meaning}</li>
             ))}
           </ul>
           {word.words && word.words.length > 0 && (

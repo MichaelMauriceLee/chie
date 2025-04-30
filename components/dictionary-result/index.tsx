@@ -96,18 +96,19 @@ async function askDictionary(
               properties: {
                 explanation: {
                   type: "string",
-                  description: "A general explanation or translation.",
+                  description: "A general explanation or direct translation",
                 },
                 words: {
                   type: "array",
-                  description: "Detailed breakdown of words.",
+                  description: "The breakdown of words and their details",
                   items: {
                     type: "object",
                     properties: {
-                      text: { type: "string" },
-                      pronunciation: { type: "string" },
+                      text: { type: "string", description: "The individual word(s)" },
+                      pronunciation: { type: "string", description: "Human-friendly pronunciation" },
                       meaning: {
                         type: "array",
+                        description: "Dictionary definiton meanings of the word",
                         items: { type: "string" },
                       },
                       words: {
@@ -115,10 +116,11 @@ async function askDictionary(
                         items: {
                           type: "object",
                           properties: {
-                            text: { type: "string" },
-                            pronunciation: { type: "string" },
+                            text: { type: "string", description: "The individual word(s)" },
+                            pronunciation: { type: "string", description: "Human-friendly pronunciation" },
                             meaning: {
                               type: "array",
+                              description: "Dictionary definiton meanings of the word",
                               items: { type: "string" },
                             },
                             words: { type: "array", items: {} },
@@ -138,7 +140,7 @@ async function askDictionary(
                 sentence: {
                   type: "string",
                   description:
-                    "Cleaned or interpreted version of the sentence.",
+                    "The original sentence (cleaned of filler words or questions)",
                 },
                 detectedLanguage: {
                   type: "string",
