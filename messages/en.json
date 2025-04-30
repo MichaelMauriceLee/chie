@@ -72,6 +72,11 @@
                 "syncFailed": "Failed to sync with Anki."
             }
         },
+        "wordSelectionMode": {
+            "title": "Word Selection Mode",
+            "override": "Override",
+            "addOn": "Add On"
+        },
         "saveButton": "Save",
         "theme": {
             "title": "Theme",

@@ -65,6 +65,11 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
               success: settingsDialogLabels("anki.success.syncCompleted"),
               error: settingsDialogLabels("anki.error.syncFailed"),
             },
+            wordSelectionMode: {
+              title: settingsDialogLabels("wordSelectionMode.title"),
+              override: settingsDialogLabels("wordSelectionMode.override"),
+              addOn: settingsDialogLabels("wordSelectionMode.addOn"),
+            },
             theme: {
               title: settingsDialogLabels("theme.title"),
               light: settingsDialogLabels("theme.light"),

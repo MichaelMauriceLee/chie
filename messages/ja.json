@@ -72,6 +72,11 @@
                 "syncFailed": "Ankiとの同期に失敗しました。"
             }
         },
+        "wordSelectionMode": {
+            "title": "単語選択モード",
+            "override": "上書き",
+            "addOn": "追加"
+        },
         "saveButton": "保存",
         "theme": {
             "title": "テーマ",

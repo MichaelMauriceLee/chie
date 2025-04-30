@@ -50,6 +50,11 @@ type Props = {
       success: string;
       error: string;
     };
+    wordSelectionMode: {
+      title: string;
+      override: string;
+      addOn: string;
+    },
     theme: {
       title: string;
       light: string;
@@ -185,7 +190,9 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
           </section>
 
           <section>
-            <h2 className="text-lg font-medium mb-2">Word Selection Mode</h2>
+            <h2 className="text-lg font-medium mb-2">
+              {i18n.wordSelectionMode.title}
+            </h2>
             <Select
               value={tempWordSelectionMode}
               onValueChange={(value) =>
@@ -197,9 +204,11 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={WordSelectionMode.Override}>
-                  Override
+                  {i18n.wordSelectionMode.override}
                 </SelectItem>
-                <SelectItem value={WordSelectionMode.Add}>Add On</SelectItem>
+                <SelectItem value={WordSelectionMode.Add}>
+                  {i18n.wordSelectionMode.addOn}
+                </SelectItem>
               </SelectContent>
             </Select>
           </section>
