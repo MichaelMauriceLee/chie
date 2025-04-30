@@ -6,7 +6,7 @@ import {
 import {
   AddCardRequest,
   FindNotesRequest,
-  GetDeckNamesRequest,
+  AnkiRequest,
   NotesInfoRequest,
 } from "../models/ankiRequest";
 import { AnkiResponse, NotesInfoResponse } from "../models/ankiResponse";
@@ -21,7 +21,7 @@ async function formatAnkiResponse<T>(res: Response): Promise<T> {
 }
 
 export async function getDeckNames(): Promise<string[]> {
-  const payload: GetDeckNamesRequest = {
+  const payload: AnkiRequest = {
     action: AnkiConnectActionType.deckNames,
     version: ANKI_CONNECT_VERSION,
   };

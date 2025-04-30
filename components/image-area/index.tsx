@@ -11,22 +11,23 @@ export default function ImageArea({ setKeyword }: Readonly<Props>) {
   const [file, setFile] = useState<File | null>(null);
   const [image, setImage] = useState<string | null>(null);
 
-  return (
-    <div className="w-full">
-      {file ? (
-        image ? (
-          <ImageDisplay
-            image={image}
-            setKeyword={setKeyword}
-            setFile={setFile}
-            setImage={setImage}
-          />
-        ) : (
-          <ImageCropper file={file} setFile={setFile} setImage={setImage} />
-        )
-      ) : (
-        <DropArea setFile={setFile} />
-      )}
-    </div>
-  );
+  let content;
+  if (!file) {
+    content = <DropArea setFile={setFile} />;
+  } else if (!image) {
+    content = (
+      <ImageCropper file={file} setFile={setFile} setImage={setImage} />
+    );
+  } else {
+    content = (
+      <ImageDisplay
+        image={image}
+        setKeyword={setKeyword}
+        setFile={setFile}
+        setImage={setImage}
+      />
+    );
+  }
+
+  return <div className="w-full">{content}</div>;
 }

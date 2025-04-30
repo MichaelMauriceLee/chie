@@ -17,13 +17,13 @@ export default function ImageCropper({
   const t = useTranslations("ImageCropper");
 
   const cropperRef = useRef<ReactCropperElement>(null);
-  const [unCroppedImage, setUncroppedImage] = useState<string>();
+  const [rawImage, setRawImage] = useState<string>();
 
   const getDataURL = useCallback(() => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setUncroppedImage(reader.result as string);
+        setRawImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -51,7 +51,7 @@ export default function ImageCropper({
         <Cropper
           style={{ height: 400, width: "100%" }}
           initialAspectRatio={1}
-          src={unCroppedImage}
+          src={rawImage}
           viewMode={1}
           minCropBoxHeight={10}
           minCropBoxWidth={10}

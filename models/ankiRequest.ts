@@ -1,7 +1,7 @@
 import { Note } from "./note";
 import { AnkiConnectActionType } from "../lib/constants";
 
-type AnkiRequest = {
+export type AnkiRequest = {
   action: AnkiConnectActionType;
   version: number;
 };
@@ -11,8 +11,6 @@ export type AddCardRequest = AnkiRequest & {
     note?: Note;
   };
 };
-
-export type GetDeckNamesRequest = AnkiRequest;
 
 export type FindNotesRequest = AnkiRequest & {
   params: {
