@@ -1,6 +1,4 @@
 import DictionaryDisplay from "./dictionary-display";
-import { openrouter } from "@/lib/openrouter";
-import { generateText } from "ai";
 import { DictionaryResponse } from "@/models/serverActions";
 
 async function getSpeechToken() {
@@ -40,70 +38,138 @@ async function askDictionary(
   query: string,
   language: string
 ): Promise<DictionaryResponse> {
-  const { text } = await generateText({
-    model: openrouter.chat("deepseek/deepseek-chat-v3-0324:free"),
-    messages: [
-      {
-        role: "system",
-        content: `
-          You are a multilingual dictionary assistant.
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error("Missing OpenRouter API key");
 
-          When given a word, phrase, or sentence:
-
-          1. Translate it into ${language}, if necessary.
-          2. Break it down into individual words or components:
-            - Text: original word/component
-            - Pronunciation: human-friendly pronunciation in ${language}
-            - Meanings: list of possible meanings
-            - If compound, also break into sub-words with the same structure.
-          3. Always provide a general explanation about grammar, usage, or context in ${language}.
-
-          Respond ONLY in minified JSON matching the following TypeScript models:
-
-          \`\`\`typescript
-          type Word = {
-            text: string;           // The original word or component
-            pronunciation: string;  // Human-friendly pronunciation
-            meaning: string[];      // Possible meanings
-            words: Word[];          // Nested components for compound words
-          };
-
-          type DictionaryResponse = {
-            explanation: string;        // A general explanation or direct translation
-            words?: Word[];             // The breakdown of words and their details
-            sentence?: string;          // The original sentence (cleaned of filler words or questions)
-            detectedLanguage?: string;  // Locale string (e.g. ja-JP) for Azure TTS
-          };
-          \`\`\`
-        `,
+  const response = await fetch(
+    "https://openrouter.ai/api/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
-      {
-        role: "user",
-        content: query,
-      },
-    ],
-    temperature: 0.7,
-  });
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-preview",
+        messages: [
+          {
+            role: "user",
+            content: ` 
+              You are a multilingual dictionary assistant.
 
-  if (!text) {
-    throw new Error("No content returned");
+              Input: ${query}
+
+              1. Translate the input into ${language}, if necessary.
+              2. Break the input down into individual words or components:
+                - Text: original word/component
+                - Pronunciation: human-friendly pronunciation in ${language}
+                - Meanings: list of possible meanings
+                - If compound, also break into sub-words with the same structure.
+              3. Always provide a general explanation about grammar, usage, or context in ${language}.
+
+              Respond ONLY in minified JSON matching the following TypeScript models:
+
+              \`\`\`typescript
+              type Word = {
+                text: string;           // The original word or component
+                pronunciation: string;  // Human-friendly pronunciation
+                meaning: string[];      // Possible meanings
+                words: Word[];          // Nested components for compound words
+              };
+
+              type DictionaryResponse = {
+                explanation: string;        // A general explanation or direct translation
+                words?: Word[];             // The breakdown of words and their details
+                sentence?: string;          // The original sentence (cleaned of filler words or questions)
+                detectedLanguage?: string;  // Locale string (e.g. ja-JP) for Azure TTS
+              };
+              \`\`\``,
+          },
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "dictionaryResponse",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                explanation: {
+                  type: "string",
+                  description: "A general explanation or translation.",
+                },
+                words: {
+                  type: "array",
+                  description: "Detailed breakdown of words.",
+                  items: {
+                    type: "object",
+                    properties: {
+                      text: { type: "string" },
+                      pronunciation: { type: "string" },
+                      meaning: {
+                        type: "array",
+                        items: { type: "string" },
+                      },
+                      words: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            text: { type: "string" },
+                            pronunciation: { type: "string" },
+                            meaning: {
+                              type: "array",
+                              items: { type: "string" },
+                            },
+                            words: { type: "array", items: {} },
+                          },
+                          required: [
+                            "text",
+                            "pronunciation",
+                            "meaning",
+                            "words",
+                          ],
+                        },
+                      },
+                    },
+                    required: ["text", "pronunciation", "meaning", "words"],
+                  },
+                },
+                sentence: {
+                  type: "string",
+                  description:
+                    "Cleaned or interpreted version of the sentence.",
+                },
+                detectedLanguage: {
+                  type: "string",
+                  description: "BCP-47 language tag for TTS, e.g., 'ja-JP'.",
+                },
+              },
+              required: ["explanation", "sentence", "detectedLanguage"],
+              additionalProperties: false,
+            },
+          },
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`OpenRouter error: ${err}`);
   }
 
-  const cleaned = text.trim();
+  const json = await response.json();
+  const rawContent = json.choices?.[0]?.message?.content;
 
-  const match = cleaned.match(/\{[\s\S]*\}/);
-  if (!match) {
-    console.error("Failed to find JSON in AI response:", cleaned);
-    throw new Error("No valid JSON found in AI response.");
-  }
-
-  const jsonString = match[0];
+  if (!rawContent) throw new Error("No content returned from OpenRouter");
 
   try {
-    return JSON.parse(jsonString) as DictionaryResponse;
+    const parsed = JSON.parse(rawContent);
+    return parsed as DictionaryResponse;
   } catch {
-    console.error("Failed to parse extracted JSON:", jsonString);
-    throw new Error("Invalid JSON returned by AI.");
+    console.error("Failed to parse content as JSON:", rawContent);
+    throw new Error("Invalid JSON returned from Gemini");
   }
 }
 
