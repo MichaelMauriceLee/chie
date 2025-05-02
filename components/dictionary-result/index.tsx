@@ -143,7 +143,6 @@ async function askDictionary(
       .replace(/^```(?:json)?\s*/i, "") 
       .replace(/\s*```$/, "") 
       .trim();
-    console.log(stripped)
     return JSON.parse(stripped);
   } catch {
     console.error("Failed to parse content as JSON:", rawContent);
