@@ -34,7 +34,7 @@ export type Word = {
 
 export type DictionaryResponse = {
   explanation: string; 
-  words?: Word[];
-  sentence?: string;
-  detectedLanguage?: string;
+  words: Word[];
+  sentence: string;
+  detectedLanguage: string;
 };

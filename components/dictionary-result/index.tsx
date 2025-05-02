@@ -31,7 +31,10 @@ async function askDictionary(
       - Text: original word/component
       - Pronunciation: human-friendly pronunciation in ${targetLanguage}
       - Meanings: list of possible meanings
-      - If compound, also break into sub-words with the same structure.
+      - For compound words or words formed from smaller units, populate the "words" array with components.
+      - Each component must follow the same { text, pronunciation, meaning, words } structure.
+      - Always include an empty "words" array, even for atomic words.
+      - You may nest sub-words up to 2 levels deep.
     3. Always provide a general explanation about grammar, usage, or context in ${displayLanguage}.
 
     ${pronunciationNote}
@@ -48,9 +51,9 @@ async function askDictionary(
 
     type DictionaryResponse = {
       explanation: string;        // A general explanation or direct translation
-      words?: Word[];             // The breakdown of words and their details
-      sentence?: string;          // The original sentence (cleaned of filler words or questions)
-      detectedLanguage?: string;  // Locale string (e.g. ja-JP) for Azure TTS
+      words: Word[];             // The breakdown of words and their details
+      sentence: string;          // The original sentence (cleaned of filler words or questions)
+      detectedLanguage: string;  // Locale string (e.g. ja-JP) for Azure TTS
     };
     \
   `;
@@ -116,7 +119,7 @@ async function askDictionary(
                   description: "Locale string for Azure TTS (e.g., 'ja-JP')",
                 },
               },
-              required: ["explanation", "sentence", "detectedLanguage"],
+              required: ["explanation", "sentence", "detectedLanguage", "words"],
               additionalProperties: false,
             },
           },
@@ -136,7 +139,12 @@ async function askDictionary(
   if (!rawContent) throw new Error("No content returned from OpenRouter");
 
   try {
-    return JSON.parse(rawContent);
+    const stripped = rawContent
+      .replace(/^```(?:json)?\s*/i, "") 
+      .replace(/\s*```$/, "") 
+      .trim();
+    console.log(stripped)
+    return JSON.parse(stripped);
   } catch {
     console.error("Failed to parse content as JSON:", rawContent);
     throw new Error("Invalid JSON returned from Gemini");
