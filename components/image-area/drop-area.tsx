@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React from "react";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -10,6 +10,7 @@ import {
 import { Upload, ClipboardPaste } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { useDropHandlers } from "@/hooks/useDropHandlers";
 
 type Props = {
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
@@ -18,69 +19,18 @@ type Props = {
 export default function DropArea({ setFile }: Readonly<Props>) {
   const t = useTranslations("DropArea");
 
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  function onClick() {
-    const inputRef = fileInputRef?.current;
-    if (inputRef) {
-      inputRef.click();
-    }
-  }
-
-  function onPhotoPaste(evt: React.ClipboardEvent<HTMLButtonElement>) {
-    const files = evt.clipboardData?.files;
-    if (files && files.length !== 0) {
-      setFile(files[0]);
-    }
-  }
-
-  function onDragEnter(evt: React.DragEvent<HTMLButtonElement>) {
-    evt.preventDefault();
-    setIsDragging(true);
-  }
-
-  function onDragOver(evt: React.DragEvent<HTMLButtonElement>) {
-    evt.preventDefault();
-  }
-
-  function onDragLeave() {
-    setIsDragging(false);
-  }
-
-  function onDrop(evt: React.DragEvent<HTMLButtonElement>) {
-    evt.preventDefault();
-    setIsDragging(false);
-
-    if (evt.dataTransfer.files.length !== 0) {
-      setFile(evt.dataTransfer.files[0]);
-    }
-  }
-
-  function onPhotoUpload() {
-    if (fileInputRef.current) {
-      const { files } = fileInputRef.current;
-      if (files && files.length !== 0) {
-        setFile(files[0]);
-      }
-    }
-  }
-
-  async function pasteFromClipboard() {
-    try {
-      const clipboardItems = await navigator.clipboard.read();
-      if (
-        clipboardItems.length !== 0 &&
-        clipboardItems[0].types.includes("image/png")
-      ) {
-        const clipboardItem = clipboardItems[0];
-        const blob = await clipboardItem.getType("image/png");
-        setFile(blob as File);
-      }
-    } catch (error) {
-      console.error(t("error.paste-failed"), error);
-    }
-  }
+  const {
+    isDragging,
+    fileInputRef,
+    onClick,
+    onPhotoPaste,
+    onDragEnter,
+    onDragOver,
+    onDragLeave,
+    onDrop,
+    onPhotoUpload,
+    pasteFromClipboard,
+  } = useDropHandlers(setFile);
 
   return (
     <ContextMenu>

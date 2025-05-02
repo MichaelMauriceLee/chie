@@ -1,22 +1,17 @@
 "use client";
 
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useMemo,
-} from "react";
-import LoadingIndicator from "./loading-indicator";
+import React, { useEffect } from "react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
-import { OCRBlock, OCRCoordinate, OCRWord } from "@/models/serverActions";
-import { analyzeImage } from "@/app/[locale]/actions";
-import { useTranslations } from "next-intl";
-import { toast } from "sonner";
+import LoadingIndicator from "./loading-indicator";
 import { useAtom } from "jotai";
-import { wordSelectionModeAtom, WordSelectionMode } from "@/store/atoms";
+import { wordSelectionModeAtom } from "@/store/atoms";
+import { useTranslations } from "next-intl";
+import { useCanvasSetup } from "@/hooks/useCanvasSetup";
+import { useOCRAnalysis } from "@/hooks/useOCRAnalysis";
+import { useOCRRendering } from "@/hooks/useOCRRendering";
+import { useOCRInteraction } from "@/hooks/useOCRInteraction";
 
 type Props = {
   image: string;
@@ -25,30 +20,6 @@ type Props = {
   setImage: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-function pointInPolygon(
-  polygon: OCRCoordinate[],
-  testPoint: OCRCoordinate
-): boolean {
-  let inside = false;
-
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const xi = polygon[i].x;
-    const yi = polygon[i].y;
-    const xj = polygon[j].x;
-    const yj = polygon[j].y;
-
-    const intersects =
-      yi > testPoint.y !== yj > testPoint.y &&
-      testPoint.x < ((xj - xi) * (testPoint.y - yi)) / (yj - yi) + xi;
-
-    if (intersects) {
-      inside = !inside;
-    }
-  }
-
-  return inside;
-}
-
 export default function ImageDisplay({
   image,
   setKeyword,
@@ -56,240 +27,37 @@ export default function ImageDisplay({
   setImage,
 }: Readonly<Props>) {
   const t = useTranslations("ImageDisplay");
-
   const [wordSelectionMode] = useAtom(wordSelectionModeAtom);
 
-  const canvasWrapperRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imgRef = useRef<HTMLImageElement>(new Image());
-  const tempWordArrayRef = useRef<OCRWord[]>([]);
-  const [cursorStyle, setCursorStyle] = useState<string>("default");
+  const { canvasRef, canvasWrapperRef, imgRef, isCanvasVisible } =
+    useCanvasSetup(image);
+  const { isLoading, imageSearchResult } = useOCRAnalysis(image);
 
-  const [imageSearchResult, setImageSearchResult] = useState<OCRBlock[] | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const [isCanvasVisible, setIsCanvasVisible] = useState<boolean>(false);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragStartPosition, setDragStartPosition] =
-    useState<OCRCoordinate | null>(null);
-
-  const [showLineBoundingBox, setShowLineBoundingBox] = useState<boolean>(true);
-  const [showWordBoundingBox, setShowWordBoundingBox] =
-    useState<boolean>(false);
-
-  const canvasWrapper = canvasWrapperRef.current;
   const canvas = canvasRef.current;
-  const ctx = useMemo(() => canvas?.getContext("2d") ?? null, [canvas]);
+  const ctx = canvas?.getContext("2d") ?? null;
 
-  const fetchAnalysis = useCallback(async () => {
-    setIsLoading(true);
-    setImageSearchResult(null);
+  const [showLineBoundingBox, setShowLineBoundingBox] = React.useState(true);
+  const [showWordBoundingBox, setShowWordBoundingBox] = React.useState(false);
 
-    try {
-      const data = await analyzeImage(image);
-      setImageSearchResult(data.readResult.blocks);
-    } catch (err: unknown) {
-      const resolvedError =
-        err instanceof Error ? err : new Error("Unknown error occurred.");
-      toast.error(`${t("error.message")}: ${resolvedError.message}`, {
-        position: "top-center",
-      });
-      console.error(resolvedError);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [image, t]);
-
-  useEffect(() => {
-    if (image) {
-      void fetchAnalysis();
-    }
-  }, [image, fetchAnalysis]);
-
-  const getImageTransformationParameters = useCallback(() => {
-    if (!canvas || !imgRef.current.width || !imgRef.current.height) {
-      return { ratio: 1, centerShiftX: 0, centerShiftY: 0 };
-    }
-    const hRatio = canvas.width / imgRef.current.width;
-    const vRatio = canvas.height / imgRef.current.height;
-    const ratio = Math.min(hRatio, vRatio);
-    const centerShiftX = (canvas.width - imgRef.current.width * ratio) / 2;
-    const centerShiftY = (canvas.height - imgRef.current.height * ratio) / 2;
-    return {
-      ratio,
-      centerShiftX,
-      centerShiftY,
-    };
-  }, [canvas]);
-
-  const translateImagePoint = useCallback(
-    (point: OCRCoordinate): [number, number] => {
-      const { ratio, centerShiftX, centerShiftY } =
-        getImageTransformationParameters();
-      return [point.x * ratio + centerShiftX, point.y * ratio + centerShiftY];
-    },
-    [getImageTransformationParameters]
-  );
-
-  const drawPolygon = useCallback(
-    (polygon: OCRCoordinate[], strokeColor: string) => {
-      if (!ctx || polygon.length < 1) return;
-
-      ctx.beginPath();
-      const [startX, startY] = translateImagePoint(polygon[0]);
-      ctx.moveTo(startX, startY);
-
-      for (let i = 1; i < polygon.length; i++) {
-        const [x, y] = translateImagePoint(polygon[i]);
-        ctx.lineTo(x, y);
-      }
-      ctx.lineTo(startX, startY);
-
-      ctx.strokeStyle = strokeColor;
-      ctx.stroke();
-    },
-    [ctx, translateImagePoint]
-  );
-
-  const drawWord = useCallback(
-    (word: OCRWord) => {
-      if (showWordBoundingBox) {
-        drawPolygon(word.boundingPolygon, "#830d30");
-      }
-    },
-    [drawPolygon, showWordBoundingBox]
-  );
-
-  const drawLine = useCallback(
-    (line: OCRBlock["lines"][number]) => {
-      if (showLineBoundingBox) {
-        drawPolygon(line.boundingPolygon, "#0066ff");
-      }
-      line.words.forEach(drawWord);
-    },
-    [drawPolygon, showLineBoundingBox, drawWord]
-  );
-
-  const drawBlock = useCallback(
-    (block: OCRBlock) => {
-      block.lines.forEach(drawLine);
-    },
-    [drawLine]
-  );
-
-  const transformMousePoint = useCallback(
-    (x: number, y: number) => {
-      if (!ctx) return { x: 0, y: 0 };
-      const transform = ctx.getTransform();
-      const inverseZoom = 1 / transform.a;
-
-      const transformedX = inverseZoom * x - inverseZoom * transform.e;
-      const transformedY = inverseZoom * y - inverseZoom * transform.f;
-      return { x: transformedX, y: transformedY };
-    },
-    [ctx]
-  );
-
-  const getMousePos = useCallback(
-    (
-      evt:
-        | React.WheelEvent<HTMLCanvasElement>
-        | React.MouseEvent<HTMLCanvasElement>
-        | WheelEvent
-    ) => {
-      if (!canvas) return null;
-      const rect = canvas.getBoundingClientRect();
-
-      const mousePos = {
-        x:
-          ((evt.clientX - rect.left) / (rect.right - rect.left)) * canvas.width,
-        y:
-          ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height,
-      };
-
-      return transformMousePoint(mousePos.x, mousePos.y);
-    },
-    [canvas, transformMousePoint]
-  );
-
-  const clearCanvas = useCallback(() => {
-    if (ctx && canvas) {
-      ctx.save();
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.restore();
-    }
-  }, [canvas, ctx]);
-
-  const drawImageAndBoundingBoxes = useCallback(() => {
-    if (!image || !ctx || !canvas) return;
-
-    clearCanvas();
-
-    const { ratio, centerShiftX, centerShiftY } =
-      getImageTransformationParameters();
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(
-      imgRef.current,
-      0,
-      0,
-      imgRef.current.width,
-      imgRef.current.height,
-      centerShiftX,
-      centerShiftY,
-      imgRef.current.width * ratio,
-      imgRef.current.height * ratio
-    );
-
-    imageSearchResult?.forEach(drawBlock);
-  }, [
-    image,
+  const { drawImageAndBoundingBoxes, translateImagePoint } = useOCRRendering(
     ctx,
     canvas,
-    clearCanvas,
-    getImageTransformationParameters,
-    imageSearchResult,
-    drawBlock,
-  ]);
-
-  useEffect(() => {
-    window.requestAnimationFrame(drawImageAndBoundingBoxes);
-  }, [
-    drawImageAndBoundingBoxes,
+    imgRef.current,
     imageSearchResult,
     showLineBoundingBox,
-    showWordBoundingBox,
-  ]);
-
-  useEffect(() => {
-    if (canvas && canvasWrapper) {
-      canvas.height = canvasWrapper.getBoundingClientRect().height;
-      canvas.width = canvasWrapper.getBoundingClientRect().width;
-      imgRef.current.onload = drawImageAndBoundingBoxes;
-      imgRef.current.src = image;
-      setIsCanvasVisible(true);
-    }
-  }, [canvas, canvasWrapper, drawImageAndBoundingBoxes, image]);
-
-  const onWheel = useCallback(
-    (evt: WheelEvent) => {
-      evt.preventDefault();
-      const mousePos = getMousePos(evt);
-      if (mousePos && ctx) {
-        const zoom = evt.deltaY < 0 ? 1.1 : 0.9;
-        const { x, y } = mousePos;
-        ctx.translate(x, y);
-        ctx.scale(zoom, zoom);
-        ctx.translate(-x, -y);
-
-        window.requestAnimationFrame(drawImageAndBoundingBoxes);
-      }
-    },
-    [ctx, getMousePos, drawImageAndBoundingBoxes]
+    showWordBoundingBox
   );
+
+  const { onMouseDown, onMouseMove, onMouseUp, onWheel, cursorStyle } =
+    useOCRInteraction(
+      canvas,
+      ctx,
+      imageSearchResult,
+      translateImagePoint,
+      setKeyword,
+      wordSelectionMode,
+      drawImageAndBoundingBoxes
+    );
 
   useEffect(() => {
     if (!canvas) return;
@@ -299,113 +67,24 @@ export default function ImageDisplay({
     };
   }, [canvas, onWheel]);
 
-  const findWordInImage = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!imageSearchResult) return;
-      const mousePos = getMousePos(evt);
-      if (!mousePos) return;
+  useEffect(() => {
+    window.requestAnimationFrame(drawImageAndBoundingBoxes);
+  }, [
+    drawImageAndBoundingBoxes,
+    showLineBoundingBox,
+    showWordBoundingBox,
+    imageSearchResult,
+  ]);
 
-      imageSearchResult.forEach((block) => {
-        block.lines.forEach((line) => {
-          const linePolygonCanvas = line.boundingPolygon.map((coord) => {
-            const [cx, cy] = translateImagePoint(coord);
-            return { x: cx, y: cy };
-          });
-
-          if (pointInPolygon(linePolygonCanvas, mousePos)) {
-            line.words.forEach((word) => {
-              const wordPolygonCanvas = word.boundingPolygon.map((coord) => {
-                const [wx, wy] = translateImagePoint(coord);
-                return { x: wx, y: wy };
-              });
-
-              if (
-                pointInPolygon(wordPolygonCanvas, mousePos) &&
-                !tempWordArrayRef.current.includes(word)
-              ) {
-                tempWordArrayRef.current.push(word);
-              }
-            });
-          }
-        });
-      });
-    },
-    [imageSearchResult, getMousePos, translateImagePoint]
-  );
-
-  const onMouseDown = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (evt.ctrlKey) {
-        findWordInImage(evt);
-        setCursorStyle("crosshair");
-      } else {
-        setDragStartPosition(getMousePos(evt));
-        setCursorStyle("grabbing");
-      }
-      setIsDragging(true);
-    },
-    [findWordInImage, getMousePos]
-  );
-
-  const onMouseUp = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (isDragging && evt.ctrlKey) {
-        const selectedWords = tempWordArrayRef.current
-          .map((el) => el.text)
-          .join("");
-
-        if (wordSelectionMode === WordSelectionMode.Add) {
-          setKeyword((prev) => (prev ?? "") + selectedWords);
-        } else {
-          setKeyword(selectedWords);
-        }
-      }
-
-      setIsDragging(false);
-      setDragStartPosition(null);
-      tempWordArrayRef.current = [];
-      setCursorStyle("default");
-      window.requestAnimationFrame(drawImageAndBoundingBoxes);
-    },
-    [isDragging, setKeyword, wordSelectionMode, drawImageAndBoundingBoxes]
-  );
-
-  const panImage = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!dragStartPosition || !ctx) return;
-      const mousePos = getMousePos(evt);
-      if (mousePos) {
-        const dx = mousePos.x - dragStartPosition.x;
-        const dy = mousePos.y - dragStartPosition.y;
-        ctx.translate(dx, dy);
-        window.requestAnimationFrame(drawImageAndBoundingBoxes);
-      }
-    },
-    [ctx, dragStartPosition, getMousePos, drawImageAndBoundingBoxes]
-  );
-
-  const onMouseMove = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!isDragging) return;
-      if (evt.ctrlKey) {
-        findWordInImage(evt);
-      } else {
-        panImage(evt);
-      }
-    },
-    [isDragging, findWordInImage, panImage]
-  );
-
-  const clearImage = useCallback(() => {
+  const clearImage = () => {
     setImage(null);
     setFile(null);
-  }, [setImage, setFile]);
+  };
 
   return (
     <>
       <div className="h-96 w-full relative" ref={canvasWrapperRef}>
         {isLoading && <LoadingIndicator />}
-
         <canvas
           className={`${isCanvasVisible ? "border border-black" : ""}`}
           style={{ cursor: cursorStyle }}
