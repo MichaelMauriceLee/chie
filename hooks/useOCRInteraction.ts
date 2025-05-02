@@ -1,5 +1,10 @@
 import { useCallback, useRef, useState } from "react";
-import { OCRBlock, OCRCoordinate, OCRWord } from "@/models/serverActions";
+import {
+  OCRBlock,
+  OCRCoordinate,
+  OCRLine,
+  OCRWord,
+} from "@/models/serverActions";
 import { WordSelectionMode } from "@/store/atoms";
 
 function pointInPolygon(
@@ -20,6 +25,10 @@ function pointInPolygon(
     if (intersects) inside = !inside;
   }
   return inside;
+}
+
+function getAllLines(blocks: OCRBlock[]): OCRLine[] {
+  return blocks.flatMap((block) => block.lines);
 }
 
 export function useOCRInteraction(
@@ -64,29 +73,28 @@ export function useOCRInteraction(
       const mousePos = getMousePos(evt);
       if (!mousePos) return;
 
-      imageSearchResult.forEach((block) => {
-        block.lines.forEach((line) => {
-          const linePolygonCanvas = line.boundingPolygon.map((coord) => {
+      for (const line of getAllLines(imageSearchResult)) {
+        const linePolygonCanvas = line.boundingPolygon.map((coord) => {
+          const [x, y] = translateImagePoint(coord);
+          return { x, y };
+        });
+
+        if (!pointInPolygon(linePolygonCanvas, mousePos)) continue;
+
+        for (const word of line.words) {
+          const wordPolygonCanvas = word.boundingPolygon.map((coord) => {
             const [x, y] = translateImagePoint(coord);
             return { x, y };
           });
 
-          if (pointInPolygon(linePolygonCanvas, mousePos)) {
-            line.words.forEach((word) => {
-              const wordPolygonCanvas = word.boundingPolygon.map((coord) => {
-                const [x, y] = translateImagePoint(coord);
-                return { x, y };
-              });
-              if (
-                pointInPolygon(wordPolygonCanvas, mousePos) &&
-                !tempWordArrayRef.current.includes(word)
-              ) {
-                tempWordArrayRef.current.push(word);
-              }
-            });
+          if (
+            pointInPolygon(wordPolygonCanvas, mousePos) &&
+            !tempWordArrayRef.current.includes(word)
+          ) {
+            tempWordArrayRef.current.push(word);
           }
-        });
-      });
+        }
+      }
     },
     [imageSearchResult, getMousePos, translateImagePoint]
   );
