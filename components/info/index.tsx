@@ -1,6 +1,10 @@
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 
+const strongOnly = {
+  strong: (chunks: React.ReactNode) => <strong>{chunks}</strong>,
+};
+
 export default async function Info() {
   const t = await getTranslations("Info");
 
@@ -11,36 +15,16 @@ export default async function Info() {
       </CardHeader>
       <CardContent className="space-y-6 text-gray-800 dark:text-gray-200">
         <div>
-          <p>
-            {t.rich("welcome.description", {
-              strong: (chunks) => <strong>{chunks}</strong>,
-            })}
-          </p>
+          <p>{t.rich("welcome.description", strongOnly)}</p>
         </div>
 
         <h3 className="text-2xl font-bold">{t("features.title")}</h3>
         <div>
           <ul className="list-disc list-inside space-y-2">
-            <li>
-              {t.rich("features.translation", {
-                strong: (chunks) => <strong>{chunks}</strong>,
-              })}
-            </li>
-            <li>
-              {t.rich("features.wordAnalysis", {
-                strong: (chunks) => <strong>{chunks}</strong>,
-              })}
-            </li>
-            <li>
-              {t.rich("features.ankiIntegration", {
-                strong: (chunks) => <strong>{chunks}</strong>,
-              })}
-            </li>
-            <li>
-              {t.rich("features.imageAudioSupport", {
-                strong: (chunks) => <strong>{chunks}</strong>,
-              })}
-            </li>
+            <li>{t.rich("features.translation", strongOnly)}</li>
+            <li>{t.rich("features.wordAnalysis", strongOnly)}</li>
+            <li>{t.rich("features.ankiIntegration", strongOnly)}</li>
+            <li>{t.rich("features.imageAudioSupport", strongOnly)}</li>
           </ul>
         </div>
 
