@@ -8,6 +8,7 @@ import { Volume2 } from "lucide-react";
 import { speakText } from "@/lib/audio";
 import DictionaryWordItem from "./dictionary-word-item";
 import { Accordion } from "@radix-ui/react-accordion";
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   data: DictionaryResponse;
@@ -51,9 +52,9 @@ export default function DictionaryDisplay({
       <CardContent>
         {data.words && data.words.length > 0 && (
           <Accordion type="single" collapsible className="space-y-4">
-            {data.words.map((word, idx) => (
+            {data.words.map((word) => (
               <DictionaryWordItem
-                key={`${word.text}-${idx}`}
+                key={`${word.text}-${uuidv4()}`}
                 word={word}
                 sentence={data.sentence ?? ""}
                 detectedLanguage={data.detectedLanguage ?? "en-US"}

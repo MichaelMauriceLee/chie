@@ -13,6 +13,7 @@ import { Plus, Volume2, Loader2 } from "lucide-react";
 import { useAnki } from "@/hooks/useAnki";
 import { speakText } from "@/lib/audio";
 import { useTranslations } from "next-intl";
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   word: Word;
@@ -90,7 +91,7 @@ export default function DictionaryWordItem({
           <Accordion type="single" collapsible className="mt-4 space-y-2">
             {word.words.map((sub) => (
               <DictionaryWordItem
-                key={sub.text}
+                key={uuidv4()}
                 word={sub}
                 sentence={sentence}
                 detectedLanguage={detectedLanguage}
