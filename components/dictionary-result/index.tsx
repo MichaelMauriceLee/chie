@@ -46,7 +46,6 @@ async function askDictionary(
       text: string;           // The original word or component
       pronunciation: string;  // Human-friendly pronunciation
       meaning: string[];      // Dictionary definition meanings
-      words: Word[];          // Nested components for compound words
     };
 
     type DictionaryResponse = {
@@ -100,13 +99,8 @@ async function askDictionary(
                         description: "Dictionary definition meanings",
                         items: { type: "string" },
                       },
-                      words: {
-                        type: "array",
-                        description: "Nested components (for compound words)",
-                        items: {},
-                      },
                     },
-                    required: ["text", "pronunciation", "meaning", "words"],
+                    required: ["text", "pronunciation", "meaning"],
                   },
                 },
                 sentence: {
