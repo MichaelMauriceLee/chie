@@ -57,12 +57,12 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
             description: settingsDialogLabels("description"),
             saveButton: settingsDialogLabels("saveButton"),
             ariaLabel: settingsDialogLabels("aria.settings"),
-            locale: {
-              title: settingsDialogLabels("locale.title"),
-              en: settingsDialogLabels("locale.en"),
-              ja: settingsDialogLabels("locale.ja"),
-              "zh-CN": settingsDialogLabels("locale.zh-CN"),
-              "zh-TW": settingsDialogLabels("locale.zh-TW"),
+            displayLanguage: {
+              title: settingsDialogLabels("displayLanguage.title"),
+              en: settingsDialogLabels("displayLanguage.en"),
+              ja: settingsDialogLabels("displayLanguage.ja"),
+              "zh-CN": settingsDialogLabels("displayLanguage.zh-CN"),
+              "zh-TW": settingsDialogLabels("displayLanguage.zh-TW"),
             },
             anki: {
               title: settingsDialogLabels("anki.title"),

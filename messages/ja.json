@@ -55,7 +55,7 @@
         },
         "title": "設定",
         "description": "一般設定とAnkiデッキを管理します。",
-        "locale": {
+        "displayLanguage": {
             "title": "表示言語",
             "en": "英語",
             "ja": "日本語",

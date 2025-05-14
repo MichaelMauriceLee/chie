@@ -1,65 +1,66 @@
 {
     "Metadata": {
-        "title": "Chie",
-        "description": "新一代多語言詞典"
+        "title": "知恵",
+        "description": "下一代多語言辭典"
     },
     "Home": {
         "close": "關閉",
         "settings": "設定"
     },
     "DictionaryInput": {
-        "askAQuestionPlaceholder": "輸入問題..."
+        "askAQuestionPlaceholder": "輸入您的問題..."
     },
     "DictionaryDisplay": {
         "errors": {
-            "noDeckSelected": "請在設定中選擇一個牌組。",
-            "addFailed": "新增卡片到Anki失敗。",
-            "audioGenerationFailed": "生成單字音頻失敗。",
-            "speechFailed": "播放單字音頻失敗。"
+            "noDeckSelected": "請先在設定中選擇一個牌組。",
+            "addFailed": "無法將卡片添加到Anki。",
+            "audioGenerationFailed": "無法生成單字的音頻。",
+            "speechFailed": "無法播放單字的音頻。"
         },
         "success": {
-            "added": "已將\"{word}\"新增到牌組\"{deck}\"。"
+            "added": "已將 \"{word}\" 添加到牌組 \"{deck}\"。"
         },
         "labels": {
             "pronunciation": "發音",
             "meanings": "含義",
             "originalSentence": "原句",
-            "addedOn": "新增於",
+            "addedOn": "添加時間",
             "notAvailable": "不適用",
-            "audioNotSupported": "您的瀏覽器不支援音頻元素。"
+            "audioNotSupported": "您的瀏覽器不支持音頻元素。"
         },
-        "dateFormat": "yyyy年MM月dd日 HH:mm"
+        "dateFormat": "yyyy年MM月dd日 hh:mm a"
     },
     "NotFound": {
         "title": "404 - 頁面未找到",
-        "description": "抱歉，我們找不到您要查找的頁面。",
+        "description": "找不到您請求的頁面。",
         "backHome": "返回首頁"
+    },
+    "ImageCropper": {
+        "instructions": "放置視窗並按裁剪圖像按鈕開始分析。",
+        "clearButton": "清除",
+        "cropButton": "裁剪圖像"
+    },
+    "DropArea": {
+        "drag-drop": "將圖像拖放到此處",
+        "click-upload": "或點擊上傳",
+        "ctrl-v": "或按Ctrl + V貼上",
+        "paste-from-clipboard": "從剪貼簿貼上圖像",
+        "error": {
+            "paste-failed": "無法從剪貼簿貼上圖像"
+        }
     },
     "SettingsDialog": {
         "aria": {
             "settings": "設定"
         },
         "title": "設定",
-        "description": "管理常規設定和您的Anki牌組。",
-        "locale": {
+        "description": "管理一般設定和Anki牌組。",
+        "displayLanguage": {
             "title": "顯示語言",
             "en": "英語",
             "ja": "日語",
             "zh-CN": "簡體中文",
             "zh-TW": "繁體中文"
-        },
-        "dictionaryTargetLanguage": {
-            "title": "目標詞典語言",
-            "auto": "自動檢測",
-            "en": "英語",
-            "ja": "日語",
-            "zh-CN": "簡體中文",
-            "zh-TW": "繁體中文"
-        },
-        "japanesePronunciationStyle": {
-            "title": "日語發音風格",
-            "romaji": "羅馬字",
-            "hiraganaKatakana": "平假名/片假名"
         },
         "anki": {
             "title": "Anki",
@@ -76,38 +77,69 @@
         "wordSelectionMode": {
             "title": "單字選擇模式",
             "override": "覆蓋",
-            "addOn": "新增"
+            "addOn": "添加"
         },
-        "saveButton": "儲存",
+        "saveButton": "保存",
         "theme": {
             "title": "主題",
             "light": "淺色",
             "dark": "深色"
+        },
+        "dictionaryTargetLanguage": {
+            "title": "辭典目標語言",
+            "auto": "自動檢測",
+            "en": "英語",
+            "ja": "日語",
+            "zh-CN": "簡體中文",
+            "zh-TW": "繁體中文"
+        },
+        "japanesePronunciationStyle": {
+            "title": "日語發音方式",
+            "romaji": "羅馬字",
+            "hiraganaKatakana": "平假名 / 片假名"
+        }
+    },
+    "ImageDisplay": {
+        "error": {
+            "message": "錯誤",
+            "unknown": "發生未知錯誤"
+        },
+        "instructions": {
+            "zoom": "將滑鼠懸停在圖像上並使用滾輪進行縮放。",
+            "pan": "按住左鍵並拖動以平移。",
+            "select": "按住Ctrl鍵並左鍵單擊以選擇單字進行搜索。"
+        },
+        "options": {
+            "lines": "行",
+            "words": "單字"
+        },
+        "buttons": {
+            "clear": "清除"
         }
     },
     "ErrorBoundary": {
-        "title": "發生錯誤",
-        "description": "我們無法載入詞典結果。請稍後再試。"
+        "title": "出現問題",
+        "description": "無法加載辭典結果。請稍後再試。"
     },
     "Info": {
         "welcome": {
             "title": "歡迎",
-            "description": "歡迎使用<strong>Chie</strong>，您的新一代多語言詞典。Chie支援多種語言之間的翻譯、單字分析和詳細解釋，包括英語和日語。無論您是語言學習者還是專業人士，Chie都旨在讓理解和掌握新單字和片語變得盡可能簡單。"
+            "description": "歡迎使用<strong>知恵</strong>，下一代多語言辭典。知恵支持多種語言（包括英語和日語）的翻譯、句子分解和詳細解釋。從語言學習者到專業人士，它旨在讓您輕鬆理解和掌握新單字和短語。"
         },
         "features": {
             "title": "功能",
-            "translation": "<strong>翻譯：</strong>輕鬆在支援的語言之間翻譯單字和句子。",
-            "wordAnalysis": "<strong>單字分析：</strong>獲取句子的各個組成部分的詳細分析，包括含義和發音。",
-            "ankiIntegration": "<strong>Anki整合：</strong>無縫地將新單字新增到您的Anki牌組中，實現有效的閃卡式學習。",
-            "imageAudioSupport": "<strong>圖像和音頻支援：</strong>使用AI驅動的工具在圖像中查找單字或轉錄音頻。"
+            "translation": "<strong>翻譯：</strong> 輕鬆在支持的語言之間翻譯單字和句子。",
+            "wordAnalysis": "<strong>單字分析：</strong> 將句子分解為組成部分，獲取每個部分的含義和發音。",
+            "ankiIntegration": "<strong>Anki集成：</strong> 無縫將新單字添加到Anki牌組中，實現有效的閃卡學習。",
+            "imageAudioSupport": "<strong>圖像和音頻支持：</strong> 搜索圖像中的單字或使用AI進行音頻轉寫。"
         },
         "gettingStarted": {
             "title": "開始使用",
-            "description": "要充分利用Chie，請按照以下步驟設定Anki整合：",
+            "description": "要充分利用知恵，請按照以下步驟設置Anki：",
             "stepOne": "安裝",
             "ankiConnectLink": "AnkiConnect",
-            "stepTwo": "用以下內容替換AnkiConnect設定檔：",
-            "stepThree": "設定完成後，保持Anki在背景執行，即可直接從Chie新增卡片。"
+            "stepTwo": "用以下內容替換AnkiConnect的配置文件：",
+            "stepThree": "設置後，保持Anki在後台運行，這樣您就可以直接從知恵添加卡片。"
         }
     }
 } 

@@ -31,7 +31,7 @@ type Props = {
     description: string;
     saveButton: string;
     ariaLabel: string;
-    locale: {
+    displayLanguage: {
       title: string;
       en: string;
       ja: string;
@@ -189,13 +189,13 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
           </section>
 
           <section>
-            <h2 className="text-lg font-medium mb-2">{i18n.locale.title}</h2>
+            <h2 className="text-lg font-medium mb-2">{i18n.displayLanguage.title}</h2>
             <Select value={selectedLocale} onValueChange={setSelectedLocale}>
               <SelectTrigger>
                 <SelectValue placeholder={i18n.anki.placeholder} />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(i18n.locale)
+                {Object.entries(i18n.displayLanguage)
                   .filter(([k]) => k !== "title")
                   .map(([k, v]) => (
                     <SelectItem key={k} value={k}>

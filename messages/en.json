@@ -55,7 +55,7 @@
         },
         "title": "Settings",
         "description": "Manage general settings and your Anki decks.",
-        "locale": {
+        "displayLanguage": {
             "title": "Display Language",
             "en": "English",
             "ja": "Japanese",
