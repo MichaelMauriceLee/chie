@@ -29,12 +29,11 @@ export type Word = {
   text: string;
   pronunciation: string;
   meaning: string[];
-  words: Word[];
 };
 
 export type DictionaryResponse = {
   explanation: string; 
-  words: Word[];
   sentence: string;
   detectedLanguage: string;
+  words: Word[];
 };

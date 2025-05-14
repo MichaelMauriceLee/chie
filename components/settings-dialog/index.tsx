@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import { RefreshCcw, Loader, Settings } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { getDeckNames } from "@/lib/agent";
+import { WordSelectionMode, wordSelectionModeAtom } from "@/store/atoms";
+import { useAtom } from "jotai";
 
 type Props = {
   i18n: {
@@ -74,7 +76,7 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
   const [deckNames, setDeckNames] = useState<string[]>([]);
   const [tempSelectedDeck, setTempSelectedDeck] = useState<string>("");
   const [tempTheme, setTempTheme] = useState<"light" | "dark">("light");
-  const [tempWordSelectionMode, setTempWordSelectionMode] = useState("add");
+  const [wordSelectionMode, setWordSelectionMode] = useAtom(wordSelectionModeAtom);
   const [tempDictLang, setTempDictLang] = useState("auto");
   const [tempJPStyle, setTempJPStyle] = useState("romaji");
   const [isSyncing, setIsSyncing] = useState(false);
@@ -89,8 +91,9 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
       setTempTheme(
         (localStorage.getItem("theme") as "light" | "dark") || "light"
       );
-      setTempWordSelectionMode(
-        localStorage.getItem("wordSelectionMode") ?? "add"
+      const storedMode = localStorage.getItem("wordSelectionMode");
+      setWordSelectionMode(
+        storedMode === "override" ? WordSelectionMode.Override : WordSelectionMode.Add
       );
       setTempDictLang(
         localStorage.getItem("dictionaryTargetLanguage") ?? "auto"
@@ -99,7 +102,7 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
         localStorage.getItem("japanesePronunciationStyle") ?? "romaji"
       );
     }
-  }, [isSettingsOpen]);
+  }, [isSettingsOpen, setWordSelectionMode]);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -128,7 +131,7 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
 
     localStorage.setItem("selectedDeck", tempSelectedDeck);
     localStorage.setItem("theme", tempTheme);
-    localStorage.setItem("wordSelectionMode", tempWordSelectionMode);
+    localStorage.setItem("wordSelectionMode", wordSelectionMode);
     localStorage.setItem("dictionaryTargetLanguage", tempDictLang);
 
     if (tempDictLang === "ja") {
@@ -252,17 +255,17 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
               {i18n.wordSelectionMode.title}
             </h2>
             <Select
-              value={tempWordSelectionMode}
-              onValueChange={(v) => setTempWordSelectionMode(v)}
+              value={wordSelectionMode}
+              onValueChange={(v) => setWordSelectionMode(v as WordSelectionMode)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Mode" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="override">
+                <SelectItem value={WordSelectionMode.Override}>
                   {i18n.wordSelectionMode.override}
                 </SelectItem>
-                <SelectItem value="add">
+                <SelectItem value={WordSelectionMode.Add}>
                   {i18n.wordSelectionMode.addOn}
                 </SelectItem>
               </SelectContent>

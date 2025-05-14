@@ -3,7 +3,6 @@
 import React from "react";
 import { Word } from "@/models/serverActions";
 import {
-  Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
@@ -13,7 +12,6 @@ import { Plus, Volume2, Loader2 } from "lucide-react";
 import { useAnki } from "@/hooks/useAnki";
 import { speakText } from "@/lib/audio";
 import { useTranslations } from "next-intl";
-import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   word: Word;
@@ -87,21 +85,6 @@ export default function DictionaryWordItem({
             <li key={meaning}>{meaning}</li>
           ))}
         </ul>
-        {word.words?.length > 0 && (
-          <Accordion type="single" collapsible className="mt-4 space-y-2">
-            {word.words.map((sub) => (
-              <DictionaryWordItem
-                key={uuidv4()}
-                word={sub}
-                sentence={sentence}
-                detectedLanguage={detectedLanguage}
-                token={token}
-                region={region}
-                level={level + 1}
-              />
-            ))}
-          </Accordion>
-        )}
       </AccordionContent>
     </AccordionItem>
   );

@@ -119,10 +119,9 @@ export function useOCRInteraction(
         const selectedWords = tempWordArrayRef.current
           .map((el) => el.text)
           .join("");
-        setKeyword((prev) =>
-          wordSelectionMode === WordSelectionMode.Add
-            ? prev + selectedWords
-            : selectedWords
+        setKeyword((prev) => wordSelectionMode === WordSelectionMode.Add
+          ? prev + selectedWords
+          : selectedWords
         );
       }
       setIsDragging(false);

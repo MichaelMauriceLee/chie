@@ -56,10 +56,10 @@ export const initializeWordSelectionModeAtom = atom(
   (get) => get(wordSelectionModeAtom),
   (_get, set) => {
     if (typeof window !== "undefined") {
-      const storedMode = localStorage.getItem(
-        "wordSelectionMode"
-      ) as WordSelectionMode;
-      const mode = storedMode || WordSelectionMode.Add;
+      const storedMode = localStorage.getItem("wordSelectionMode");
+      const mode = storedMode === "override" 
+        ? WordSelectionMode.Override 
+        : WordSelectionMode.Add;
       set(wordSelectionModeAtom, mode);
     }
   }
