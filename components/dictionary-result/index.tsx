@@ -1,12 +1,22 @@
 import DictionaryDisplay from "./dictionary-display";
 import { DictionaryResponse } from "@/models/serverActions";
+import { cache } from "react";
 
-async function askDictionary(
+const dictionaryCache = new Map<string, DictionaryResponse>();
+
+const askDictionary = cache(async (
   query: string,
   displayLanguage: string,
   targetLanguage: string,
   jpStyle?: "romaji" | "hiragana-katakana"
-): Promise<DictionaryResponse> {
+): Promise<DictionaryResponse> => {
+  const cacheKey = `${query}-${displayLanguage}-${targetLanguage}-${jpStyle || ''}`;
+
+  const cachedResult = dictionaryCache.get(cacheKey);
+  if (cachedResult) {
+    return cachedResult;
+  }
+
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("Missing OpenRouter API key");
 
@@ -28,8 +38,7 @@ async function askDictionary(
 
     Input: ${query}
 
-    1. Translate the input into ${
-      targetLanguage === "auto" ? "the appropriate language" : targetLanguage
+    1. Translate the input into ${targetLanguage === "auto" ? "the appropriate language" : targetLanguage
     }, if necessary.
     2. Break the input down into individual words or components:
       - Text: original word/component
@@ -138,15 +147,20 @@ async function askDictionary(
 
   try {
     const stripped = rawContent
-      .replace(/^```(?:json)?\s*/i, "") 
-      .replace(/\s*```$/, "") 
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/, "")
       .trim();
-    return JSON.parse(stripped);
+    const result = JSON.parse(stripped);
+
+    // Store the result in our cache
+    dictionaryCache.set(cacheKey, result);
+
+    return result;
   } catch {
     console.error("Failed to parse content as JSON:", rawContent);
     throw new Error("Invalid JSON returned from Gemini");
   }
-}
+});
 
 type Props = {
   query: string;
