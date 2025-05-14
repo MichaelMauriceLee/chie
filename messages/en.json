@@ -32,7 +32,7 @@
     },
     "NotFound": {
         "title": "404 - Page Not Found",
-        "description": "Sorry, we couldn’t find the page you’re looking for.",
+        "description": "Sorry, we couldn't find the page you're looking for.",
         "backHome": "Go back home"
     },
     "ImageCropper": {
@@ -58,13 +58,17 @@
         "locale": {
             "title": "Display Language",
             "en": "English",
-            "ja": "Japanese"
+            "ja": "Japanese",
+            "zh-CN": "Simplified Chinese",
+            "zh-TW": "Traditional Chinese"
         },
         "dictionaryTargetLanguage": {
             "title": "Target Dictionary Language",
             "auto": "Auto Detect",
             "en": "English",
-            "ja": "Japanese"
+            "ja": "Japanese",
+            "zh-CN": "Simplified Chinese",
+            "zh-TW": "Traditional Chinese"
         },
         "japanesePronunciationStyle": {
             "title": "Japanese Pronunciation Style",

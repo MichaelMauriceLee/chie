@@ -12,6 +12,8 @@ import { getSpeechToken } from "@/lib/speech";
 const LOCALE_LANGUAGE_MAP = {
   en: "English",
   ja: "Japanese",
+  "zh-CN": "Simplified Chinese",
+  "zh-TW": "Traditional Chinese",
 };
 
 type Props = {
@@ -59,6 +61,8 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
               title: settingsDialogLabels("locale.title"),
               en: settingsDialogLabels("locale.en"),
               ja: settingsDialogLabels("locale.ja"),
+              "zh-CN": settingsDialogLabels("locale.zh-CN"),
+              "zh-TW": settingsDialogLabels("locale.zh-TW"),
             },
             anki: {
               title: settingsDialogLabels("anki.title"),
@@ -83,6 +87,8 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
               auto: settingsDialogLabels("dictionaryTargetLanguage.auto"),
               en: settingsDialogLabels("dictionaryTargetLanguage.en"),
               ja: settingsDialogLabels("dictionaryTargetLanguage.ja"),
+              "zh-CN": settingsDialogLabels("dictionaryTargetLanguage.zh-CN"),
+              "zh-TW": settingsDialogLabels("dictionaryTargetLanguage.zh-TW"),
             },
             japanesePronunciationStyle: {
               title: settingsDialogLabels("japanesePronunciationStyle.title"),

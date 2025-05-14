@@ -1,0 +1,113 @@
+{
+    "Metadata": {
+        "title": "Chie",
+        "description": "新一代多语言词典"
+    },
+    "Home": {
+        "close": "关闭",
+        "settings": "设置"
+    },
+    "DictionaryInput": {
+        "askAQuestionPlaceholder": "输入问题..."
+    },
+    "DictionaryDisplay": {
+        "errors": {
+            "noDeckSelected": "请在设置中选择一个牌组。",
+            "addFailed": "添加卡片到Anki失败。",
+            "audioGenerationFailed": "生成单词音频失败。",
+            "speechFailed": "播放单词音频失败。"
+        },
+        "success": {
+            "added": "已将\"{word}\"添加到牌组\"{deck}\"。"
+        },
+        "labels": {
+            "pronunciation": "发音",
+            "meanings": "含义",
+            "originalSentence": "原句",
+            "addedOn": "添加于",
+            "notAvailable": "不适用",
+            "audioNotSupported": "您的浏览器不支持音频元素。"
+        },
+        "dateFormat": "yyyy年MM月dd日 HH:mm"
+    },
+    "NotFound": {
+        "title": "404 - 页面未找到",
+        "description": "抱歉，我们找不到您要查找的页面。",
+        "backHome": "返回首页"
+    },
+    "SettingsDialog": {
+        "aria": {
+            "settings": "设置"
+        },
+        "title": "设置",
+        "description": "管理常规设置和您的Anki牌组。",
+        "locale": {
+            "title": "显示语言",
+            "en": "英语",
+            "ja": "日语",
+            "zh-CN": "简体中文",
+            "zh-TW": "繁体中文"
+        },
+        "dictionaryTargetLanguage": {
+            "title": "目标词典语言",
+            "auto": "自动检测",
+            "en": "英语",
+            "ja": "日语",
+            "zh-CN": "简体中文",
+            "zh-TW": "繁体中文"
+        },
+        "japanesePronunciationStyle": {
+            "title": "日语发音风格",
+            "romaji": "罗马字",
+            "hiraganaKatakana": "平假名/片假名"
+        },
+        "anki": {
+            "title": "Anki",
+            "syncButton": "同步",
+            "selectDeck": "选择要同步的牌组：",
+            "placeholder": "选择牌组",
+            "success": {
+                "syncCompleted": "同步成功完成。"
+            },
+            "error": {
+                "syncFailed": "与Anki同步失败。"
+            }
+        },
+        "wordSelectionMode": {
+            "title": "单词选择模式",
+            "override": "覆盖",
+            "addOn": "添加"
+        },
+        "saveButton": "保存",
+        "theme": {
+            "title": "主题",
+            "light": "浅色",
+            "dark": "深色"
+        }
+    },
+    "ErrorBoundary": {
+        "title": "发生错误",
+        "description": "我们无法加载词典结果。请稍后再试。"
+    },
+    "Info": {
+        "welcome": {
+            "title": "欢迎",
+            "description": "欢迎使用<strong>Chie</strong>，您的新一代多语言词典。Chie支持多种语言之间的翻译、单词分析和详细解释，包括英语和日语。无论您是语言学习者还是专业人士，Chie都旨在让理解和掌握新单词和短语变得尽可能简单。"
+        },
+        "features": {
+            "title": "功能",
+            "translation": "<strong>翻译：</strong>轻松在支持的语言之间翻译单词和句子。",
+            "wordAnalysis": "<strong>单词分析：</strong>获取句子的各个组成部分的详细分析，包括含义和发音。",
+            "ankiIntegration": "<strong>Anki集成：</strong>无缝地将新单词添加到您的Anki牌组中，实现有效的闪卡式学习。",
+            "imageAudioSupport": "<strong>图像和音频支持：</strong>使用AI驱动的工具在图像中查找单词或转录音频。"
+        },
+        "gettingStarted": {
+            "title": "开始使用",
+            "description": "要充分利用Chie，请按照以下步骤设置Anki集成：",
+            "stepOne": "安装",
+            "ankiConnectLink": "AnkiConnect",
+            "stepTwo": "用以下内容替换AnkiConnect配置文件：",
+            "stepThree": "配置完成后，保持Anki在后台运行，即可直接从Chie添加卡片。"
+        }
+    }
+} 

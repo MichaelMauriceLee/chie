@@ -35,6 +35,8 @@ type Props = {
       title: string;
       en: string;
       ja: string;
+      "zh-CN": string;
+      "zh-TW": string;
     };
     anki: {
       title: string;
@@ -59,6 +61,8 @@ type Props = {
       auto: string;
       en: string;
       ja: string;
+      "zh-CN": string;
+      "zh-TW": string;
     };
     japanesePronunciationStyle: {
       title: string;
@@ -219,6 +223,12 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
                 </SelectItem>
                 <SelectItem value="ja">
                   {i18n.dictionaryTargetLanguage.ja}
+                </SelectItem>
+                <SelectItem value="zh-CN">
+                  {i18n.dictionaryTargetLanguage["zh-CN"]}
+                </SelectItem>
+                <SelectItem value="zh-TW">
+                  {i18n.dictionaryTargetLanguage["zh-TW"]}
                 </SelectItem>
               </SelectContent>
             </Select>
