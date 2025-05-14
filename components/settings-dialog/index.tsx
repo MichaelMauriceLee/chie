@@ -72,47 +72,84 @@ type Props = {
   };
 };
 
+type SettingSectionProps = {
+  title: string;
+  children: React.ReactNode;
+};
+
+const SettingSection = ({ title, children }: SettingSectionProps) => (
+  <section>
+    <h2 className="text-lg font-medium mb-2">{title}</h2>
+    {children}
+  </section>
+);
+
+type SettingSelectProps<T extends string> = {
+  value: T;
+  onValueChange: (value: T) => void;
+  placeholder?: string;
+  options: { value: T; label: string }[];
+};
+
+const SettingSelect = <T extends string>({
+  value,
+  onValueChange,
+  placeholder,
+  options,
+}: SettingSelectProps<T>) => (
+  <Select value={value} onValueChange={onValueChange}>
+    <SelectTrigger>
+      <SelectValue placeholder={placeholder} />
+    </SelectTrigger>
+    <SelectContent>
+      {options.map(({ value, label }) => (
+        <SelectItem key={value} value={value}>
+          {label}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+);
+
 export default function SettingsDialog({ i18n }: Readonly<Props>) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
   const [deckNames, setDeckNames] = useState<string[]>([]);
-  const [tempSelectedDeck, setTempSelectedDeck] = useState<string>("");
-  const [tempTheme, setTempTheme] = useState<"light" | "dark">("light");
-  const [wordSelectionMode, setWordSelectionMode] = useAtom(wordSelectionModeAtom);
-  const [tempDictLang, setTempDictLang] = useState("auto");
-  const [tempJPStyle, setTempJPStyle] = useState("romaji");
   const [isSyncing, setIsSyncing] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [selectedLocale, setSelectedLocale] = useState<string>(
-    pathname?.split("/")[1] || "en"
-  );
+  const [wordSelectionMode, setWordSelectionMode] = useAtom(wordSelectionModeAtom);
+
+  const [settings, setSettings] = useState({
+    selectedDeck: localStorage.getItem("selectedDeck") ?? "",
+    theme: (localStorage.getItem("theme") as "light" | "dark") || "light",
+    dictionaryTargetLanguage: localStorage.getItem("dictionaryTargetLanguage") ?? "auto",
+    japanesePronunciationStyle: localStorage.getItem("japanesePronunciationStyle") ?? "romaji",
+    locale: pathname?.split("/")[1] || "en"
+  });
 
   useEffect(() => {
     if (!isSettingsOpen) {
-      setTempSelectedDeck(localStorage.getItem("selectedDeck") ?? "");
-      setTempTheme(
-        (localStorage.getItem("theme") as "light" | "dark") || "light"
-      );
-      const storedMode = localStorage.getItem("wordSelectionMode");
-      setWordSelectionMode(
-        storedMode === "override" ? WordSelectionMode.Override : WordSelectionMode.Add
-      );
-      setTempDictLang(
-        localStorage.getItem("dictionaryTargetLanguage") ?? "auto"
-      );
-      setTempJPStyle(
-        localStorage.getItem("japanesePronunciationStyle") ?? "romaji"
-      );
+      setSettings({
+        selectedDeck: localStorage.getItem("selectedDeck") ?? "",
+        theme: (localStorage.getItem("theme") as "light" | "dark") || "light",
+        dictionaryTargetLanguage: localStorage.getItem("dictionaryTargetLanguage") ?? "auto",
+        japanesePronunciationStyle: localStorage.getItem("japanesePronunciationStyle") ?? "romaji",
+        locale: pathname?.split("/")[1] || "en"
+      });
     }
-  }, [isSettingsOpen, setWordSelectionMode]);
+  }, [isSettingsOpen, pathname]);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
-      document.documentElement.classList.toggle("dark", tempTheme === "dark");
+      document.documentElement.classList.toggle("dark", settings.theme === "dark");
     }
-  }, [tempTheme]);
+  }, [settings.theme]);
+
+  const updateSetting = <K extends keyof typeof settings>(key: K, value: typeof settings[K]) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
+  };
 
   async function handleAnkiSync() {
     setIsSyncing(true);
@@ -133,23 +170,21 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
     const queryParams = new URLSearchParams(searchParams?.toString());
     const currentLocale = pathname?.split("/")[1] || "en";
 
-    localStorage.setItem("selectedDeck", tempSelectedDeck);
-    localStorage.setItem("theme", tempTheme);
+    Object.entries(settings).forEach(([key, value]) => {
+      localStorage.setItem(key, value.toString());
+    });
     localStorage.setItem("wordSelectionMode", wordSelectionMode);
-    localStorage.setItem("dictionaryTargetLanguage", tempDictLang);
 
-    if (tempDictLang === "ja") {
-      localStorage.setItem("japanesePronunciationStyle", tempJPStyle);
-      queryParams.set("jpStyle", tempJPStyle);
+    if (settings.dictionaryTargetLanguage === "ja") {
+      queryParams.set("jpStyle", settings.japanesePronunciationStyle);
     } else {
       queryParams.delete("jpStyle");
     }
 
-    queryParams.set("targetLang", tempDictLang);
-
+    queryParams.set("targetLang", settings.dictionaryTargetLanguage);
     setIsSettingsOpen(false);
 
-    const basePath = `/${selectedLocale}`;
+    const basePath = `/${settings.locale}`;
     router.push(
       `${basePath}${pathname?.replace(
         `/${currentLocale}`,
@@ -172,118 +207,66 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
         </SheetHeader>
 
         <div className="my-4 space-y-4">
-          <section>
-            <h2 className="text-lg font-medium mb-2">{i18n.theme.title}</h2>
-            <Select
-              value={tempTheme}
-              onValueChange={(v) => setTempTheme(v as "light" | "dark")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={i18n.theme.title} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">{i18n.theme.light}</SelectItem>
-                <SelectItem value="dark">{i18n.theme.dark}</SelectItem>
-              </SelectContent>
-            </Select>
-          </section>
+          <SettingSection title={i18n.theme.title}>
+            <SettingSelect
+              value={settings.theme}
+              onValueChange={(v) => updateSetting("theme", v as "light" | "dark")}
+              options={[
+                { value: "light", label: i18n.theme.light },
+                { value: "dark", label: i18n.theme.dark }
+              ]}
+            />
+          </SettingSection>
 
-          <section>
-            <h2 className="text-lg font-medium mb-2">{i18n.displayLanguage.title}</h2>
-            <Select value={selectedLocale} onValueChange={setSelectedLocale}>
-              <SelectTrigger>
-                <SelectValue placeholder={i18n.anki.placeholder} />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(i18n.displayLanguage)
-                  .filter(([k]) => k !== "title")
-                  .map(([k, v]) => (
-                    <SelectItem key={k} value={k}>
-                      {v}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </section>
+          <SettingSection title={i18n.displayLanguage.title}>
+            <SettingSelect
+              value={settings.locale}
+              onValueChange={(v) => updateSetting("locale", v)}
+              options={Object.entries(i18n.displayLanguage)
+                .filter(([k]) => k !== "title")
+                .map(([k, v]) => ({ value: k, label: v }))}
+            />
+          </SettingSection>
 
-          <section>
-            <h2 className="text-lg font-medium mb-2">
-              {i18n.dictionaryTargetLanguage.title}
-            </h2>
-            <Select value={tempDictLang} onValueChange={setTempDictLang}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="auto">
-                  {i18n.dictionaryTargetLanguage.auto}
-                </SelectItem>
-                <SelectItem value="en">
-                  {i18n.dictionaryTargetLanguage.en}
-                </SelectItem>
-                <SelectItem value="ja">
-                  {i18n.dictionaryTargetLanguage.ja}
-                </SelectItem>
-                <SelectItem value="zh-MN">
-                  {i18n.dictionaryTargetLanguage["zh-MN"]}
-                </SelectItem>
-                <SelectItem value="zh-CT">
-                  {i18n.dictionaryTargetLanguage["zh-CT"]}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </section>
+          <SettingSection title={i18n.dictionaryTargetLanguage.title}>
+            <SettingSelect
+              value={settings.dictionaryTargetLanguage}
+              onValueChange={(v) => updateSetting("dictionaryTargetLanguage", v)}
+              options={[
+                { value: "auto", label: i18n.dictionaryTargetLanguage.auto },
+                { value: "en", label: i18n.dictionaryTargetLanguage.en },
+                { value: "ja", label: i18n.dictionaryTargetLanguage.ja },
+                { value: "zh-MN", label: i18n.dictionaryTargetLanguage["zh-MN"] },
+                { value: "zh-CT", label: i18n.dictionaryTargetLanguage["zh-CT"] }
+              ]}
+            />
+          </SettingSection>
 
-          {tempDictLang === "ja" && (
-            <section>
-              <h2 className="text-lg font-medium mb-2">
-                {i18n.japanesePronunciationStyle.title}
-              </h2>
-              <Select
-                value={tempJPStyle}
-                onValueChange={(v) =>
-                  setTempJPStyle(v as "romaji" | "hiragana-katakana")
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="romaji">
-                    {i18n.japanesePronunciationStyle.romaji}
-                  </SelectItem>
-                  <SelectItem value="hiragana-katakana">
-                    {i18n.japanesePronunciationStyle.hiraganaKatakana}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </section>
+          {settings.dictionaryTargetLanguage === "ja" && (
+            <SettingSection title={i18n.japanesePronunciationStyle.title}>
+              <SettingSelect
+                value={settings.japanesePronunciationStyle}
+                onValueChange={(v) => updateSetting("japanesePronunciationStyle", v)}
+                options={[
+                  { value: "romaji", label: i18n.japanesePronunciationStyle.romaji },
+                  { value: "hiragana-katakana", label: i18n.japanesePronunciationStyle.hiraganaKatakana }
+                ]}
+              />
+            </SettingSection>
           )}
 
-          <section>
-            <h2 className="text-lg font-medium mb-2">
-              {i18n.wordSelectionMode.title}
-            </h2>
-            <Select
+          <SettingSection title={i18n.wordSelectionMode.title}>
+            <SettingSelect
               value={wordSelectionMode}
               onValueChange={(v) => setWordSelectionMode(v as WordSelectionMode)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Mode" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={WordSelectionMode.Override}>
-                  {i18n.wordSelectionMode.override}
-                </SelectItem>
-                <SelectItem value={WordSelectionMode.Add}>
-                  {i18n.wordSelectionMode.addOn}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </section>
+              options={[
+                { value: WordSelectionMode.Override, label: i18n.wordSelectionMode.override },
+                { value: WordSelectionMode.Add, label: i18n.wordSelectionMode.addOn }
+              ]}
+            />
+          </SettingSection>
 
-          <section>
-            <h2 className="text-lg font-medium mb-2">{i18n.anki.title}</h2>
+          <SettingSection title={i18n.anki.title}>
             <Button onClick={handleAnkiSync} disabled={isSyncing}>
               {isSyncing ? (
                 <Loader className="w-4 h-4 mr-2 animate-spin" />
@@ -298,24 +281,15 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
                 <p className="text-sm text-gray-500 mb-2">
                   {i18n.anki.selectDeck}
                 </p>
-                <Select
-                  value={tempSelectedDeck}
-                  onValueChange={setTempSelectedDeck}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={i18n.anki.placeholder} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {deckNames.map((deck) => (
-                      <SelectItem key={deck} value={deck}>
-                        {deck}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SettingSelect
+                  value={settings.selectedDeck}
+                  onValueChange={(v) => updateSetting("selectedDeck", v)}
+                  placeholder={i18n.anki.placeholder}
+                  options={deckNames.map(deck => ({ value: deck, label: deck }))}
+                />
               </div>
             )}
-          </section>
+          </SettingSection>
         </div>
 
         <SheetFooter>
