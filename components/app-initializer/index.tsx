@@ -2,11 +2,29 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useSetAtom } from "jotai";
+import { 
+  initializeWordSelectionModeAtom,
+  initializeThemeAtom,
+  initializeDeckNamesAtom,
+  initializeSelectedDeckAtom
+} from "@/store/atoms";
 
 export default function AppInitializer() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const initializeWordSelectionMode = useSetAtom(initializeWordSelectionModeAtom);
+  const initializeTheme = useSetAtom(initializeThemeAtom);
+  const initializeDeckNames = useSetAtom(initializeDeckNamesAtom);
+  const initializeSelectedDeck = useSetAtom(initializeSelectedDeckAtom);
+
+  useEffect(() => {
+    initializeWordSelectionMode();
+    initializeTheme();
+    initializeDeckNames();
+    initializeSelectedDeck();
+  }, [initializeWordSelectionMode, initializeTheme, initializeDeckNames, initializeSelectedDeck]);
 
   useEffect(() => {
     const targetLang = searchParams.get("targetLang");
