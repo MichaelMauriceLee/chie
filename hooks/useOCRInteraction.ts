@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import {
   OCRBlock,
   OCRCoordinate,
@@ -38,13 +38,23 @@ export function useOCRInteraction(
   translateImagePoint: (coord: OCRCoordinate) => [number, number],
   setKeyword: React.Dispatch<React.SetStateAction<string>>,
   wordSelectionMode: WordSelectionMode,
-  drawImageAndBoundingBoxes: () => void
+  drawImageAndBoundingBoxes: () => void,
+  setSelectedWords: React.Dispatch<React.SetStateAction<OCRWord[]>>
 ) {
   const tempWordArrayRef = useRef<OCRWord[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [cursorStyle, setCursorStyle] = useState("default");
   const [dragStartPosition, setDragStartPosition] =
     useState<OCRCoordinate | null>(null);
+
+  const resetSelection = useCallback(() => {
+    setIsDragging(false);
+    setDragStartPosition(null);
+    tempWordArrayRef.current = [];
+    setSelectedWords([]);
+    setCursorStyle("default");
+    window.requestAnimationFrame(drawImageAndBoundingBoxes);
+  }, [drawImageAndBoundingBoxes, setSelectedWords]);
 
   const getMousePos = useCallback(
     (evt: React.MouseEvent<HTMLCanvasElement> | WheelEvent) => {
@@ -104,13 +114,14 @@ export function useOCRInteraction(
       if (evt.ctrlKey) {
         findWordInImage(evt);
         setCursorStyle("crosshair");
+        setSelectedWords([...tempWordArrayRef.current]);
       } else {
         setDragStartPosition(getMousePos(evt));
         setCursorStyle("grabbing");
       }
       setIsDragging(true);
     },
-    [findWordInImage, getMousePos]
+    [findWordInImage, getMousePos, setSelectedWords]
   );
 
   const onMouseUp = useCallback(
@@ -124,14 +135,24 @@ export function useOCRInteraction(
           : selectedWords
         );
       }
-      setIsDragging(false);
-      setDragStartPosition(null);
-      tempWordArrayRef.current = [];
-      setCursorStyle("default");
-      window.requestAnimationFrame(drawImageAndBoundingBoxes);
+      resetSelection();
     },
-    [isDragging, setKeyword, wordSelectionMode, drawImageAndBoundingBoxes]
+    [isDragging, setKeyword, wordSelectionMode, resetSelection]
   );
+
+  // Add global mouse up handler
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      if (isDragging) {
+        resetSelection();
+      }
+    };
+
+    window.addEventListener("mouseup", handleGlobalMouseUp);
+    return () => {
+      window.removeEventListener("mouseup", handleGlobalMouseUp);
+    };
+  }, [isDragging, resetSelection]);
 
   const panImage = useCallback(
     (evt: React.MouseEvent<HTMLCanvasElement>) => {
@@ -152,11 +173,12 @@ export function useOCRInteraction(
       if (!isDragging) return;
       if (evt.ctrlKey) {
         findWordInImage(evt);
+        setSelectedWords([...tempWordArrayRef.current]);
       } else {
         panImage(evt);
       }
     },
-    [isDragging, findWordInImage, panImage]
+    [isDragging, findWordInImage, panImage, setSelectedWords]
   );
 
   const onWheel = useCallback(

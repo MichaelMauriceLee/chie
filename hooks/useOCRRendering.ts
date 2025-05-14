@@ -7,7 +7,8 @@ export function useOCRRendering(
   img: HTMLImageElement,
   imageSearchResult: OCRBlock[] | null,
   showLineBoundingBox: boolean,
-  showWordBoundingBox: boolean
+  showWordBoundingBox: boolean,
+  selectedWords: OCRWord[]
 ) {
   const getImageTransformationParameters = useCallback(() => {
     if (!canvas || !img.width || !img.height) {
@@ -52,11 +53,12 @@ export function useOCRRendering(
 
   const drawWord = useCallback(
     (word: OCRWord) => {
-      if (showWordBoundingBox) {
-        drawPolygon(word.boundingPolygon, "#830d30");
+      if (showWordBoundingBox || selectedWords.includes(word)) {
+        const isSelected = selectedWords.includes(word);
+        drawPolygon(word.boundingPolygon, isSelected ? "#ff0000" : "#830d30");
       }
     },
-    [drawPolygon, showWordBoundingBox]
+    [drawPolygon, showWordBoundingBox, selectedWords]
   );
 
   const drawLine = useCallback(
@@ -113,6 +115,9 @@ export function useOCRRendering(
     imageSearchResult,
     drawBlock,
     img,
+    showLineBoundingBox,
+    showWordBoundingBox,
+    selectedWords
   ]);
 
   return {
