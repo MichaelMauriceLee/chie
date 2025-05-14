@@ -90,8 +90,8 @@
             "auto": "自動檢測",
             "en": "英語",
             "ja": "日語",
-            "zh-CN": "簡體中文",
-            "zh-TW": "繁體中文"
+            "zh-MN": "普通話",
+            "zh-CT": "粵語"
         },
         "japanesePronunciationStyle": {
             "title": "日語發音方式",

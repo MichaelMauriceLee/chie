@@ -17,6 +17,10 @@ async function askDictionary(
     } else if (jpStyle === "hiragana-katakana") {
       pronunciationNote = "Use hiragana/katakana for pronunciation.";
     }
+  } else if (targetLanguage === "zh-MN") {
+    pronunciationNote = "Use pinyin for pronunciation.";
+  } else if (targetLanguage === "zh-CT") {
+    pronunciationNote = "Use jyutping for pronunciation.";
   }
 
   const systemPrompt = `

@@ -90,8 +90,8 @@
             "auto": "自動検出",
             "en": "英語",
             "ja": "日本語",
-            "zh-CN": "簡体字中国語",
-            "zh-TW": "繁体字中国語"
+            "zh-MN": "中国語（北京語）",
+            "zh-CT": "中国語（広東語）"
         },
         "japanesePronunciationStyle": {
             "title": "日本語の発音形式",

@@ -87,8 +87,8 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
               auto: settingsDialogLabels("dictionaryTargetLanguage.auto"),
               en: settingsDialogLabels("dictionaryTargetLanguage.en"),
               ja: settingsDialogLabels("dictionaryTargetLanguage.ja"),
-              "zh-CN": settingsDialogLabels("dictionaryTargetLanguage.zh-CN"),
-              "zh-TW": settingsDialogLabels("dictionaryTargetLanguage.zh-TW"),
+              "zh-MN": settingsDialogLabels("dictionaryTargetLanguage.zh-MN"),
+              "zh-CT": settingsDialogLabels("dictionaryTargetLanguage.zh-CT"),
             },
             japanesePronunciationStyle: {
               title: settingsDialogLabels("japanesePronunciationStyle.title"),

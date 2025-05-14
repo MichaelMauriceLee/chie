@@ -67,8 +67,8 @@
             "auto": "Auto Detect",
             "en": "English",
             "ja": "Japanese",
-            "zh-CN": "Simplified Chinese",
-            "zh-TW": "Traditional Chinese"
+            "zh-MN": "Mandarin Chinese",
+            "zh-CT": "Cantonese Chinese"
         },
         "japanesePronunciationStyle": {
             "title": "Japanese Pronunciation Style",

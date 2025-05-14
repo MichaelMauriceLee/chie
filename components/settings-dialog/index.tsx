@@ -61,8 +61,8 @@ type Props = {
       auto: string;
       en: string;
       ja: string;
-      "zh-CN": string;
-      "zh-TW": string;
+      "zh-MN": string;
+      "zh-CT": string;
     };
     japanesePronunciationStyle: {
       title: string;
@@ -224,11 +224,11 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
                 <SelectItem value="ja">
                   {i18n.dictionaryTargetLanguage.ja}
                 </SelectItem>
-                <SelectItem value="zh-CN">
-                  {i18n.dictionaryTargetLanguage["zh-CN"]}
+                <SelectItem value="zh-MN">
+                  {i18n.dictionaryTargetLanguage["zh-MN"]}
                 </SelectItem>
-                <SelectItem value="zh-TW">
-                  {i18n.dictionaryTargetLanguage["zh-TW"]}
+                <SelectItem value="zh-CT">
+                  {i18n.dictionaryTargetLanguage["zh-CT"]}
                 </SelectItem>
               </SelectContent>
             </Select>
