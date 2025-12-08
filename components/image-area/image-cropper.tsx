@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Cropper, ReactCropperElement } from "react-cropper";
 import { Button } from "../ui/button";
 import { useTranslations } from "next-intl";
@@ -19,7 +19,7 @@ export default function ImageCropper({
   const cropperRef = useRef<ReactCropperElement>(null);
   const [rawImage, setRawImage] = useState<string>();
 
-  const getDataURL = useCallback(() => {
+  useEffect(() => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -28,10 +28,6 @@ export default function ImageCropper({
       reader.readAsDataURL(file);
     }
   }, [file]);
-
-  useEffect(() => {
-    getDataURL();
-  }, [getDataURL]);
 
   function setCroppedImage() {
     const cropper = cropperRef.current?.cropper;

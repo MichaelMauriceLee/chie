@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, RefObject } from "react";
 import {
   OCRBlock,
   OCRCoordinate,
@@ -32,8 +32,7 @@ function getAllLines(blocks: OCRBlock[]): OCRLine[] {
 }
 
 export function useOCRInteraction(
-  canvas: HTMLCanvasElement | null,
-  ctx: CanvasRenderingContext2D | null,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
   imageSearchResult: OCRBlock[] | null,
   translateImagePoint: (coord: OCRCoordinate) => [number, number],
   setKeyword: React.Dispatch<React.SetStateAction<string>>,
@@ -47,98 +46,88 @@ export function useOCRInteraction(
   const [dragStartPosition, setDragStartPosition] =
     useState<OCRCoordinate | null>(null);
 
-  const resetSelection = useCallback(() => {
+  const resetSelection = () => {
     setIsDragging(false);
     setDragStartPosition(null);
     tempWordArrayRef.current = [];
     setSelectedWords([]);
     setCursorStyle("default");
     window.requestAnimationFrame(drawImageAndBoundingBoxes);
-  }, [drawImageAndBoundingBoxes, setSelectedWords]);
+  };
 
-  const getMousePos = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement> | WheelEvent) => {
-      if (!canvas) return null;
-      const rect = canvas.getBoundingClientRect();
-      const x =
-        ((evt.clientX - rect.left) / (rect.right - rect.left)) * canvas.width;
-      const y =
-        ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height;
+  const getMousePos = (evt: React.MouseEvent<HTMLCanvasElement> | WheelEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    const x =
+      ((evt.clientX - rect.left) / (rect.right - rect.left)) * canvas.width;
+    const y =
+      ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height;
 
-      if (!ctx) return null;
-      const transform = ctx.getTransform();
-      const inverseZoom = 1 / transform.a;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    const transform = ctx.getTransform();
+    const inverseZoom = 1 / transform.a;
 
-      return {
-        x: inverseZoom * x - inverseZoom * transform.e,
-        y: inverseZoom * y - inverseZoom * transform.f,
-      };
-    },
-    [canvas, ctx]
-  );
+    return {
+      x: inverseZoom * x - inverseZoom * transform.e,
+      y: inverseZoom * y - inverseZoom * transform.f,
+    };
+  };
 
-  const findWordInImage = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!imageSearchResult) return;
-      const mousePos = getMousePos(evt);
-      if (!mousePos) return;
+  const findWordInImage = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!imageSearchResult) return;
+    const mousePos = getMousePos(evt);
+    if (!mousePos) return;
 
-      for (const line of getAllLines(imageSearchResult)) {
-        const linePolygonCanvas = line.boundingPolygon.map((coord) => {
+    for (const line of getAllLines(imageSearchResult)) {
+      const linePolygonCanvas = line.boundingPolygon.map((coord) => {
+        const [x, y] = translateImagePoint(coord);
+        return { x, y };
+      });
+
+      if (!pointInPolygon(linePolygonCanvas, mousePos)) continue;
+
+      for (const word of line.words) {
+        const wordPolygonCanvas = word.boundingPolygon.map((coord) => {
           const [x, y] = translateImagePoint(coord);
           return { x, y };
         });
 
-        if (!pointInPolygon(linePolygonCanvas, mousePos)) continue;
-
-        for (const word of line.words) {
-          const wordPolygonCanvas = word.boundingPolygon.map((coord) => {
-            const [x, y] = translateImagePoint(coord);
-            return { x, y };
-          });
-
-          if (
-            pointInPolygon(wordPolygonCanvas, mousePos) &&
-            !tempWordArrayRef.current.includes(word)
-          ) {
-            tempWordArrayRef.current.push(word);
-          }
+        if (
+          pointInPolygon(wordPolygonCanvas, mousePos) &&
+          !tempWordArrayRef.current.includes(word)
+        ) {
+          tempWordArrayRef.current.push(word);
         }
       }
-    },
-    [imageSearchResult, getMousePos, translateImagePoint]
-  );
+    }
+  };
 
-  const onMouseDown = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (evt.ctrlKey) {
-        findWordInImage(evt);
-        setCursorStyle("crosshair");
-        setSelectedWords([...tempWordArrayRef.current]);
-      } else {
-        setDragStartPosition(getMousePos(evt));
-        setCursorStyle("grabbing");
-      }
-      setIsDragging(true);
-    },
-    [findWordInImage, getMousePos, setSelectedWords]
-  );
+  const onMouseDown = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+    if (evt.ctrlKey) {
+      findWordInImage(evt);
+      setCursorStyle("crosshair");
+      setSelectedWords([...tempWordArrayRef.current]);
+    } else {
+      setDragStartPosition(getMousePos(evt));
+      setCursorStyle("grabbing");
+    }
+    setIsDragging(true);
+  };
 
-  const onMouseUp = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (isDragging && evt.ctrlKey) {
-        const selectedWords = tempWordArrayRef.current
-          .map((el) => el.text)
-          .join("");
-        setKeyword((prev) => wordSelectionMode === WordSelectionMode.Add
-          ? prev + selectedWords
-          : selectedWords
-        );
-      }
-      resetSelection();
-    },
-    [isDragging, setKeyword, wordSelectionMode, resetSelection]
-  );
+  const onMouseUp = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isDragging && evt.ctrlKey) {
+      const selectedWords = tempWordArrayRef.current
+        .map((el) => el.text)
+        .join("");
+      setKeyword((prev) => wordSelectionMode === WordSelectionMode.Add
+        ? prev + selectedWords
+        : selectedWords
+      );
+    }
+    resetSelection();
+  };
 
   // Add global mouse up handler
   useEffect(() => {
@@ -152,49 +141,42 @@ export function useOCRInteraction(
     return () => {
       window.removeEventListener("mouseup", handleGlobalMouseUp);
     };
-  }, [isDragging, resetSelection]);
+  });
 
-  const panImage = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!dragStartPosition || !ctx) return;
-      const mousePos = getMousePos(evt);
-      if (mousePos) {
-        const dx = mousePos.x - dragStartPosition.x;
-        const dy = mousePos.y - dragStartPosition.y;
-        ctx.translate(dx, dy);
-        window.requestAnimationFrame(drawImageAndBoundingBoxes);
-      }
-    },
-    [ctx, dragStartPosition, getMousePos, drawImageAndBoundingBoxes]
-  );
+  const panImage = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!dragStartPosition || !ctx) return;
+    const mousePos = getMousePos(evt);
+    if (mousePos) {
+      const dx = mousePos.x - dragStartPosition.x;
+      const dy = mousePos.y - dragStartPosition.y;
+      ctx.translate(dx, dy);
+      window.requestAnimationFrame(drawImageAndBoundingBoxes);
+    }
+  };
 
-  const onMouseMove = useCallback(
-    (evt: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!isDragging) return;
-      if (evt.ctrlKey) {
-        findWordInImage(evt);
-        setSelectedWords([...tempWordArrayRef.current]);
-      } else {
-        panImage(evt);
-      }
-    },
-    [isDragging, findWordInImage, panImage, setSelectedWords]
-  );
+  const onMouseMove = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDragging) return;
+    if (evt.ctrlKey) {
+      findWordInImage(evt);
+      setSelectedWords([...tempWordArrayRef.current]);
+    } else {
+      panImage(evt);
+    }
+  };
 
-  const onWheel = useCallback(
-    (evt: WheelEvent) => {
-      evt.preventDefault();
-      const mousePos = getMousePos(evt);
-      if (mousePos && ctx) {
-        const zoom = evt.deltaY < 0 ? 1.1 : 0.9;
-        ctx.translate(mousePos.x, mousePos.y);
-        ctx.scale(zoom, zoom);
-        ctx.translate(-mousePos.x, -mousePos.y);
-        window.requestAnimationFrame(drawImageAndBoundingBoxes);
-      }
-    },
-    [ctx, getMousePos, drawImageAndBoundingBoxes]
-  );
+  const onWheel = (evt: WheelEvent) => {
+    evt.preventDefault();
+    const ctx = canvasRef.current?.getContext("2d");
+    const mousePos = getMousePos(evt);
+    if (mousePos && ctx) {
+      const zoom = evt.deltaY < 0 ? 1.1 : 0.9;
+      ctx.translate(mousePos.x, mousePos.y);
+      ctx.scale(zoom, zoom);
+      ctx.translate(-mousePos.x, -mousePos.y);
+      window.requestAnimationFrame(drawImageAndBoundingBoxes);
+    }
+  };
 
   return {
     onMouseDown,

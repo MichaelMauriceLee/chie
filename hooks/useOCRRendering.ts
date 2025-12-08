@@ -1,17 +1,18 @@
-import { useCallback } from "react";
+import { RefObject } from "react";
 import { OCRBlock, OCRCoordinate, OCRWord } from "@/models/serverActions";
 
 export function useOCRRendering(
-  ctx: CanvasRenderingContext2D | null,
-  canvas: HTMLCanvasElement | null,
-  img: HTMLImageElement,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
+  imgRef: RefObject<HTMLImageElement | null>,
   imageSearchResult: OCRBlock[] | null,
   showLineBoundingBox: boolean,
   showWordBoundingBox: boolean,
   selectedWords: OCRWord[]
 ) {
-  const getImageTransformationParameters = useCallback(() => {
-    if (!canvas || !img.width || !img.height) {
+  const getImageTransformationParameters = () => {
+    const canvas = canvasRef.current;
+    const img = imgRef.current;
+    if (!canvas || !img || !img.width || !img.height) {
       return { ratio: 1, centerShiftX: 0, centerShiftY: 0 };
     }
     const hRatio = canvas.width / img.width;
@@ -20,75 +21,66 @@ export function useOCRRendering(
     const centerShiftX = (canvas.width - img.width * ratio) / 2;
     const centerShiftY = (canvas.height - img.height * ratio) / 2;
     return { ratio, centerShiftX, centerShiftY };
-  }, [canvas, img]);
+  };
 
-  const translateImagePoint = useCallback(
-    (point: OCRCoordinate): [number, number] => {
-      const { ratio, centerShiftX, centerShiftY } =
-        getImageTransformationParameters();
-      return [point.x * ratio + centerShiftX, point.y * ratio + centerShiftY];
-    },
-    [getImageTransformationParameters]
-  );
+  const translateImagePoint = (point: OCRCoordinate): [number, number] => {
+    const { ratio, centerShiftX, centerShiftY } =
+      getImageTransformationParameters();
+    return [point.x * ratio + centerShiftX, point.y * ratio + centerShiftY];
+  };
 
-  const drawPolygon = useCallback(
-    (polygon: OCRCoordinate[], strokeColor: string) => {
-      if (!ctx || polygon.length < 1) return;
+  const drawPolygon = (polygon: OCRCoordinate[], strokeColor: string) => {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx || polygon.length < 1) return;
 
-      ctx.beginPath();
-      const [startX, startY] = translateImagePoint(polygon[0]);
-      ctx.moveTo(startX, startY);
+    ctx.beginPath();
+    const [startX, startY] = translateImagePoint(polygon[0]);
+    ctx.moveTo(startX, startY);
 
-      for (let i = 1; i < polygon.length; i++) {
-        const [x, y] = translateImagePoint(polygon[i]);
-        ctx.lineTo(x, y);
-      }
-      ctx.lineTo(startX, startY);
+    for (let i = 1; i < polygon.length; i++) {
+      const [x, y] = translateImagePoint(polygon[i]);
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(startX, startY);
 
-      ctx.strokeStyle = strokeColor;
-      ctx.stroke();
-    },
-    [ctx, translateImagePoint]
-  );
+    ctx.strokeStyle = strokeColor;
+    ctx.stroke();
+  };
 
-  const drawWord = useCallback(
-    (word: OCRWord) => {
-      if (showWordBoundingBox || selectedWords.includes(word)) {
-        const isSelected = selectedWords.includes(word);
-        drawPolygon(word.boundingPolygon, isSelected ? "#ff0000" : "#830d30");
-      }
-    },
-    [drawPolygon, showWordBoundingBox, selectedWords]
-  );
+  const drawWord = (word: OCRWord) => {
+    if (showWordBoundingBox || selectedWords.includes(word)) {
+      const isSelected = selectedWords.includes(word);
+      drawPolygon(word.boundingPolygon, isSelected ? "#ff0000" : "#830d30");
+    }
+  };
 
-  const drawLine = useCallback(
-    (line: OCRBlock["lines"][number]) => {
-      if (showLineBoundingBox) {
-        drawPolygon(line.boundingPolygon, "#0066ff");
-      }
-      line.words.forEach(drawWord);
-    },
-    [drawPolygon, showLineBoundingBox, drawWord]
-  );
+  const drawLine = (line: OCRBlock["lines"][number]) => {
+    if (showLineBoundingBox) {
+      drawPolygon(line.boundingPolygon, "#0066ff");
+    }
+    line.words.forEach(drawWord);
+  };
 
-  const drawBlock = useCallback(
-    (block: OCRBlock) => {
-      block.lines.forEach(drawLine);
-    },
-    [drawLine]
-  );
+  const drawBlock = (block: OCRBlock) => {
+    block.lines.forEach(drawLine);
+  };
 
-  const clearCanvas = useCallback(() => {
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
     if (ctx && canvas) {
       ctx.save();
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
     }
-  }, [canvas, ctx]);
+  };
 
-  const drawImageAndBoundingBoxes = useCallback(() => {
-    if (!ctx || !canvas) return;
+  const drawImageAndBoundingBoxes = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    const img = imgRef.current;
+    if (!ctx || !canvas || !img) return;
 
     clearCanvas();
     const { ratio, centerShiftX, centerShiftY } =
@@ -107,18 +99,7 @@ export function useOCRRendering(
     );
 
     imageSearchResult?.forEach(drawBlock);
-  }, [
-    ctx,
-    canvas,
-    clearCanvas,
-    getImageTransformationParameters,
-    imageSearchResult,
-    drawBlock,
-    img,
-    showLineBoundingBox,
-    showWordBoundingBox,
-    selectedWords
-  ]);
+  };
 
   return {
     drawImageAndBoundingBoxes,

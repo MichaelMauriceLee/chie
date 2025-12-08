@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export function useDropHandlers(
   setFile: React.Dispatch<React.SetStateAction<File | null>>
@@ -6,52 +6,46 @@ export function useDropHandlers(
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const onClick = useCallback(() => {
+  const onClick = () => {
     fileInputRef.current?.click();
-  }, []);
+  };
 
-  const onPhotoPaste = useCallback(
-    (evt: React.ClipboardEvent<HTMLButtonElement>) => {
-      const files = evt.clipboardData?.files;
-      if (files && files.length !== 0) {
-        setFile(files[0]);
-      }
-    },
-    [setFile]
-  );
+  const onPhotoPaste = (evt: React.ClipboardEvent<HTMLButtonElement>) => {
+    const files = evt.clipboardData?.files;
+    if (files && files.length !== 0) {
+      setFile(files[0]);
+    }
+  };
 
-  const onDragEnter = useCallback((evt: React.DragEvent<HTMLButtonElement>) => {
+  const onDragEnter = (evt: React.DragEvent<HTMLButtonElement>) => {
     evt.preventDefault();
     setIsDragging(true);
-  }, []);
+  };
 
-  const onDragOver = useCallback((evt: React.DragEvent<HTMLButtonElement>) => {
+  const onDragOver = (evt: React.DragEvent<HTMLButtonElement>) => {
     evt.preventDefault();
-  }, []);
+  };
 
-  const onDragLeave = useCallback(() => {
+  const onDragLeave = () => {
     setIsDragging(false);
-  }, []);
+  };
 
-  const onDrop = useCallback(
-    (evt: React.DragEvent<HTMLButtonElement>) => {
-      evt.preventDefault();
-      setIsDragging(false);
-      if (evt.dataTransfer.files.length !== 0) {
-        setFile(evt.dataTransfer.files[0]);
-      }
-    },
-    [setFile]
-  );
+  const onDrop = (evt: React.DragEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    setIsDragging(false);
+    if (evt.dataTransfer.files.length !== 0) {
+      setFile(evt.dataTransfer.files[0]);
+    }
+  };
 
-  const onPhotoUpload = useCallback(() => {
+  const onPhotoUpload = () => {
     const files = fileInputRef.current?.files;
     if (files && files.length !== 0) {
       setFile(files[0]);
     }
-  }, [setFile]);
+  };
 
-  const pasteFromClipboard = useCallback(async () => {
+  const pasteFromClipboard = async () => {
     try {
       const clipboardItems = await navigator.clipboard.read();
       if (
@@ -65,7 +59,7 @@ export function useDropHandlers(
     } catch (error) {
       console.error("Paste from clipboard failed:", error);
     }
-  }, [setFile]);
+  };
 
   return {
     isDragging,

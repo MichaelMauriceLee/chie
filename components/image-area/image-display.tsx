@@ -34,17 +34,13 @@ export default function ImageDisplay({
     useCanvasSetup(image);
   const { isLoading, imageSearchResult } = useOCRAnalysis(image);
 
-  const canvas = canvasRef.current;
-  const ctx = canvas?.getContext("2d") ?? null;
-
   const [showLineBoundingBox, setShowLineBoundingBox] = React.useState(true);
   const [showWordBoundingBox, setShowWordBoundingBox] = React.useState(false);
   const [selectedWords, setSelectedWords] = React.useState<OCRWord[]>([]);
 
   const { drawImageAndBoundingBoxes, translateImagePoint } = useOCRRendering(
-    ctx,
-    canvas,
-    imgRef.current,
+    canvasRef,
+    imgRef,
     imageSearchResult,
     showLineBoundingBox,
     showWordBoundingBox,
@@ -53,8 +49,7 @@ export default function ImageDisplay({
 
   const { onMouseDown, onMouseMove, onMouseUp, onWheel, cursorStyle } =
     useOCRInteraction(
-      canvas,
-      ctx,
+      canvasRef,
       imageSearchResult,
       translateImagePoint,
       setKeyword,
@@ -74,12 +69,13 @@ export default function ImageDisplay({
   ]);
 
   useEffect(() => {
+    const canvas = canvasRef.current;
     if (!canvas) return;
     canvas.addEventListener("wheel", onWheel);
     return () => {
       canvas.removeEventListener("wheel", onWheel);
     };
-  }, [canvas, onWheel]);
+  });
 
   const clearImage = () => {
     setImage(null);
