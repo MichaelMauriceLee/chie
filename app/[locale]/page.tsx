@@ -97,6 +97,9 @@ export default async function Home({ params, searchParams }: Readonly<Props>) {
                 "japanesePronunciationStyle.hiraganaKatakana"
               ),
             },
+            ttsVolume: {
+              title: settingsDialogLabels("ttsVolume.title"),
+            },
           }}
         />
       </div>

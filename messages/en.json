@@ -75,6 +75,9 @@
             "romaji": "Romaji",
             "hiraganaKatakana": "Hiragana / Katakana"
         },
+        "ttsVolume": {
+            "title": "Text-to-Speech Volume"
+        },
         "anki": {
             "title": "Anki",
             "syncButton": "Sync",

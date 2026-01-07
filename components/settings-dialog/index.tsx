@@ -18,8 +18,9 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
-import { RefreshCcw, Loader, Settings } from "lucide-react";
+import { RefreshCcw, Loader, Settings, Volume2 } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { getDeckNames } from "@/lib/agent";
 import { WordSelectionMode, wordSelectionModeAtom } from "@/store/atoms";
@@ -68,6 +69,9 @@ type Props = {
       title: string;
       romaji: string;
       hiraganaKatakana: string;
+    };
+    ttsVolume: {
+      title: string;
     };
   };
 };
@@ -122,13 +126,27 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
   const [wordSelectionMode, setWordSelectionMode] = useAtom(wordSelectionModeAtom);
 
   const [settings, setSettings] = useState({
-    selectedDeck: localStorage.getItem("selectedDeck") ?? "",
-    theme: (localStorage.getItem("theme") as "light" | "dark") || "light",
-    dictionaryTargetLanguage: localStorage.getItem("dictionaryTargetLanguage") ?? "auto",
-    japanesePronunciationStyle: localStorage.getItem("japanesePronunciationStyle") ?? "romaji",
-    locale: pathname?.split("/")[1] || "en"
+    selectedDeck: "",
+    theme: "light" as "light" | "dark",
+    dictionaryTargetLanguage: "auto",
+    japanesePronunciationStyle: "romaji",
+    locale: pathname?.split("/")[1] || "en",
+    ttsVolume: 100
   });
 
+  // Hydrate settings from localStorage on mount
+  useEffect(() => {
+    setSettings({
+      selectedDeck: localStorage.getItem("selectedDeck") ?? "",
+      theme: (localStorage.getItem("theme") as "light" | "dark") || "light",
+      dictionaryTargetLanguage: localStorage.getItem("dictionaryTargetLanguage") ?? "auto",
+      japanesePronunciationStyle: localStorage.getItem("japanesePronunciationStyle") ?? "romaji",
+      locale: pathname?.split("/")[1] || "en",
+      ttsVolume: parseInt(localStorage.getItem("ttsVolume") ?? "100", 10)
+    });
+  }, [pathname]);
+
+  // Reset settings when dialog closes
   useEffect(() => {
     if (!isSettingsOpen) {
       setSettings({
@@ -136,7 +154,8 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
         theme: (localStorage.getItem("theme") as "light" | "dark") || "light",
         dictionaryTargetLanguage: localStorage.getItem("dictionaryTargetLanguage") ?? "auto",
         japanesePronunciationStyle: localStorage.getItem("japanesePronunciationStyle") ?? "romaji",
-        locale: pathname?.split("/")[1] || "en"
+        locale: pathname?.split("/")[1] || "en",
+        ttsVolume: parseInt(localStorage.getItem("ttsVolume") ?? "100", 10)
       });
     }
   }, [isSettingsOpen, pathname]);
@@ -254,6 +273,23 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
               />
             </SettingSection>
           )}
+
+          <SettingSection title={i18n.ttsVolume.title}>
+            <div className="flex items-center gap-3">
+              <Volume2 className="h-4 w-4 text-muted-foreground" />
+              <Slider
+                value={[settings.ttsVolume]}
+                onValueChange={([v]) => updateSetting("ttsVolume", v)}
+                min={0}
+                max={100}
+                step={1}
+                className="flex-1"
+              />
+              <span className="w-10 text-sm text-muted-foreground text-right">
+                {settings.ttsVolume}%
+              </span>
+            </div>
+          </SettingSection>
 
           <SettingSection title={i18n.wordSelectionMode.title}>
             <SettingSelect

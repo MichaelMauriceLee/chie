@@ -97,6 +97,9 @@
             "title": "日本語の発音形式",
             "romaji": "ローマ字",
             "hiraganaKatakana": "ひらがな / カタカナ"
+        },
+        "ttsVolume": {
+            "title": "音声読み上げ音量"
         }
     },
     "ImageDisplay": {

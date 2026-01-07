@@ -97,6 +97,9 @@
             "title": "日语发音方式",
             "romaji": "罗马字",
             "hiraganaKatakana": "平假名 / 片假名"
+        },
+        "ttsVolume": {
+            "title": "语音朗读音量"
         }
     },
     "ImageDisplay": {
