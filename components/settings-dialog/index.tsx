@@ -120,10 +120,16 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  const [mounted, setMounted] = useState(false);
   const [deckNames, setDeckNames] = useState<string[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [wordSelectionMode, setWordSelectionMode] = useAtom(wordSelectionModeAtom);
+
+  // Prevent hydration mismatch from Radix UI ID generation
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [settings, setSettings] = useState({
     selectedDeck: "",
@@ -209,6 +215,15 @@ export default function SettingsDialog({ i18n }: Readonly<Props>) {
         `/${currentLocale}`,
         ""
       )}?${queryParams.toString()}`
+    );
+  }
+
+  // Render placeholder button before hydration to prevent layout shift
+  if (!mounted) {
+    return (
+      <Button aria-label={i18n.ariaLabel} disabled>
+        <Settings className="w-6 h-6" />
+      </Button>
     );
   }
 
